@@ -97,6 +97,10 @@ function App() {
               <Route path="masters/warehouses" element={<WarehouseMaster />} />
               <Route path="masters/bin-locations" element={<BINLocationMaster />} />
               <Route path="masters/tax-hsn" element={<TaxHSNMaster />} />
+              <Route path="masters/fabric-categories" element={<FabricCategoryMaster />} />
+              <Route path="masters/colors" element={<ColorMaster />} />
+              <Route path="masters/sizes" element={<SizeMaster />} />
+              <Route path="masters/brands" element={<BrandMaster />} />
 
               {/* Purchase */}
               <Route path="purchase/indents" element={<PurchaseIndents />} />
