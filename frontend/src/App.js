@@ -6,6 +6,7 @@ import MainLayout from '@/layouts/MainLayout';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Dashboard from '@/pages/Dashboard';
+import { inventoryRoutes } from '@/router/inventoryRoutes';
 
 // Masters
 import ItemCategories from '@/pages/masters/ItemCategories';
