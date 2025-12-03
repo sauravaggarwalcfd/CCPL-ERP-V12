@@ -146,19 +146,6 @@ const Dashboard = () => {
             <p className="text-sm text-neutral-600">Handle stock inward, transfers, and adjustments</p>
           </CardContent>
         </Card>
-
-        <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer border-2 border-primary" onClick={() => navigate('/inventory/masters/item-category')}>
-          <CardHeader>
-            <CardTitle className="text-lg font-heading flex items-center gap-2">
-              <Package className="h-5 w-5 text-primary" />
-              Inventory Module
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-neutral-600">Complete inventory management with masters, transactions & reports</p>
-            <p className="text-xs text-primary font-medium mt-2">→ Go to Inventory Module</p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
