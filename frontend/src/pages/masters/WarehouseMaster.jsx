@@ -84,6 +84,31 @@ const WarehouseMaster = () => {
     }
   };
 
+  const handleEdit = (warehouse) => {
+    setFormData({
+      warehouse_code: warehouse.warehouse_code,
+      warehouse_name: warehouse.warehouse_name,
+      warehouse_type: warehouse.warehouse_type || 'STORE',
+      location: warehouse.location || '',
+      address: warehouse.address || '',
+      city: warehouse.city || '',
+      state: warehouse.state || '',
+      pincode: warehouse.pincode || '',
+      capacity: warehouse.capacity?.toString() || '',
+      parent_warehouse_id: warehouse.parent_warehouse_id || '',
+      responsible_person: warehouse.responsible_person || warehouse.manager_name || '',
+      contact_number: warehouse.contact_number || '',
+      email: warehouse.email || '',
+      enable_qc: warehouse.enable_qc || false,
+      is_transit_warehouse: warehouse.is_transit_warehouse || false,
+      is_wip_warehouse: warehouse.is_wip_warehouse || false,
+      status: warehouse.status
+    });
+    setCurrentId(warehouse.id);
+    setEditMode(true);
+    setDialogOpen(true);
+  };
+
   const resetForm = () => {
     setFormData({
       warehouse_code: '',
