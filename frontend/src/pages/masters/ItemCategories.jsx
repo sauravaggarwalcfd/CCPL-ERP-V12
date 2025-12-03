@@ -7,17 +7,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { StatusBadge } from '@/components/StatusBadge';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, ChevronRight, ChevronDown, FolderTree, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const ItemCategories = () => {
   const [categories, setCategories] = useState([]);
+  const [expandedCategories, setExpandedCategories] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentId, setCurrentId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     code: '',
     name: '',
     parent_category: '',
+    level: 0,
     inventory_type: 'RAW',
     default_uom: '',
     default_hsn: '',
