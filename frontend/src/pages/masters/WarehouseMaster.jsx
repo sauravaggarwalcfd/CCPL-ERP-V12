@@ -326,17 +326,18 @@ const WarehouseMaster = () => {
               <TableHead className="font-semibold">Type</TableHead>
               <TableHead className="font-semibold">Location</TableHead>
               <TableHead className="font-semibold">Capacity</TableHead>
-              <TableHead className="font-semibold">Manager</TableHead>
+              <TableHead className="font-semibold">Responsible</TableHead>
+              <TableHead className="font-semibold">Controls</TableHead>
               <TableHead className="font-semibold">Status</TableHead>
               <TableHead className="font-semibold text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={8} className="text-center py-12 text-neutral-500">Loading...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={9} className="text-center py-12 text-neutral-500">Loading...</TableCell></TableRow>
             ) : filteredWarehouses.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-12">
+                <TableCell colSpan={9} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
                     <WarehouseIcon className="h-12 w-12 text-neutral-300" />
                     <p className="text-neutral-600 font-medium">No warehouses found</p>
@@ -349,14 +350,38 @@ const WarehouseMaster = () => {
                 <TableRow key={warehouse.id} className="hover:bg-neutral-50 transition-colors">
                   <TableCell className="font-mono text-sm">{warehouse.warehouse_code}</TableCell>
                   <TableCell className="font-medium">{warehouse.warehouse_name}</TableCell>
-                  <TableCell>{warehouse.warehouse_type}</TableCell>
-                  <TableCell>{warehouse.location || '-'}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-xs">{warehouse.warehouse_type}</Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">{warehouse.location || '-'}</TableCell>
                   <TableCell>{warehouse.capacity ? `${warehouse.capacity} sq.ft` : '-'}</TableCell>
-                  <TableCell>{warehouse.manager_name || '-'}</TableCell>
+                  <TableCell className="text-sm">
+                    <div>{warehouse.responsible_person || warehouse.manager_name || '-'}</div>
+                    <div className="text-xs text-neutral-500">{warehouse.contact_number || '-'}</div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {warehouse.enable_qc && (
+                        <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                          <CheckCircle2 className="h-3 w-3" />
+                          QC
+                        </Badge>
+                      )}
+                      {warehouse.is_transit_warehouse && (
+                        <Badge variant="secondary" className="text-xs flex items-center gap-1">
+                          <TruckIcon className="h-3 w-3" />
+                          Transit
+                        </Badge>
+                      )}
+                      {warehouse.is_wip_warehouse && (
+                        <Badge variant="secondary" className="text-xs">WIP</Badge>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell><StatusBadge status={warehouse.status} /></TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" data-testid={`edit-warehouse-${warehouse.id}`}><Edit className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(warehouse)} data-testid={`edit-warehouse-${warehouse.id}`}><Edit className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" data-testid={`delete-warehouse-${warehouse.id}`}><Trash2 className="h-4 w-4 text-red-600" /></Button>
                     </div>
                   </TableCell>
