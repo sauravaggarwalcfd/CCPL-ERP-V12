@@ -41,7 +41,7 @@ const BrandMaster = () => {
   }, []);
 
   const fetchBrands = async () => {
-    try:
+    try {
       setLoading(true);
       const response = await axios.get(`${API}/masters/brands`);
       setBrands(response.data || []);
