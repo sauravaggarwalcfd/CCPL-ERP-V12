@@ -41,12 +41,10 @@ const ColorMaster = () => {
   const fetchColors = async () => {
     try {
       setLoading(true);
-      // Fetch from colors collection
-      const response = await axios.get(`${API}/masters/colors`);
+      const response = await mastersAPI.getColors();
       setColors(response.data || []);
     } catch (error) {
-      // If endpoint doesn't exist, try generic approach
-      console.log('Colors endpoint not found, using empty array');
+      toast.error('Failed to load colors');
       setColors([]);
     } finally {
       setLoading(false);
