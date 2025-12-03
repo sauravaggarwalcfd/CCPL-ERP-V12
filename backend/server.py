@@ -608,6 +608,27 @@ async def get_uoms(current_user: Dict = Depends(get_current_user)):
             uom['created_at'] = datetime.fromisoformat(uom['created_at'])
     return uoms
 
+@api_router.get("/masters/uoms/convert")
+async def convert_uom_quantity(
+    qty: float,
+    from_uom_id: str,
+    to_uom_id: str,
+    current_user: Dict = Depends(get_current_user)
+):
+    """Convert quantity between UOMs"""
+    try:
+        converted_qty = await convert_uom(qty, from_uom_id, to_uom_id)
+        return {
+            "original_qty": qty,
+            "from_uom_id": from_uom_id,
+            "converted_qty": converted_qty,
+            "to_uom_id": to_uom_id
+        }
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 # ============ Supplier Master Routes ============
 @api_router.post("/masters/suppliers", response_model=SupplierMaster)
 async def create_supplier(supplier: SupplierMaster, current_user: Dict = Depends(get_current_user)):
