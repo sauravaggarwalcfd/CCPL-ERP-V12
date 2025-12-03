@@ -41,7 +41,26 @@ const ItemCategories = () => {
   const fetchCategories = async () => {
     try {
       const response = await mastersAPI.getItemCategories();
-      setCategories(response.data);
+      // Mock hierarchical data
+      const hierarchicalData = [
+        { id: '1', code: 'FAB', name: 'Fabric', parent_category: null, level: 0, status: 'Active', inventory_type: 'RAW' },
+        { id: '2', code: 'FAB-KNT', name: 'Knits', parent_category: '1', level: 1, status: 'Active', inventory_type: 'RAW' },
+        { id: '3', code: 'FAB-KNT-COT', name: 'Cotton', parent_category: '2', level: 2, status: 'Active', inventory_type: 'RAW' },
+        { id: '4', code: 'FAB-KNT-POL', name: 'Polyester', parent_category: '2', level: 2, status: 'Active', inventory_type: 'RAW' },
+        { id: '5', code: 'FAB-WVN', name: 'Woven', parent_category: '1', level: 1, status: 'Active', inventory_type: 'RAW' },
+        { id: '6', code: 'FAB-WVN-COT', name: 'Cotton', parent_category: '5', level: 2, status: 'Active', inventory_type: 'RAW' },
+        { id: '7', code: 'TRM', name: 'Trim', parent_category: null, level: 0, status: 'Active', inventory_type: 'RAW' },
+        { id: '8', code: 'TRM-BTN', name: 'Button', parent_category: '7', level: 1, status: 'Active', inventory_type: 'RAW' },
+        { id: '9', code: 'TRM-BTN-POL', name: 'Polyester', parent_category: '8', level: 2, status: 'Active', inventory_type: 'RAW' },
+        { id: '10', code: 'TRM-BTN-MET', name: 'Metal', parent_category: '8', level: 2, status: 'Active', inventory_type: 'RAW' },
+        { id: '11', code: 'TRM-ZIP', name: 'Zipper', parent_category: '7', level: 1, status: 'Active', inventory_type: 'RAW' },
+        { id: '12', code: 'ACC', name: 'Accessory', parent_category: null, level: 0, status: 'Active', inventory_type: 'RAW' },
+        { id: '13', code: 'ACC-LBL', name: 'Label', parent_category: '12', level: 1, status: 'Active', inventory_type: 'RAW' },
+        { id: '14', code: 'ACC-TAG', name: 'Tag', parent_category: '12', level: 1, status: 'Active', inventory_type: 'RAW' }
+      ];
+      setCategories(hierarchicalData);
+      // Expand root categories by default
+      setExpandedCategories(new Set(['1', '7', '12']));
     } catch (error) {
       toast.error('Failed to load categories');
     } finally {
