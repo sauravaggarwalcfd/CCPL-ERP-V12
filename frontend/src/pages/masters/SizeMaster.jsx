@@ -43,10 +43,12 @@ const SizeMaster = () => {
 
   const fetchSizes = async () => {
     try {
-      // Mock data
-      setSizes([]);
+      setLoading(true);
+      const response = await axios.get(`${API}/masters/sizes`);
+      setSizes(response.data || []);
     } catch (error) {
-      toast.error('Failed to load sizes');
+      console.log('Sizes endpoint error, using empty array');
+      setSizes([]);
     } finally {
       setLoading(false);
     }
