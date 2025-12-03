@@ -611,22 +611,25 @@ const SupplierMaster = () => {
         <Table>
           <TableHeader>
             <TableRow className="bg-neutral-50">
-              <TableHead className="font-semibold">Code</TableHead>
+              <TableHead className="font-semibold">Supplier Code</TableHead>
+              <TableHead className="font-semibold">Vendor Code</TableHead>
               <TableHead className="font-semibold">Name</TableHead>
-              <TableHead className="font-semibold">Contact Person</TableHead>
-              <TableHead className="font-semibold">Phone</TableHead>
+              <TableHead className="font-semibold">Group</TableHead>
+              <TableHead className="font-semibold">Contact</TableHead>
               <TableHead className="font-semibold">GST</TableHead>
-              <TableHead className="font-semibold">Payment Terms</TableHead>
+              <TableHead className="font-semibold">Credit Days</TableHead>
+              <TableHead className="font-semibold">Lead Time</TableHead>
+              <TableHead className="font-semibold">Rating</TableHead>
               <TableHead className="font-semibold">Status</TableHead>
               <TableHead className="font-semibold text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={8} className="text-center py-12 text-neutral-500">Loading...</TableCell></TableRow>
+              <TableRow><TableCell colSpan={11} className="text-center py-12 text-neutral-500">Loading...</TableCell></TableRow>
             ) : filteredSuppliers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-12">
+                <TableCell colSpan={11} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
                     <Building2 className="h-12 w-12 text-neutral-300" />
                     <p className="text-neutral-600 font-medium">No suppliers found</p>
@@ -638,15 +641,30 @@ const SupplierMaster = () => {
               filteredSuppliers.map((supplier) => (
                 <TableRow key={supplier.id} className="hover:bg-neutral-50 transition-colors">
                   <TableCell className="font-mono text-sm">{supplier.supplier_code}</TableCell>
+                  <TableCell className="font-mono text-xs text-neutral-600">{supplier.vendor_code || '-'}</TableCell>
                   <TableCell className="font-medium">{supplier.name}</TableCell>
-                  <TableCell>{supplier.contact_person || '-'}</TableCell>
-                  <TableCell>{supplier.phone || '-'}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-xs">{supplier.supplier_group || 'DOMESTIC'}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-xs">
+                      <div>{supplier.contact_person || '-'}</div>
+                      <div className="text-neutral-500">{supplier.phone || '-'}</div>
+                    </div>
+                  </TableCell>
                   <TableCell className="font-mono text-xs">{supplier.gst || '-'}</TableCell>
-                  <TableCell>{supplier.payment_terms?.replace('_', ' ') || '-'}</TableCell>
+                  <TableCell className="text-center">{supplier.credit_days || '-'} days</TableCell>
+                  <TableCell className="text-center">{supplier.lead_time_days || '-'} days</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-medium">{supplier.supplier_rating || 3}/5</span>
+                    </div>
+                  </TableCell>
                   <TableCell><StatusBadge status={supplier.status} /></TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" data-testid={`edit-supplier-${supplier.id}`}><Edit className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(supplier)} data-testid={`edit-supplier-${supplier.id}`}><Edit className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" data-testid={`delete-supplier-${supplier.id}`}><Trash2 className="h-4 w-4 text-red-600" /></Button>
                     </div>
                   </TableCell>
