@@ -276,7 +276,7 @@ const UOMMaster = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="uom_type">UOM Type *</Label>
                     <Select value={formData.uom_type} onValueChange={(value) => setFormData({ ...formData, uom_type: value })}>
@@ -290,6 +290,21 @@ const UOMMaster = () => {
                         <SelectItem value="VOLUME">Volume</SelectItem>
                         <SelectItem value="AREA">Area</SelectItem>
                         <SelectItem value="TIME">Time</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="uom_category">Category *</Label>
+                    <Select value={formData.uom_category} onValueChange={(value) => setFormData({ ...formData, uom_category: value })}>
+                      <SelectTrigger data-testid="uom-category-select">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="WEIGHT">Weight</SelectItem>
+                        <SelectItem value="LENGTH">Length</SelectItem>
+                        <SelectItem value="COUNT">Count</SelectItem>
+                        <SelectItem value="VOLUME">Volume</SelectItem>
+                        <SelectItem value="AREA">Area</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -319,6 +334,60 @@ const UOMMaster = () => {
                     placeholder="Optional description"
                     data-testid="description-input"
                   />
+                </div>
+
+                <div className="border-t pt-4 space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="is_base_unit"
+                      checked={formData.is_base_unit}
+                      onCheckedChange={(checked) => setFormData({ ...formData, is_base_unit: checked, base_uom_id: '', conversion_factor: '1.0' })}
+                      data-testid="base-unit-checkbox"
+                    />
+                    <Label htmlFor="is_base_unit" className="cursor-pointer">
+                      This is a Base Unit (no conversion required)
+                    </Label>
+                  </div>
+
+                  {!formData.is_base_unit && (
+                    <>
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
+                        <Label className="text-sm font-semibold text-blue-900">Base UOM Mapping</Label>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="base_uom_id" className="text-xs">Base UOM</Label>
+                            <Select value={formData.base_uom_id} onValueChange={(value) => {
+                              const baseUOM = uoms.find(u => u.id === value);
+                              setFormData({ ...formData, base_uom_id: value, base_uom_name: baseUOM?.uom_name || '' });
+                            }}>
+                              <SelectTrigger data-testid="base-uom-select">
+                                <SelectValue placeholder="Select base UOM" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {uoms.filter(u => u.is_base_unit && u.uom_category === formData.uom_category).map(u => (
+                                  <SelectItem key={u.id} value={u.id}>{u.uom_name}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-blue-600">Only showing base units in same category</p>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="conversion_factor" className="text-xs">Conversion Factor</Label>
+                            <Input
+                              id="conversion_factor"
+                              type="number"
+                              step="0.0001"
+                              value={formData.conversion_factor}
+                              onChange={(e) => setFormData({ ...formData, conversion_factor: e.target.value })}
+                              placeholder="1.0"
+                              data-testid="base-conversion-factor-input"
+                            />
+                            <p className="text-xs text-neutral-500">1 {formData.uom_name || 'Unit'} = {formData.conversion_factor || '1'} {formData.base_uom_name || 'Base Unit'}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
