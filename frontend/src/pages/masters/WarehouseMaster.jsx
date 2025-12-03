@@ -133,41 +133,82 @@ const WarehouseMaster = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="warehouse_code">Warehouse Code *</Label>
-                  <Input id="warehouse_code" value={formData.warehouse_code} onChange={(e) => setFormData({ ...formData, warehouse_code: e.target.value })} placeholder="WH-001" required data-testid="warehouse-code-input" />
+                  <Input
+                    id="warehouse_code"
+                    value={formData.warehouse_code}
+                    onChange={(e) => setFormData({ ...formData, warehouse_code: e.target.value })}
+                    placeholder="WH-001"
+                    required
+                    disabled={editMode}
+                    className={editMode ? 'bg-neutral-100' : ''}
+                    data-testid="warehouse-code-input"
+                  />
+                  {editMode && <p className="text-xs text-neutral-500">Code cannot be changed</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="warehouse_name">Warehouse Name *</Label>
-                  <Input id="warehouse_name" value={formData.warehouse_name} onChange={(e) => setFormData({ ...formData, warehouse_name: e.target.value })} placeholder="Main Warehouse" required data-testid="warehouse-name-input" />
+                  <Input
+                    id="warehouse_name"
+                    value={formData.warehouse_name}
+                    onChange={(e) => setFormData({ ...formData, warehouse_name: e.target.value })}
+                    placeholder="Main Warehouse"
+                    required
+                    data-testid="warehouse-name-input"
+                  />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="warehouse_type">Type</Label>
+                  <Label htmlFor="warehouse_type">Warehouse Type *</Label>
                   <Select value={formData.warehouse_type} onValueChange={(value) => setFormData({ ...formData, warehouse_type: value })}>
-                    <SelectTrigger data-testid="warehouse-type-select"><SelectValue /></SelectTrigger>
+                    <SelectTrigger data-testid="warehouse-type-select">
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="MAIN">Main Warehouse</SelectItem>
-                      <SelectItem value="TRANSIT">Transit Warehouse</SelectItem>
-                      <SelectItem value="PRODUCTION">Production Warehouse</SelectItem>
-                      <SelectItem value="RETURNS">Returns Warehouse</SelectItem>
+                      <SelectItem value="STORE">Store / Storage</SelectItem>
+                      <SelectItem value="CUTTING">Cutting Department</SelectItem>
+                      <SelectItem value="STITCHING">Stitching Department</SelectItem>
+                      <SelectItem value="SCRAP">Scrap / Waste</SelectItem>
+                      <SelectItem value="PRODUCTION">Production</SelectItem>
+                      <SelectItem value="RETURNS">Returns</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="capacity">Capacity (sq. ft)</Label>
-                  <Input id="capacity" type="number" value={formData.capacity} onChange={(e) => setFormData({ ...formData, capacity: e.target.value })} placeholder="10000" data-testid="capacity-input" />
+                  <Input
+                    id="capacity"
+                    type="number"
+                    value={formData.capacity}
+                    onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                    placeholder="10000"
+                    data-testid="capacity-input"
+                  />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
-                <Input id="location" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} placeholder="Building/Area" data-testid="location-input" />
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="Building/Floor/Area"
+                  data-testid="location-input"
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="address">Address</Label>
-                <Textarea id="address" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} placeholder="Full address" rows={2} data-testid="address-input" />
+                <Textarea
+                  id="address"
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  placeholder="Full address"
+                  rows={2}
+                  data-testid="address-input"
+                />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
@@ -185,20 +226,89 @@ const WarehouseMaster = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="manager_name">Manager Name</Label>
-                  <Input id="manager_name" value={formData.manager_name} onChange={(e) => setFormData({ ...formData, manager_name: e.target.value })} placeholder="Warehouse Manager" data-testid="manager-input" />
+              <div className="border-t pt-4 space-y-4">
+                <Label className="text-base font-semibold">Responsible Person</Label>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="responsible_person">Name</Label>
+                    <Input
+                      id="responsible_person"
+                      value={formData.responsible_person}
+                      onChange={(e) => setFormData({ ...formData, responsible_person: e.target.value })}
+                      placeholder="Manager/Supervisor Name"
+                      data-testid="responsible-person-input"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="contact_number">Contact Number</Label>
+                    <Input
+                      id="contact_number"
+                      value={formData.contact_number}
+                      onChange={(e) => setFormData({ ...formData, contact_number: e.target.value })}
+                      placeholder="+91 1234567890"
+                      data-testid="contact-input"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="manager@company.com"
+                      data-testid="email-input"
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="contact_number">Contact Number</Label>
-                  <Input id="contact_number" value={formData.contact_number} onChange={(e) => setFormData({ ...formData, contact_number: e.target.value })} placeholder="+91 1234567890" data-testid="contact-input" />
+              </div>
+
+              <div className="border-t pt-4 space-y-3">
+                <Label className="text-base font-semibold">Warehouse Controls</Label>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="enable_qc"
+                    checked={formData.enable_qc}
+                    onCheckedChange={(checked) => setFormData({ ...formData, enable_qc: checked })}
+                    data-testid="enable-qc-checkbox"
+                  />
+                  <Label htmlFor="enable_qc" className="cursor-pointer font-normal">
+                    Enable Quality Check (QC) for this warehouse
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="is_transit_warehouse"
+                    checked={formData.is_transit_warehouse}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_transit_warehouse: checked })}
+                    data-testid="transit-checkbox"
+                  />
+                  <Label htmlFor="is_transit_warehouse" className="cursor-pointer font-normal">
+                    Is Transit Warehouse (temporary storage during transfers)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="is_wip_warehouse"
+                    checked={formData.is_wip_warehouse}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_wip_warehouse: checked })}
+                    data-testid="wip-checkbox"
+                  />
+                  <Label htmlFor="is_wip_warehouse" className="cursor-pointer font-normal">
+                    Is WIP Warehouse (Work-in-Progress storage)
+                  </Label>
                 </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={() => { setDialogOpen(false); resetForm(); }}><X className="h-4 w-4 mr-2" />Cancel</Button>
-                <Button type="submit" data-testid="save-warehouse-btn" className="gap-2"><Save className="h-4 w-4" />{editMode ? 'Update' : 'Save'} Warehouse</Button>
+                <Button type="button" variant="outline" onClick={() => { setDialogOpen(false); resetForm(); }}>
+                  <X className="h-4 w-4 mr-2" />
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="save-warehouse-btn" className="gap-2">
+                  <Save className="h-4 w-4" />
+                  {editMode ? 'Update' : 'Save'} Warehouse
+                </Button>
               </div>
             </form>
           </DialogContent>
