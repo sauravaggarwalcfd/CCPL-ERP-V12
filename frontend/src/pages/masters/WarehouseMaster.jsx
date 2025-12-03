@@ -21,7 +21,7 @@ const WarehouseMaster = () => {
   const [formData, setFormData] = useState({
     warehouse_code: '',
     warehouse_name: '',
-    warehouse_type: 'MAIN',
+    warehouse_type: 'STORE',
     location: '',
     address: '',
     city: '',
@@ -29,8 +29,11 @@ const WarehouseMaster = () => {
     pincode: '',
     capacity: '',
     parent_warehouse_id: '',
-    manager_name: '',
+    responsible_person: '',
     contact_number: '',
+    email: '',
+    enable_qc: false,
+    is_transit_warehouse: false,
     is_wip_warehouse: false,
     status: 'Active'
   });
