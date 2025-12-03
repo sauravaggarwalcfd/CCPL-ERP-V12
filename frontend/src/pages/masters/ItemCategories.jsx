@@ -252,6 +252,25 @@ const ItemCategories = () => {
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {formData.parent_category && formData.parent_category !== 'none' && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-blue-900">Category Path Preview:</p>
+                      <p className="text-sm text-blue-700 mt-1 font-medium">
+                        {getCategoryPath(formData.parent_category)} › <span className="text-blue-900">{formData.name || 'New Category'}</span>
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-blue-600">Level</p>
+                      <p className="text-2xl font-bold text-blue-900">
+                        {(categories.find(c => c.id === formData.parent_category)?.level || 0) + 1}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="code">Category Code *</Label>
@@ -263,6 +282,7 @@ const ItemCategories = () => {
                     required
                     data-testid="category-code-input"
                   />
+                  <p className="text-xs text-neutral-500">Use hierarchical codes (FAB-KNT-COT)</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="name">Category Name *</Label>
@@ -284,16 +304,22 @@ const ItemCategories = () => {
                     <SelectValue placeholder="Select parent (leave empty for root)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">-- No Parent (Root Category) --</SelectItem>
+                    <SelectItem value="none">🏠 No Parent (Root Category)</SelectItem>
                     {categories.filter(c => c.id !== currentId).map(cat => (
                       <SelectItem key={cat.id} value={cat.id}>
-                        {'└─'.repeat(cat.level)} {cat.name}
+                        {'  '.repeat(cat.level)}{'└─ '.repeat(Math.min(cat.level, 1))}{cat.name} <span className="text-xs text-neutral-500">(Level {cat.level})</span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-neutral-500">
-                  {formData.parent_category ? 'Will create as sub-category' : 'Will create as root category'}
+                  {formData.parent_category && formData.parent_category !== 'none' ? (
+                    <span className="text-blue-600 font-medium">
+                      Will create as Level {(categories.find(c => c.id === formData.parent_category)?.level || 0) + 1} category
+                    </span>
+                  ) : (
+                    'Will create as Level 0 (Root) category'
+                  )}
                 </p>
               </div>
 
