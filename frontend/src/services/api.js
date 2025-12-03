@@ -49,6 +49,18 @@ export const mastersAPI = {
   // Tax/HSN
   getTaxHSN: () => api.get('/masters/tax-hsn'),
   createTaxHSN: (data) => api.post('/masters/tax-hsn', data),
+
+  // Colors
+  getColors: () => api.get('/masters/colors'),
+  createColor: (data) => api.post('/masters/colors', data),
+
+  // Sizes
+  getSizes: () => api.get('/masters/sizes'),
+  createSize: (data) => api.post('/masters/sizes', data),
+
+  // Brands
+  getBrands: () => api.get('/masters/brands'),
+  createBrand: (data) => api.post('/masters/brands', data),
 };
 
 // Purchase API
