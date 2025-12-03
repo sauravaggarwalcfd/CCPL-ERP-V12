@@ -351,6 +351,9 @@ class ReturnFromDepartment(BaseModel):
     item_name: str
     qty_returned: float
     uom: str
+    uom_id: Optional[str] = None
+    base_qty: Optional[float] = None
+    base_uom: Optional[str] = None
     warehouse_id: str
     condition: str = "Good"
     returned_by: str
