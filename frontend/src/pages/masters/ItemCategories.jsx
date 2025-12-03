@@ -265,12 +265,12 @@ const ItemCategories = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="parent_category">Parent Category</Label>
-                <Select value={formData.parent_category} onValueChange={(value) => setFormData({ ...formData, parent_category: value })}>
+                <Select value={formData.parent_category || 'none'} onValueChange={(value) => setFormData({ ...formData, parent_category: value === 'none' ? '' : value })}>
                   <SelectTrigger data-testid="parent-category-select">
                     <SelectValue placeholder="Select parent (leave empty for root)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">-- No Parent (Root Category) --</SelectItem>
+                    <SelectItem value="none">-- No Parent (Root Category) --</SelectItem>
                     {categories.filter(c => c.id !== currentId).map(cat => (
                       <SelectItem key={cat.id} value={cat.id}>
                         {'└─'.repeat(cat.level)} {cat.name}
