@@ -58,9 +58,12 @@ const UOMMaster = () => {
           id: '1',
           uom_name: 'Piece',
           uom_type: 'QUANTITY',
+          uom_category: 'COUNT',
           decimal_precision: 0,
           symbol: 'PCS',
           is_base_unit: true,
+          base_uom_id: null,
+          conversion_factor: 1.0,
           status: 'Active',
           conversions: []
         },
@@ -68,9 +71,12 @@ const UOMMaster = () => {
           id: '2',
           uom_name: 'Kilogram',
           uom_type: 'WEIGHT',
+          uom_category: 'WEIGHT',
           decimal_precision: 3,
           symbol: 'KG',
-          is_base_unit: false,
+          is_base_unit: true,
+          base_uom_id: null,
+          conversion_factor: 1.0,
           status: 'Active',
           conversions: [
             { to_uom: 'Gram', factor: 1000 },
@@ -81,14 +87,31 @@ const UOMMaster = () => {
           id: '3',
           uom_name: 'Meter',
           uom_type: 'LENGTH',
+          uom_category: 'LENGTH',
           decimal_precision: 2,
           symbol: 'MTR',
-          is_base_unit: false,
+          is_base_unit: true,
+          base_uom_id: null,
+          conversion_factor: 1.0,
           status: 'Active',
           conversions: [
             { to_uom: 'Centimeter', factor: 100 },
             { to_uom: 'Kilometer', factor: 0.001 }
           ]
+        },
+        {
+          id: '4',
+          uom_name: 'Gram',
+          uom_type: 'WEIGHT',
+          uom_category: 'WEIGHT',
+          decimal_precision: 2,
+          symbol: 'GM',
+          is_base_unit: false,
+          base_uom_id: '2',
+          base_uom_name: 'Kilogram',
+          conversion_factor: 0.001,
+          status: 'Active',
+          conversions: []
         }
       ];
       setUOMs(mockUOMs);
