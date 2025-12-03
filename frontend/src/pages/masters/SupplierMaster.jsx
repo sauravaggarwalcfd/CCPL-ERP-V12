@@ -5,10 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/StatusBadge';
-import { Search, Plus, Edit, Trash2, Save, X, Building2 } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Save, X, Building2, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SupplierMaster = () => {
@@ -18,9 +21,12 @@ const SupplierMaster = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentId, setCurrentId] = useState(null);
+  const [activeTab, setActiveTab] = useState('basic');
   const [formData, setFormData] = useState({
     supplier_code: '',
+    vendor_code: '',
     name: '',
+    supplier_group: 'DOMESTIC',
     gst: '',
     pan: '',
     contact_person: '',
@@ -30,8 +36,19 @@ const SupplierMaster = () => {
     city: '',
     state: '',
     pincode: '',
+    country: 'India',
     payment_terms: 'NET_30',
-    bank_details: '',
+    credit_days: '30',
+    currency: 'INR',
+    bank_name: '',
+    bank_account: '',
+    bank_ifsc: '',
+    bank_branch: '',
+    transporter_name: '',
+    transport_mode: 'ROAD',
+    supplier_rating: '3',
+    lead_time_days: '',
+    remarks: '',
     status: 'Active'
   });
 
