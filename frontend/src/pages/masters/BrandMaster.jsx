@@ -38,10 +38,13 @@ const BrandMaster = () => {
   }, []);
 
   const fetchBrands = async () => {
-    try {
-      setBrands([]);
+    try:
+      setLoading(true);
+      const response = await axios.get(`${API}/masters/brands`);
+      setBrands(response.data || []);
     } catch (error) {
-      toast.error('Failed to load brands');
+      console.log('Brands endpoint error, using empty array');
+      setBrands([]);
     } finally {
       setLoading(false);
     }
