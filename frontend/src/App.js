@@ -116,17 +116,22 @@ function App() {
               {/* Quality */}
               <Route path="quality/checks" element={<QualityChecks />} />
 
-              {/* Inventory */}
+              {/* Inventory Transactions */}
+              <Route path="inventory/opening-stock" element={<OpeningStockPage />} />
               <Route path="inventory/grn" element={<GRN />} />
               <Route path="inventory/stock-inward" element={<StockInward />} />
+              <Route path="inventory/stock-issue" element={<StockIssuePage />} />
               <Route path="inventory/stock-transfer" element={<StockTransfer />} />
+              <Route path="inventory/adjustment" element={<StockAdjustment />} />
+              <Route path="inventory/audit" element={<StockAuditPage />} />
               <Route path="inventory/issue" element={<IssueToDepartment />} />
               <Route path="inventory/return" element={<ReturnFromDepartment />} />
-              <Route path="inventory/adjustment" element={<StockAdjustment />} />
 
               {/* Reports */}
               <Route path="reports/stock-ledger" element={<StockLedger />} />
               <Route path="reports/item-balance" element={<ItemBalanceReport />} />
+              <Route path="reports/bin-stock" element={<BINStockPage />} />
+              <Route path="reports/dead-stock" element={<DeadStockPage />} />
               <Route path="reports/issue-return" element={<IssueReturnRegister />} />
               <Route path="reports/pending-po" element={<PendingPOReport />} />
 
