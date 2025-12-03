@@ -9,6 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { StatusBadge } from '@/components/StatusBadge';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { toast } from 'sonner';
+import axios from 'axios';
+
+const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const SizeMaster = () => {
   const [sizes, setSizes] = useState([]);
