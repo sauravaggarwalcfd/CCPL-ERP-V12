@@ -278,6 +278,9 @@ class GRN(BaseModel):
     item_name: str
     qty: float
     uom: str
+    uom_id: Optional[str] = None
+    base_qty: Optional[float] = None  # Converted to base UOM
+    base_uom: Optional[str] = None
     warehouse_id: str
     invoice_no: Optional[str] = None
     invoice_date: Optional[datetime] = None
