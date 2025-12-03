@@ -45,6 +45,8 @@ import StockLedger from '@/pages/reports/StockLedger';
 import ItemBalanceReport from '@/pages/reports/ItemBalanceReport';
 import IssueReturnRegister from '@/pages/reports/IssueReturnRegister';
 import PendingPOReport from '@/pages/reports/PendingPOReport';
+import BINStockPage from '@/inventory/reports/BINStockPage';
+import DeadStockPage from '@/inventory/reports/DeadStockPage';
 
 // Settings
 import ApprovalFlows from '@/pages/settings/ApprovalFlows';
