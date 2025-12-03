@@ -27,10 +27,14 @@ const UOMMaster = () => {
   const [formData, setFormData] = useState({
     uom_name: '',
     uom_type: 'QUANTITY',
+    uom_category: 'COUNT',
     decimal_precision: '2',
     symbol: '',
     description: '',
     is_base_unit: false,
+    base_uom_id: '',
+    base_uom_name: '',
+    conversion_factor: '1.0',
     status: 'Active'
   });
 
