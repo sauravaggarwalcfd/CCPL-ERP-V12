@@ -112,6 +112,20 @@ const ItemCategories = () => {
     setDialogOpen(true);
   };
 
+  const getCategoryPath = (categoryId) => {
+    const path = [];
+    let current = categories.find(c => c.id === categoryId);
+    while (current) {
+      path.unshift(current.name);
+      current = categories.find(c => c.id === current.parent_category);
+    }
+    return path.join(' › ');
+  };
+
+  const getChildCount = (categoryId) => {
+    return categories.filter(c => c.parent_category === categoryId).length;
+  };
+
   const handleDelete = async (id) => {
     const hasChildren = categories.some(c => c.parent_category === id);
     if (hasChildren) {
