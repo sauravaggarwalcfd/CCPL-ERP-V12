@@ -436,6 +436,27 @@ async def get_next_number(series_type: str) -> str:
     )
     return f"{series['prefix']}{str(next_num).zfill(series['padding'])}"
 
+async def convert_uom(qty: float, from_uom_id: str, to_uom_id: str) -> float:
+    """Convert quantity from one UOM to another using conversion factors"""
+    if from_uom_id == to_uom_id:
+        return qty
+    
+    from_uom = await db.uoms.find_one({"id": from_uom_id})
+    to_uom = await db.uoms.find_one({"id": to_uom_id})
+    
+    if not from_uom or not to_uom:
+        return qty
+    
+    # Check if UOMs are in same category
+    if from_uom.get('uom_category') != to_uom.get('uom_category'):
+        raise HTTPException(status_code=400, detail="Cannot convert between different UOM categories")
+    
+    # Convert to base unit first, then to target unit
+    qty_in_base = qty * from_uom.get('conversion_factor', 1.0)
+    converted_qty = qty_in_base / to_uom.get('conversion_factor', 1.0)
+    
+    return round(converted_qty, to_uom.get('decimal_precision', 2))
+
 # ============ Authentication Routes ============
 @api_router.post("/auth/register", response_model=User)
 async def register(user_create: UserCreate):
