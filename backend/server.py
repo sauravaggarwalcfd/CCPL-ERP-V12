@@ -693,6 +693,39 @@ async def get_tax_hsn(current_user: Dict = Depends(get_current_user)):
             tax['created_at'] = datetime.fromisoformat(tax['created_at'])
     return taxes
 
+# ============ Color Master Routes ============
+@api_router.get("/masters/colors")
+async def get_colors(current_user: Dict = Depends(get_current_user)):
+    colors = await db.colors.find({}, {"_id": 0}).to_list(1000)
+    return colors
+
+@api_router.post("/masters/colors")
+async def create_color(data: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+    await db.colors.insert_one(data)
+    return data
+
+# ============ Size Master Routes ============
+@api_router.get("/masters/sizes")
+async def get_sizes(current_user: Dict = Depends(get_current_user)):
+    sizes = await db.sizes.find({}, {"_id": 0}).to_list(1000)
+    return sizes
+
+@api_router.post("/masters/sizes")
+async def create_size(data: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+    await db.sizes.insert_one(data)
+    return data
+
+# ============ Brand Master Routes ============
+@api_router.get("/masters/brands")
+async def get_brands(current_user: Dict = Depends(get_current_user)):
+    brands = await db.brands.find({}, {"_id": 0}).to_list(1000)
+    return brands
+
+@api_router.post("/masters/brands")
+async def create_brand(data: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+    await db.brands.insert_one(data)
+    return data
+
 # ============ Purchase Indent Routes ============
 @api_router.post("/purchase/indents", response_model=PurchaseIndent)
 async def create_indent(indent: PurchaseIndent, current_user: Dict = Depends(get_current_user)):
