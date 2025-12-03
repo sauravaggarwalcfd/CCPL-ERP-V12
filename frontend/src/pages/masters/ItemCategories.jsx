@@ -160,6 +160,95 @@ const ItemCategories = () => {
       code: '',
       name: '',
       parent_category: '',
+      level: 0,
+      inventory_type: 'RAW',
+      default_uom: '',
+      default_hsn: '',
+      stock_account: '',
+      expense_account: '',
+      income_account: '',
+      allow_purchase: true,
+      allow_issue: true,
+      status: 'Active'
+    });
+    setEditMode(false);
+    setCurrentId(null);
+  };
+
+  const toggleExpand = (categoryId) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId);
+    } else {
+      newExpanded.add(categoryId);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  const renderCategoryRow = (category, depth = 0) => {
+    const children = categories.filter(c => c.parent_category === category.id);
+    const hasChildren = children.length > 0;
+    const isExpanded = expandedCategories.has(category.id);
+
+    return (
+      <React.Fragment key={category.id}>
+        <TableRow className="hover:bg-neutral-50 transition-colors">
+          <TableCell>
+            <div className="flex items-center gap-2" style={{ paddingLeft: `${depth * 24}px` }}>
+              {hasChildren ? (
+                <button
+                  onClick={() => toggleExpand(category.id)}
+                  className="p-1 hover:bg-neutral-200 rounded"
+                  data-testid={`expand-${category.id}`}
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-neutral-600" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-neutral-600" />
+                  )}
+                </button>
+              ) : (
+                <span className="w-6" />
+              )}
+              <span className="font-mono text-sm">{category.code}</span>
+            </div>
+          </TableCell>
+          <TableCell>
+            <div className="flex items-center gap-2">
+              <span className="font-medium">{category.name}</span>
+              {category.level === 0 && (
+                <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded font-medium">Root</span>
+              )}
+            </div>
+          </TableCell>
+          <TableCell className="text-center">
+            <span className="text-sm text-neutral-600">Level {category.level}</span>
+          </TableCell>
+          <TableCell>{category.default_uom || '-'}</TableCell>
+          <TableCell>
+            <StatusBadge status={category.status} />
+          </TableCell>
+          <TableCell className="text-right">
+            <div className="flex items-center justify-end gap-2">
+              <Button variant="ghost" size="icon" onClick={() => handleEdit(category)} data-testid={`edit-category-${category.id}`}>
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => handleDelete(category.id)} data-testid={`delete-category-${category.id}`}>
+                <Trash2 className="h-4 w-4 text-red-600" />
+              </Button>
+            </div>
+          </TableCell>
+        </TableRow>
+        {hasChildren && isExpanded && children.map(child => renderCategoryRow(child, depth + 1))}
+      </React.Fragment>
+    );
+  };
+
+  const rootCategories = categories.filter(c => c.parent_category === null || c.parent_category === '');
+    setFormData({
+      code: '',
+      name: '',
+      parent_category: '',
       inventory_type: 'RAW',
       default_uom: '',
       default_hsn: '',
