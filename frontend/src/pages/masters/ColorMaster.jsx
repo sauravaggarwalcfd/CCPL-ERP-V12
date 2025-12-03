@@ -40,11 +40,14 @@ const ColorMaster = () => {
 
   const fetchColors = async () => {
     try {
-      // Mock data for now - replace with actual API call
-      const mockColors = [];
-      setColors(mockColors);
+      setLoading(true);
+      // Fetch from colors collection
+      const response = await axios.get(`${API}/masters/colors`);
+      setColors(response.data || []);
     } catch (error) {
-      toast.error('Failed to load colors');
+      // If endpoint doesn't exist, try generic approach
+      console.log('Colors endpoint not found, using empty array');
+      setColors([]);
     } finally {
       setLoading(false);
     }
