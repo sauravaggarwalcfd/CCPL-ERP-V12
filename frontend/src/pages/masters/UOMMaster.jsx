@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, Plus, Edit, Trash2, Save, X, ArrowRightLeft } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
 const UOMMaster = () => {
