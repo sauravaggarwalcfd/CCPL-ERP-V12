@@ -332,6 +332,9 @@ class IssueToDepartment(BaseModel):
     item_name: str
     qty: float
     uom: str
+    uom_id: Optional[str] = None
+    base_qty: Optional[float] = None
+    base_uom: Optional[str] = None
     warehouse_id: str
     warehouse_name: str
     issued_by: str
