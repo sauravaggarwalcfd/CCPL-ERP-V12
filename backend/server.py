@@ -134,7 +134,13 @@ class UOMMaster(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     uom_name: str
     uom_type: str
+    uom_category: str = "COUNT"  # WEIGHT, LENGTH, COUNT, VOLUME, AREA
     decimal_precision: int = 2
+    symbol: Optional[str] = None
+    is_base_unit: bool = False
+    base_uom_id: Optional[str] = None
+    base_uom_name: Optional[str] = None
+    conversion_factor: float = 1.0
     conversions: Optional[Dict[str, float]] = None
     status: str = "Active"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
