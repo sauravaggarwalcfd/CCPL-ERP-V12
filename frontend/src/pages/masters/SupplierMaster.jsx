@@ -69,23 +69,83 @@ const SupplierMaster = () => {
     }
   };
 
+  const validateGST = (gst) => {
+    // GST format: 29XXXXX1234X1ZX (15 characters)
+    const gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+    return gstPattern.test(gst);
+  };
+
+  const validatePAN = (pan) => {
+    // PAN format: ABCDE1234F (10 characters)
+    const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+    return panPattern.test(pan);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validations
     if (!formData.supplier_code.trim()) {
       toast.error('Supplier Code is required');
+      setActiveTab('basic');
       return;
     }
     if (!formData.name.trim()) {
       toast.error('Supplier Name is required');
+      setActiveTab('basic');
+      return;
+    }
+
+    // Check duplicate vendor name
+    if (!editMode) {
+      const exists = suppliers.find(s => s.name.toLowerCase() === formData.name.toLowerCase());
+      if (exists) {
+        toast.error('Supplier name already exists. Please use a unique name.');
+        setActiveTab('basic');
+        return;
+      }
+    }
+
+    // GST validation
+    if (formData.gst && !validateGST(formData.gst)) {
+      toast.error('Invalid GST format. Format: 29XXXXX1234X1ZX (15 characters)');
+      setActiveTab('basic');
+      return;
+    }
+
+    // PAN validation
+    if (formData.pan && !validatePAN(formData.pan)) {
+      toast.error('Invalid PAN format. Format: ABCDE1234F (10 characters)');
+      setActiveTab('basic');
+      return;
+    }
+
+    // Email validation
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      toast.error('Invalid email format');
+      setActiveTab('basic');
+      return;
+    }
+
+    // Credit days validation
+    if (formData.credit_days && parseInt(formData.credit_days) < 0) {
+      toast.error('Credit days must be positive');
+      setActiveTab('payment');
       return;
     }
 
     try {
+      const payload = {
+        ...formData,
+        credit_days: parseInt(formData.credit_days) || 0,
+        lead_time_days: parseInt(formData.lead_time_days) || 0,
+        supplier_rating: parseInt(formData.supplier_rating) || 3
+      };
+
       if (editMode) {
         toast.success('Supplier updated successfully');
       } else {
-        await mastersAPI.createSupplier(formData);
+        await mastersAPI.createSupplier(payload);
         toast.success('Supplier created successfully');
       }
       setDialogOpen(false);
@@ -96,25 +156,53 @@ const SupplierMaster = () => {
     }
   };
 
+  const handleEdit = (supplier) => {
+    setFormData({
+      supplier_code: supplier.supplier_code,
+      vendor_code: supplier.vendor_code || '',
+      name: supplier.name,
+      supplier_group: supplier.supplier_group || 'DOMESTIC',
+      gst: supplier.gst || '',
+      pan: supplier.pan || '',
+      contact_person: supplier.contact_person || '',
+      phone: supplier.phone || '',
+      email: supplier.email || '',
+      address: supplier.address || '',
+      city: supplier.city || '',
+      state: supplier.state || '',
+      pincode: supplier.pincode || '',
+      country: supplier.country || 'India',
+      payment_terms: supplier.payment_terms || 'NET_30',
+      credit_days: supplier.credit_days?.toString() || '30',
+      currency: supplier.currency || 'INR',
+      bank_name: supplier.bank_name || '',
+      bank_account: supplier.bank_account || '',
+      bank_ifsc: supplier.bank_ifsc || '',
+      bank_branch: supplier.bank_branch || '',
+      transporter_name: supplier.transporter_name || '',
+      transport_mode: supplier.transport_mode || 'ROAD',
+      supplier_rating: supplier.supplier_rating?.toString() || '3',
+      lead_time_days: supplier.lead_time_days?.toString() || '',
+      remarks: supplier.remarks || '',
+      status: supplier.status
+    });
+    setCurrentId(supplier.id);
+    setEditMode(true);
+    setDialogOpen(true);
+  };
+
   const resetForm = () => {
     setFormData({
-      supplier_code: '',
-      name: '',
-      gst: '',
-      pan: '',
-      contact_person: '',
-      phone: '',
-      email: '',
-      address: '',
-      city: '',
-      state: '',
-      pincode: '',
-      payment_terms: 'NET_30',
-      bank_details: '',
-      status: 'Active'
+      supplier_code: '', vendor_code: '', name: '', supplier_group: 'DOMESTIC',
+      gst: '', pan: '', contact_person: '', phone: '', email: '', address: '',
+      city: '', state: '', pincode: '', country: 'India', payment_terms: 'NET_30',
+      credit_days: '30', currency: 'INR', bank_name: '', bank_account: '',
+      bank_ifsc: '', bank_branch: '', transporter_name: '', transport_mode: 'ROAD',
+      supplier_rating: '3', lead_time_days: '', remarks: '', status: 'Active'
     });
     setEditMode(false);
     setCurrentId(null);
+    setActiveTab('basic');
   };
 
   const filteredSuppliers = suppliers.filter(sup =>
