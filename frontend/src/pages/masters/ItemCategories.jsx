@@ -244,7 +244,180 @@ const ItemCategories = () => {
     );
   };
 
-  const rootCategories = categories.filter(c => c.parent_category === null || c.parent_category === '');
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-heading flex items-center gap-2">
+                <FolderTree className="h-5 w-5" />
+                {editMode ? 'Edit' : 'Create'} Category
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="code">Category Code *</Label>
+                  <Input
+                    id="code"
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                    placeholder="e.g., FAB-KNT-COT"
+                    required
+                    data-testid="category-code-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Category Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g., Cotton"
+                    required
+                    data-testid="category-name-input"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="parent_category">Parent Category</Label>
+                <Select value={formData.parent_category} onValueChange={(value) => setFormData({ ...formData, parent_category: value })}>
+                  <SelectTrigger data-testid="parent-category-select">
+                    <SelectValue placeholder="Select parent (leave empty for root)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">-- No Parent (Root Category) --</SelectItem>
+                    {categories.filter(c => c.id !== currentId).map(cat => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {'  '.repeat(cat.level)} {cat.code} - {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-neutral-500">
+                  {formData.parent_category ? 'Will create as sub-category' : 'Will create as root category'}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="inventory_type">Inventory Type *</Label>
+                  <Select value={formData.inventory_type} onValueChange={(value) => setFormData({ ...formData, inventory_type: value })}>
+                    <SelectTrigger data-testid="inventory-type-select">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="RAW">Raw Material</SelectItem>
+                      <SelectItem value="CONSUMABLE">Consumable</SelectItem>
+                      <SelectItem value="FG">Finished Goods</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="default_uom">Default UOM</Label>
+                  <Input
+                    id="default_uom"
+                    value={formData.default_uom}
+                    onChange={(e) => setFormData({ ...formData, default_uom: e.target.value })}
+                    placeholder="e.g., Pcs, Kg"
+                    data-testid="default-uom-input"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="default_hsn">Default HSN</Label>
+                  <Input
+                    id="default_hsn"
+                    value={formData.default_hsn}
+                    onChange={(e) => setFormData({ ...formData, default_hsn: e.target.value })}
+                    data-testid="default-hsn-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stock_account">Stock Account</Label>
+                  <Input
+                    id="stock_account"
+                    value={formData.stock_account}
+                    onChange={(e) => setFormData({ ...formData, stock_account: e.target.value })}
+                    data-testid="stock-account-input"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4 border-t">
+                <Button type="button" variant="outline" onClick={() => { setDialogOpen(false); resetForm(); }}>
+                  <X className="h-4 w-4 mr-2" />
+                  Cancel
+                </Button>
+                <Button type="submit" data-testid="submit-category-btn" className="gap-2">
+                  <Save className="h-4 w-4" />
+                  {editMode ? 'Update' : 'Create'} Category
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Search */}
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+          <Input
+            placeholder="Search categories..."
+            className="pl-10"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            data-testid="search-category-input"
+          />
+        </div>
+        <Button variant="outline" onClick={() => setExpandedCategories(new Set(categories.map(c => c.id)))} size="sm">
+          Expand All
+        </Button>
+        <Button variant="outline" onClick={() => setExpandedCategories(new Set())} size="sm">
+          Collapse All
+        </Button>
+      </div>
+
+      {/* Table */}
+      <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-neutral-50">
+              <TableHead className="font-semibold">Code</TableHead>
+              <TableHead className="font-semibold">Name</TableHead>
+              <TableHead className="font-semibold text-center">Level</TableHead>
+              <TableHead className="font-semibold">Default UOM</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-neutral-500">Loading...</TableCell>
+              </TableRow>
+            ) : categories.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8">
+                  <div className="flex flex-col items-center gap-2">
+                    <FolderTree className="h-12 w-12 text-neutral-300" />
+                    <p className="text-neutral-600 font-medium">No categories found</p>
+                    <p className="text-sm text-neutral-500">Click "Create Category" to add one</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              rootCategories.map(category => renderCategoryRow(category, 0))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+};
+
+export default ItemCategories;
     setFormData({
       code: '',
       name: '',
