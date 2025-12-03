@@ -173,6 +173,7 @@ const ItemCategories = () => {
     const children = categories.filter(c => c.parent_category === category.id);
     const hasChildren = children.length > 0;
     const isExpanded = expandedCategories.has(category.id);
+    const childCount = getChildCount(category.id);
 
     return (
       <React.Fragment key={category.id}>
@@ -182,7 +183,7 @@ const ItemCategories = () => {
               {hasChildren ? (
                 <button
                   onClick={() => toggleExpand(category.id)}
-                  className="p-1 hover:bg-neutral-200 rounded"
+                  className="p-1 hover:bg-neutral-200 rounded transition-colors"
                   data-testid={`expand-${category.id}`}
                 >
                   {isExpanded ? (
@@ -199,14 +200,30 @@ const ItemCategories = () => {
           </TableCell>
           <TableCell>
             <div className="flex items-center gap-2">
+              {depth > 0 && (
+                <span className="text-neutral-400">
+                  {'└─ '.repeat(Math.min(depth, 1))}
+                </span>
+              )}
               <span className="font-medium">{category.name}</span>
               {category.level === 0 && (
                 <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded font-medium">Root</span>
               )}
+              {hasChildren && (
+                <span className="text-xs bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded">
+                  {childCount} {childCount === 1 ? 'child' : 'children'}
+                </span>
+              )}
             </div>
           </TableCell>
           <TableCell className="text-center">
-            <span className="text-sm text-neutral-600">Level {category.level}</span>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${
+              category.level === 0 ? 'bg-blue-100 text-blue-800' : 
+              category.level === 1 ? 'bg-green-100 text-green-800' : 
+              'bg-purple-100 text-purple-800'
+            }`}>
+              Level {category.level}
+            </span>
           </TableCell>
           <TableCell>{category.default_uom || '-'}</TableCell>
           <TableCell>
