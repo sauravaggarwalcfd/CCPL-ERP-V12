@@ -70,8 +70,82 @@ const ItemCategories = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!formData.code.trim()) {
+      toast.error('Category code is required');
+      return;
+    }
+    if (!formData.name.trim()) {
+      toast.error('Category name is required');
+      return;
+    }
+
     try {
-      await mastersAPI.createItemCategory(formData);
+      const level = formData.parent_category 
+        ? (categories.find(c => c.id === formData.parent_category)?.level || 0) + 1 
+        : 0;
+
+      const payload = {
+        ...formData,
+        level,
+        inventory_type: 'RAW',
+        default_hsn: formData.code
+      };
+
+      if (editMode) {
+        await mastersAPI.updateItemCategory(currentId, payload);
+        toast.success('Category updated successfully');
+      } else {
+        await mastersAPI.createItemCategory(payload);
+        toast.success('Category created successfully');
+      }
+      
+      setDialogOpen(false);
+      fetchCategories();
+      resetForm();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to save category');
+    }
+  };
+
+  const handleEdit = (category) => {
+    setFormData({
+      code: category.code,
+      name: category.name,
+      parent_category: category.parent_category || '',
+      level: category.level,
+      inventory_type: category.inventory_type,
+      default_uom: category.default_uom || '',
+      default_hsn: category.default_hsn || '',
+      stock_account: category.stock_account || '',
+      expense_account: category.expense_account || '',
+      income_account: category.income_account || '',
+      allow_purchase: category.allow_purchase !== false,
+      allow_issue: category.allow_issue !== false,
+      status: category.status
+    });
+    setCurrentId(category.id);
+    setEditMode(true);
+    setDialogOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    const hasChildren = categories.some(c => c.parent_category === id);
+    if (hasChildren) {
+      toast.error('Cannot delete category with sub-categories. Delete children first.');
+      return;
+    }
+
+    if (window.confirm('Are you sure you want to delete this category?')) {
+      try {
+        await mastersAPI.deleteItemCategory(id);
+        toast.success('Category deleted successfully');
+        fetchCategories();
+      } catch (error) {
+        toast.error('Failed to delete category');
+      }
+    }
+  };
       toast.success('Category created successfully');
       setDialogOpen(false);
       fetchCategories();
