@@ -109,6 +109,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Reports',
       icon: FileText,
       key: 'reports',
+      color: 'from-cyan-500 to-cyan-600',
       items: [
         { title: 'Stock Ledger', path: '/reports/stock-ledger' },
         { title: 'Item Balance Report', path: '/reports/item-balance' },
