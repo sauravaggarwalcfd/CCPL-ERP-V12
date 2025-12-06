@@ -188,8 +188,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                   <div key={section.key} className="space-y-1">
                     <button
                       onClick={() => toggleSection(section.key)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
-                        sectionActive ? 'text-primary bg-primary/5' : 'text-neutral-700 hover:bg-neutral-100'
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-semibold transition-colors ${
+                        sectionActive 
+                          ? 'text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-sm' 
+                          : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700'
                       }`}
                       data-testid={`nav-section-${section.key}`}
                     >
