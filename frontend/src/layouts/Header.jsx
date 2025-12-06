@@ -5,14 +5,14 @@ import { Input } from '@/components/ui/input';
 
 const Header = ({ setSidebarOpen }) => {
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-neutral-200 h-16" data-testid="header">
+    <header className="sticky top-0 z-30 bg-gradient-to-r from-blue-600 to-blue-700 border-b border-blue-800 h-16 shadow-sm" data-testid="header">
       <div className="flex items-center justify-between h-full px-6">
         {/* Left: Mobile Menu Button */}
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden"
+            className="lg:hidden text-white hover:bg-blue-600"
             onClick={() => setSidebarOpen(true)}
             data-testid="mobile-menu-btn"
           >
@@ -21,10 +21,10 @@ const Header = ({ setSidebarOpen }) => {
 
           {/* Search Bar */}
           <div className="hidden md:flex items-center relative">
-            <Search className="absolute left-3 h-4 w-4 text-neutral-500" />
+            <Search className="absolute left-3 h-4 w-4 text-blue-200" />
             <Input
               placeholder="Search items, orders..."
-              className="pl-10 w-80"
+              className="pl-10 w-80 bg-blue-500/20 border-blue-400 text-white placeholder:text-blue-200 focus:bg-white focus:text-neutral-900"
               data-testid="global-search-input"
             />
           </div>
@@ -32,7 +32,7 @@ const Header = ({ setSidebarOpen }) => {
 
         {/* Right: Notifications */}
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" data-testid="notifications-btn">
+          <Button variant="ghost" size="icon" className="text-white hover:bg-blue-600" data-testid="notifications-btn">
             <Bell className="h-5 w-5" />
           </Button>
         </div>
