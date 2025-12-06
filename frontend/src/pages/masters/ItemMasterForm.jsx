@@ -131,37 +131,37 @@ const ItemMasterForm = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      <div className="bg-white border-b border-neutral-200 sticky top-0 z-10">
-        <div className="px-8 py-5 flex items-center justify-between border-b border-neutral-200">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 border-b border-blue-800 sticky top-0 z-10 shadow-md">
+        <div className="px-8 py-5 flex items-center justify-between border-b border-blue-800/30">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/masters/items')} data-testid="back-btn">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/masters/items')} className="text-white hover:bg-blue-700" data-testid="back-btn">
               <ArrowLeft className="h-6 w-6" />
             </Button>
             <div>
-              <h1 className="text-3xl font-heading font-semibold">{id ? 'Edit' : 'Create'} Item Master</h1>
-              <p className="text-base text-neutral-600">Complete item registration form</p>
+              <h1 className="text-3xl font-heading font-semibold text-white">{id ? 'Edit' : 'Create'} Item Master</h1>
+              <p className="text-base text-blue-100">Complete item registration form</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <Button type="button" variant="outline" size="lg" onClick={() => navigate('/masters/items')} data-testid="cancel-form-btn">
+            <Button type="button" variant="outline" size="lg" onClick={() => navigate('/masters/items')} className="bg-white hover:bg-neutral-100 text-blue-700 border-white" data-testid="cancel-form-btn">
               <X className="h-5 w-5 mr-2" />Cancel
             </Button>
-            <Button type="submit" form="item-form" size="lg" data-testid="save-form-btn" className="gap-2">
+            <Button type="submit" form="item-form" size="lg" className="gap-2 bg-white text-blue-700 hover:bg-neutral-100" data-testid="save-form-btn">
               <Save className="h-5 w-5" />{id ? 'Update' : 'Save'} Item
             </Button>
           </div>
         </div>
 
-        <div className="px-8">
+        <div className="px-8 bg-white">
           <nav className="flex gap-3 overflow-x-auto">
             {sections.map((section) => (
               <button
                 key={section.id}
                 onClick={() => scrollToSection(section.id)}
-                className={`flex items-center gap-2 px-6 py-4 text-base font-medium whitespace-nowrap border-b-2 transition-colors ${
+                className={`flex items-center gap-2 px-6 py-4 text-base font-medium whitespace-nowrap border-b-3 transition-colors ${
                   activeSection === section.id
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-neutral-600 hover:text-neutral-900 hover:border-neutral-300'
+                    ? 'border-blue-600 text-blue-700 bg-blue-50'
+                    : 'border-transparent text-neutral-600 hover:text-blue-700 hover:bg-blue-50/50'
                 }`}
                 data-testid={`tab-${section.id}`}
               >
