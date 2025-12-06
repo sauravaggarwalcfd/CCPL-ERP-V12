@@ -190,13 +190,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
                 const isExpanded = expandedSections.includes(section.key);
                 const sectionActive = isSectionActive(section.items.map(i => i.path));
+                const shouldShowColor = isExpanded || sectionActive;
 
                 return (
                   <div key={section.key} className="space-y-1">
                     <button
                       onClick={() => toggleSection(section.key)}
                       className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-semibold transition-colors ${
-                        sectionActive 
+                        shouldShowColor
                           ? `text-white bg-gradient-to-r ${section.color} shadow-sm` 
                           : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700'
                       }`}
