@@ -99,6 +99,8 @@ function App() {
               {/* Masters */}
               <Route path="masters/item-categories" element={<ItemCategories />} />
               <Route path="masters/items" element={<ItemMaster />} />
+              <Route path="masters/items/new" element={<ItemMasterForm />} />
+              <Route path="masters/items/edit/:id" element={<ItemMasterForm />} />
               <Route path="masters/uoms" element={<UOMMaster />} />
               <Route path="masters/suppliers" element={<SupplierMaster />} />
               <Route path="masters/warehouses" element={<WarehouseMaster />} />
