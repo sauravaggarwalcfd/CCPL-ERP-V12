@@ -390,7 +390,7 @@ const ItemMasterForm = () => {
               </CardContent>
             </Card>
 
-            <Card id="tax" className="scroll-mt-20">
+            <Card id="tax" className="scroll-mt-48">
               <CardHeader className="bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200">
                 <CardTitle className="flex items-center gap-2 text-xl text-amber-900"><DollarSign className="h-6 w-6 text-amber-600" />Tax Code & Accounts</CardTitle>
               </CardHeader>
