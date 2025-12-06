@@ -391,8 +391,8 @@ const ItemMasterForm = () => {
             </Card>
 
             <Card id="tax" className="scroll-mt-20">
-              <CardHeader className="bg-neutral-50 border-b">
-                <CardTitle className="flex items-center gap-2 text-xl"><DollarSign className="h-6 w-6 text-primary" />Tax Code & Accounts</CardTitle>
+              <CardHeader className="bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200">
+                <CardTitle className="flex items-center gap-2 text-xl text-amber-900"><DollarSign className="h-6 w-6 text-amber-600" />Tax Code & Accounts</CardTitle>
               </CardHeader>
               <CardContent className="p-8 space-y-5">
                 <div className="grid grid-cols-3 gap-6">
