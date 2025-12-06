@@ -178,22 +178,22 @@ const ItemMasterForm = () => {
           <form id="item-form" onSubmit={handleSubmit} className="space-y-6">
             <Card id="basic" className="scroll-mt-20">
               <CardHeader className="bg-neutral-50 border-b">
-                <CardTitle className="flex items-center gap-2 text-lg"><FileText className="h-5 w-5 text-primary" />Product Classification</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-xl"><FileText className="h-6 w-6 text-primary" />Product Classification</CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-3 gap-4">
+              <CardContent className="p-8 space-y-5">
+                <div className="grid grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="item_code">Item Code *</Label>
-                    <Input id="item_code" value={formData.item_code} onChange={(e) => setFormData({ ...formData, item_code: e.target.value })} placeholder="AUTO" required disabled={!!id} className={id ? 'bg-neutral-100' : ''} data-testid="item-code-input" />
+                    <Label htmlFor="item_code" className="text-base font-medium">Item Code *</Label>
+                    <Input id="item_code" value={formData.item_code} onChange={(e) => setFormData({ ...formData, item_code: e.target.value })} placeholder="AUTO" required disabled={!!id} className={`h-11 text-base ${id ? 'bg-neutral-100' : ''}`} data-testid="item-code-input" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="item_name">Item Name *</Label>
-                    <Input id="item_name" value={formData.item_name} onChange={(e) => setFormData({ ...formData, item_name: e.target.value })} placeholder="Enter item name" required data-testid="item-name-input" />
+                    <Label htmlFor="item_name" className="text-base font-medium">Item Name *</Label>
+                    <Input id="item_name" value={formData.item_name} onChange={(e) => setFormData({ ...formData, item_name: e.target.value })} placeholder="Enter item name" required className="h-11 text-base" data-testid="item-name-input" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="item_type">Item Type *</Label>
+                    <Label htmlFor="item_type" className="text-base font-medium">Item Type *</Label>
                     <Select value={formData.item_type} onValueChange={(value) => setFormData({ ...formData, item_type: value })}>
-                      <SelectTrigger data-testid="item-type-select"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-11 text-base" data-testid="item-type-select"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="FABRIC">Fabric</SelectItem>
                         <SelectItem value="TRIM">Trim</SelectItem>
@@ -206,17 +206,17 @@ const ItemMasterForm = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="category_id">Category *</Label>
+                    <Label htmlFor="category_id" className="text-base font-medium">Category *</Label>
                     <Select value={formData.category_id} onValueChange={(value) => setFormData({ ...formData, category_id: value })}>
-                      <SelectTrigger data-testid="category-select"><SelectValue placeholder="Select category" /></SelectTrigger>
+                      <SelectTrigger className="h-11 text-base" data-testid="category-select"><SelectValue placeholder="Select category" /></SelectTrigger>
                       <SelectContent>{categories.map(cat => <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="sub_category">Sub-Category</Label>
-                    <Input id="sub_category" value={formData.sub_category} onChange={(e) => setFormData({ ...formData, sub_category: e.target.value })} placeholder="e.g., Cotton, Silk" data-testid="sub-category-input" />
+                    <Label htmlFor="sub_category" className="text-base font-medium">Sub-Category</Label>
+                    <Input id="sub_category" value={formData.sub_category} onChange={(e) => setFormData({ ...formData, sub_category: e.target.value })} placeholder="e.g., Cotton, Silk" className="h-11 text-base" data-testid="sub-category-input" />
                   </div>
                 </div>
               </CardContent>
@@ -224,22 +224,22 @@ const ItemMasterForm = () => {
 
             <Card id="details" className="scroll-mt-20">
               <CardHeader className="bg-neutral-50 border-b">
-                <CardTitle className="flex items-center gap-2 text-lg"><Package className="h-5 w-5 text-primary" />Product Details</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-xl"><Package className="h-6 w-6 text-primary" />Product Details</CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-8 space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="description">Item Description</Label>
-                  <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Detailed item description" rows={3} data-testid="description-input" />
+                  <Label htmlFor="description" className="text-base font-medium">Item Description</Label>
+                  <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Detailed item description" rows={4} className="text-base" data-testid="description-input" />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="barcode">Barcode</Label>
-                    <Input id="barcode" value={formData.barcode} onChange={(e) => setFormData({ ...formData, barcode: e.target.value })} placeholder="Scan or enter barcode" data-testid="barcode-input" />
+                    <Label htmlFor="barcode" className="text-base font-medium">Barcode</Label>
+                    <Input id="barcode" value={formData.barcode} onChange={(e) => setFormData({ ...formData, barcode: e.target.value })} placeholder="Scan or enter barcode" className="h-11 text-base" data-testid="barcode-input" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="brand_id">Brand</Label>
+                    <Label htmlFor="brand_id" className="text-base font-medium">Brand</Label>
                     <Select value={formData.brand_id} onValueChange={(value) => setFormData({ ...formData, brand_id: value })}>
-                      <SelectTrigger data-testid="brand-select"><SelectValue placeholder="Select brand" /></SelectTrigger>
+                      <SelectTrigger className="h-11 text-base" data-testid="brand-select"><SelectValue placeholder="Select brand" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="brand1">Brand A</SelectItem>
                         <SelectItem value="brand2">Brand B</SelectItem>
@@ -252,9 +252,9 @@ const ItemMasterForm = () => {
 
             <Card id="stock" className="scroll-mt-20">
               <CardHeader className="bg-neutral-50 border-b">
-                <CardTitle className="flex items-center gap-2 text-lg"><TrendingUp className="h-5 w-5 text-primary" />Stock & Inventory Settings</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-xl"><TrendingUp className="h-6 w-6 text-primary" />Stock & Inventory Settings</CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-8 space-y-5">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="stock_uom">Stock UOM *</Label>
