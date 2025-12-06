@@ -92,6 +92,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Inventory Transactions',
       icon: Warehouse,
       key: 'inventory',
+      color: 'from-amber-500 to-amber-600',
       items: [
         { title: 'Opening Stock', path: '/inventory/opening-stock' },
         { title: 'Goods Receipt (GRN)', path: '/inventory/grn' },
