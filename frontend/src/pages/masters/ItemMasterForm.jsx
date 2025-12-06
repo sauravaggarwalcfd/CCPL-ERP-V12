@@ -174,7 +174,7 @@ const ItemMasterForm = () => {
       </div>
 
       <div className="max-w-full px-8 py-6">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-full mx-auto">
           <form id="item-form" onSubmit={handleSubmit} className="space-y-6">
             <Card id="basic" className="scroll-mt-20">
               <CardHeader className="bg-neutral-50 border-b">
