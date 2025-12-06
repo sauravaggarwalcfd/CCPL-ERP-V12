@@ -177,8 +177,8 @@ const ItemMasterForm = () => {
         <div className="max-w-full mx-auto">
           <form id="item-form" onSubmit={handleSubmit} className="space-y-6">
             <Card id="basic" className="scroll-mt-20">
-              <CardHeader className="bg-neutral-50 border-b">
-                <CardTitle className="flex items-center gap-2 text-xl"><FileText className="h-6 w-6 text-primary" />Product Classification</CardTitle>
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
+                <CardTitle className="flex items-center gap-2 text-xl text-blue-900"><FileText className="h-6 w-6 text-blue-600" />Product Classification</CardTitle>
               </CardHeader>
               <CardContent className="p-8 space-y-5">
                 <div className="grid grid-cols-3 gap-6">
