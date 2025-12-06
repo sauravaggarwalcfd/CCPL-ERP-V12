@@ -16,6 +16,7 @@ import { Search, Plus, Edit, Trash2, Save, X, Package, AlertCircle, History } fr
 import { toast } from 'sonner';
 
 const ItemMaster = () => {
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
