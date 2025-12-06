@@ -334,8 +334,8 @@ const ItemMasterForm = () => {
             </Card>
 
             <Card id="specifications" className="scroll-mt-20">
-              <CardHeader className="bg-neutral-50 border-b">
-                <CardTitle className="flex items-center gap-2 text-xl"><Settings className="h-6 w-6 text-primary" />Product Specification</CardTitle>
+              <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-100 border-b border-orange-200">
+                <CardTitle className="flex items-center gap-2 text-xl text-orange-900"><Settings className="h-6 w-6 text-orange-600" />Product Specification</CardTitle>
               </CardHeader>
               <CardContent className="p-8 space-y-5">
                 {isFabric && (
