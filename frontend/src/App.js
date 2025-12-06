@@ -11,6 +11,7 @@ import { inventoryRoutes } from '@/router/inventoryRoutes';
 // Masters
 import ItemCategories from '@/pages/masters/ItemCategories';
 import ItemMaster from '@/pages/masters/ItemMaster';
+import ItemMasterForm from '@/pages/masters/ItemMasterForm';
 import UOMMaster from '@/pages/masters/UOMMaster';
 import SupplierMaster from '@/pages/masters/SupplierMaster';
 import WarehouseMaster from '@/pages/masters/WarehouseMaster';
