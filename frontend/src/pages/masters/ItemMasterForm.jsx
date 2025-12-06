@@ -255,51 +255,51 @@ const ItemMasterForm = () => {
                 <CardTitle className="flex items-center gap-2 text-xl"><TrendingUp className="h-6 w-6 text-primary" />Stock & Inventory Settings</CardTitle>
               </CardHeader>
               <CardContent className="p-8 space-y-5">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="stock_uom">Stock UOM *</Label>
+                    <Label htmlFor="stock_uom" className="text-base font-medium">Stock UOM *</Label>
                     <Select value={formData.stock_uom} onValueChange={(value) => setFormData({ ...formData, stock_uom: value })}>
-                      <SelectTrigger data-testid="stock-uom-select"><SelectValue placeholder="Select UOM" /></SelectTrigger>
+                      <SelectTrigger className="h-11 text-base" data-testid="stock-uom-select"><SelectValue placeholder="Select UOM" /></SelectTrigger>
                       <SelectContent>{uoms.map(uom => <SelectItem key={uom.id} value={uom.uom_name}>{uom.uom_name} ({uom.symbol})</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="conversion_uom">Conversion UOM</Label>
+                    <Label htmlFor="conversion_uom" className="text-base font-medium">Conversion UOM</Label>
                     <Select value={formData.conversion_uom} onValueChange={(value) => setFormData({ ...formData, conversion_uom: value })}>
-                      <SelectTrigger data-testid="conversion-uom-select"><SelectValue placeholder="Optional" /></SelectTrigger>
+                      <SelectTrigger className="h-11 text-base" data-testid="conversion-uom-select"><SelectValue placeholder="Optional" /></SelectTrigger>
                       <SelectContent>{uoms.map(uom => <SelectItem key={uom.id} value={uom.uom_name}>{uom.uom_name}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="conversion_factor">Conversion Factor</Label>
-                    <Input id="conversion_factor" type="number" step="0.001" value={formData.conversion_factor} onChange={(e) => setFormData({ ...formData, conversion_factor: e.target.value })} data-testid="conversion-factor-input" />
+                    <Label htmlFor="conversion_factor" className="text-base font-medium">Conversion Factor</Label>
+                    <Input id="conversion_factor" type="number" step="0.001" value={formData.conversion_factor} onChange={(e) => setFormData({ ...formData, conversion_factor: e.target.value })} className="h-11 text-base" data-testid="conversion-factor-input" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="min_stock_level">Min Stock Level</Label>
-                    <Input id="min_stock_level" type="number" value={formData.min_stock_level} onChange={(e) => setFormData({ ...formData, min_stock_level: e.target.value })} placeholder="0" data-testid="min-stock-input" />
+                    <Label htmlFor="min_stock_level" className="text-base font-medium">Min Stock Level</Label>
+                    <Input id="min_stock_level" type="number" value={formData.min_stock_level} onChange={(e) => setFormData({ ...formData, min_stock_level: e.target.value })} placeholder="0" className="h-11 text-base" data-testid="min-stock-input" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reorder_qty">Reorder Qty</Label>
-                    <Input id="reorder_qty" type="number" value={formData.reorder_qty} onChange={(e) => setFormData({ ...formData, reorder_qty: e.target.value })} placeholder="0" data-testid="reorder-qty-input" />
+                    <Label htmlFor="reorder_qty" className="text-base font-medium">Reorder Qty</Label>
+                    <Input id="reorder_qty" type="number" value={formData.reorder_qty} onChange={(e) => setFormData({ ...formData, reorder_qty: e.target.value })} placeholder="0" className="h-11 text-base" data-testid="reorder-qty-input" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="opening_stock">Opening Stock</Label>
-                    <Input id="opening_stock" type="number" value={formData.opening_stock} onChange={(e) => setFormData({ ...formData, opening_stock: e.target.value })} placeholder="0" data-testid="opening-stock-input" />
+                    <Label htmlFor="opening_stock" className="text-base font-medium">Opening Stock</Label>
+                    <Input id="opening_stock" type="number" value={formData.opening_stock} onChange={(e) => setFormData({ ...formData, opening_stock: e.target.value })} placeholder="0" className="h-11 text-base" data-testid="opening-stock-input" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="opening_rate">Opening Rate</Label>
-                    <Input id="opening_rate" type="number" step="0.01" value={formData.opening_rate} onChange={(e) => setFormData({ ...formData, opening_rate: e.target.value })} placeholder="0.00" data-testid="opening-rate-input" />
+                    <Label htmlFor="opening_rate" className="text-base font-medium">Opening Rate</Label>
+                    <Input id="opening_rate" type="number" step="0.01" value={formData.opening_rate} onChange={(e) => setFormData({ ...formData, opening_rate: e.target.value })} placeholder="0.00" className="h-11 text-base" data-testid="opening-rate-input" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="costing_method">Costing Method</Label>
+                    <Label htmlFor="costing_method" className="text-base font-medium">Costing Method</Label>
                     <Select value={formData.costing_method} onValueChange={(value) => setFormData({ ...formData, costing_method: value })}>
-                      <SelectTrigger data-testid="costing-method-select"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-11 text-base" data-testid="costing-method-select"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="FIFO">FIFO (First In First Out)</SelectItem>
                         <SelectItem value="AVERAGE">Weighted Average</SelectItem>
@@ -309,24 +309,24 @@ const ItemMasterForm = () => {
                   </div>
                 </div>
 
-                <div className="space-y-3 border-t pt-4">
-                  <Label className="text-sm font-semibold">Inventory Controls</Label>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="is_batch_controlled" checked={formData.is_batch_controlled} onCheckedChange={(checked) => setFormData({ ...formData, is_batch_controlled: checked })} data-testid="batch-checkbox" />
-                    <Label htmlFor="is_batch_controlled" className="cursor-pointer font-normal">Batch Number Controlled</Label>
+                <div className="space-y-3 border-t pt-5">
+                  <Label className="text-base font-semibold">Inventory Controls</Label>
+                  <div className="flex items-center space-x-3">
+                    <Checkbox id="is_batch_controlled" checked={formData.is_batch_controlled} onCheckedChange={(checked) => setFormData({ ...formData, is_batch_controlled: checked })} data-testid="batch-checkbox" className="h-5 w-5" />
+                    <Label htmlFor="is_batch_controlled" className="cursor-pointer font-normal text-base">Batch Number Controlled</Label>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="is_serial_controlled" checked={formData.is_serial_controlled} onCheckedChange={(checked) => setFormData({ ...formData, is_serial_controlled: checked })} data-testid="serial-checkbox" />
-                    <Label htmlFor="is_serial_controlled" className="cursor-pointer font-normal">Serial Number Controlled</Label>
+                  <div className="flex items-center space-x-3">
+                    <Checkbox id="is_serial_controlled" checked={formData.is_serial_controlled} onCheckedChange={(checked) => setFormData({ ...formData, is_serial_controlled: checked })} data-testid="serial-checkbox" className="h-5 w-5" />
+                    <Label htmlFor="is_serial_controlled" className="cursor-pointer font-normal text-base">Serial Number Controlled</Label>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="has_expiry_tracking" checked={formData.has_expiry_tracking} onCheckedChange={(checked) => setFormData({ ...formData, has_expiry_tracking: checked })} data-testid="expiry-checkbox" />
-                    <Label htmlFor="has_expiry_tracking" className="cursor-pointer font-normal">Expiry Date Tracking</Label>
+                  <div className="flex items-center space-x-3">
+                    <Checkbox id="has_expiry_tracking" checked={formData.has_expiry_tracking} onCheckedChange={(checked) => setFormData({ ...formData, has_expiry_tracking: checked })} data-testid="expiry-checkbox" className="h-5 w-5" />
+                    <Label htmlFor="has_expiry_tracking" className="cursor-pointer font-normal text-base">Expiry Date Tracking</Label>
                   </div>
                   {formData.has_expiry_tracking && (
-                    <div className="space-y-2 ml-6">
-                      <Label htmlFor="shelf_life_days">Shelf Life (Days)</Label>
-                      <Input id="shelf_life_days" type="number" value={formData.shelf_life_days} onChange={(e) => setFormData({ ...formData, shelf_life_days: e.target.value })} placeholder="365" className="max-w-xs" data-testid="shelf-life-input" />
+                    <div className="space-y-2 ml-8">
+                      <Label htmlFor="shelf_life_days" className="text-base font-medium">Shelf Life (Days)</Label>
+                      <Input id="shelf_life_days" type="number" value={formData.shelf_life_days} onChange={(e) => setFormData({ ...formData, shelf_life_days: e.target.value })} placeholder="365" className="max-w-xs h-11 text-base" data-testid="shelf-life-input" />
                     </div>
                   )}
                 </div>
@@ -335,28 +335,28 @@ const ItemMasterForm = () => {
 
             <Card id="specifications" className="scroll-mt-20">
               <CardHeader className="bg-neutral-50 border-b">
-                <CardTitle className="flex items-center gap-2 text-lg"><Settings className="h-5 w-5 text-primary" />Product Specification</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-xl"><Settings className="h-6 w-6 text-primary" />Product Specification</CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-8 space-y-5">
                 {isFabric && (
                   <div className="space-y-4">
-                    <Badge variant="outline" className="bg-blue-50 text-blue-900">Fabric Specifications</Badge>
-                    <div className="grid grid-cols-4 gap-4">
+                    <Badge variant="outline" className="bg-blue-50 text-blue-900 text-sm px-3 py-1">Fabric Specifications</Badge>
+                    <div className="grid grid-cols-4 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="gsm">GSM</Label>
-                        <Input id="gsm" type="number" value={formData.gsm} onChange={(e) => setFormData({ ...formData, gsm: e.target.value })} placeholder="120" data-testid="gsm-input" />
+                        <Label htmlFor="gsm" className="text-base font-medium">GSM</Label>
+                        <Input id="gsm" type="number" value={formData.gsm} onChange={(e) => setFormData({ ...formData, gsm: e.target.value })} placeholder="120" className="h-11 text-base" data-testid="gsm-input" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="width">Width (inches)</Label>
-                        <Input id="width" type="number" step="0.1" value={formData.width} onChange={(e) => setFormData({ ...formData, width: e.target.value })} placeholder="44" data-testid="width-input" />
+                        <Label htmlFor="width" className="text-base font-medium">Width (inches)</Label>
+                        <Input id="width" type="number" step="0.1" value={formData.width} onChange={(e) => setFormData({ ...formData, width: e.target.value })} placeholder="44" className="h-11 text-base" data-testid="width-input" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="shade">Shade</Label>
-                        <Input id="shade" value={formData.shade} onChange={(e) => setFormData({ ...formData, shade: e.target.value })} placeholder="Navy Blue" data-testid="shade-input" />
+                        <Label htmlFor="shade" className="text-base font-medium">Shade</Label>
+                        <Input id="shade" value={formData.shade} onChange={(e) => setFormData({ ...formData, shade: e.target.value })} placeholder="Navy Blue" className="h-11 text-base" data-testid="shade-input" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="composition">Composition</Label>
-                        <Input id="composition" value={formData.composition} onChange={(e) => setFormData({ ...formData, composition: e.target.value })} placeholder="100% Cotton" data-testid="composition-input" />
+                        <Label htmlFor="composition" className="text-base font-medium">Composition</Label>
+                        <Input id="composition" value={formData.composition} onChange={(e) => setFormData({ ...formData, composition: e.target.value })} placeholder="100% Cotton" className="h-11 text-base" data-testid="composition-input" />
                       </div>
                     </div>
                   </div>
@@ -364,27 +364,27 @@ const ItemMasterForm = () => {
 
                 {isTrim && (
                   <div className="space-y-4">
-                    <Badge variant="outline" className="bg-green-50 text-green-900">Trim Specifications</Badge>
-                    <div className="grid grid-cols-3 gap-4">
+                    <Badge variant="outline" className="bg-green-50 text-green-900 text-sm px-3 py-1">Trim Specifications</Badge>
+                    <div className="grid grid-cols-3 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="trim_size">Size</Label>
-                        <Input id="trim_size" value={formData.trim_size} onChange={(e) => setFormData({ ...formData, trim_size: e.target.value })} placeholder="15mm" data-testid="trim-size-input" />
+                        <Label htmlFor="trim_size" className="text-base font-medium">Size</Label>
+                        <Input id="trim_size" value={formData.trim_size} onChange={(e) => setFormData({ ...formData, trim_size: e.target.value })} placeholder="15mm" className="h-11 text-base" data-testid="trim-size-input" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="trim_color">Color</Label>
-                        <Input id="trim_color" value={formData.trim_color} onChange={(e) => setFormData({ ...formData, trim_color: e.target.value })} placeholder="Black" data-testid="trim-color-input" />
+                        <Label htmlFor="trim_color" className="text-base font-medium">Color</Label>
+                        <Input id="trim_color" value={formData.trim_color} onChange={(e) => setFormData({ ...formData, trim_color: e.target.value })} placeholder="Black" className="h-11 text-base" data-testid="trim-color-input" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="trim_material">Material</Label>
-                        <Input id="trim_material" value={formData.trim_material} onChange={(e) => setFormData({ ...formData, trim_material: e.target.value })} placeholder="Plastic, Metal" data-testid="trim-material-input" />
+                        <Label htmlFor="trim_material" className="text-base font-medium">Material</Label>
+                        <Input id="trim_material" value={formData.trim_material} onChange={(e) => setFormData({ ...formData, trim_material: e.target.value })} placeholder="Plastic, Metal" className="h-11 text-base" data-testid="trim-material-input" />
                       </div>
                     </div>
                   </div>
                 )}
 
                 {!isFabric && !isTrim && (
-                  <div className="text-center py-8 text-neutral-500">
-                    <p>No specific specifications required for {formData.item_type || 'this item type'}</p>
+                  <div className="text-center py-12 text-neutral-500">
+                    <p className="text-base">No specific specifications required for {formData.item_type || 'this item type'}</p>
                   </div>
                 )}
               </CardContent>
@@ -392,18 +392,18 @@ const ItemMasterForm = () => {
 
             <Card id="tax" className="scroll-mt-20">
               <CardHeader className="bg-neutral-50 border-b">
-                <CardTitle className="flex items-center gap-2 text-lg"><DollarSign className="h-5 w-5 text-primary" />Tax Code & Accounts</CardTitle>
+                <CardTitle className="flex items-center gap-2 text-xl"><DollarSign className="h-6 w-6 text-primary" />Tax Code & Accounts</CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="grid grid-cols-3 gap-4">
+              <CardContent className="p-8 space-y-5">
+                <div className="grid grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="hsn_code">HSN Code</Label>
-                    <Input id="hsn_code" value={formData.hsn_code} onChange={(e) => setFormData({ ...formData, hsn_code: e.target.value })} placeholder="6302" data-testid="hsn-input" />
+                    <Label htmlFor="hsn_code" className="text-base font-medium">HSN Code</Label>
+                    <Input id="hsn_code" value={formData.hsn_code} onChange={(e) => setFormData({ ...formData, hsn_code: e.target.value })} placeholder="6302" className="h-11 text-base" data-testid="hsn-input" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="tax_group">Tax Group</Label>
+                    <Label htmlFor="tax_group" className="text-base font-medium">Tax Group</Label>
                     <Select value={formData.tax_group} onValueChange={(value) => setFormData({ ...formData, tax_group: value })}>
-                      <SelectTrigger data-testid="tax-group-select"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectTrigger className="h-11 text-base" data-testid="tax-group-select"><SelectValue placeholder="Select" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="STANDARD">Standard</SelectItem>
                         <SelectItem value="EXEMPT">Exempt</SelectItem>
@@ -412,9 +412,9 @@ const ItemMasterForm = () => {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="gst_rate">GST Rate (%)</Label>
+                    <Label htmlFor="gst_rate" className="text-base font-medium">GST Rate (%)</Label>
                     <Select value={formData.gst_rate} onValueChange={(value) => setFormData({ ...formData, gst_rate: value })}>
-                      <SelectTrigger data-testid="gst-rate-select"><SelectValue placeholder="Select" /></SelectTrigger>
+                      <SelectTrigger className="h-11 text-base" data-testid="gst-rate-select"><SelectValue placeholder="Select" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="0">0%</SelectItem>
                         <SelectItem value="5">5%</SelectItem>
@@ -426,8 +426,8 @@ const ItemMasterForm = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="remarks">Remarks</Label>
-                  <Textarea id="remarks" value={formData.remarks} onChange={(e) => setFormData({ ...formData, remarks: e.target.value })} placeholder="Additional notes" rows={3} data-testid="remarks-input" />
+                  <Label htmlFor="remarks" className="text-base font-medium">Remarks</Label>
+                  <Textarea id="remarks" value={formData.remarks} onChange={(e) => setFormData({ ...formData, remarks: e.target.value })} placeholder="Additional notes" rows={4} className="text-base" data-testid="remarks-input" />
                 </div>
               </CardContent>
             </Card>
