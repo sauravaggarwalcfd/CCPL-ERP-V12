@@ -83,6 +83,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Quality',
       icon: ClipboardCheck,
       key: 'quality',
+      color: 'from-rose-500 to-rose-600',
       items: [
         { title: 'Quality Check', path: '/quality/checks' }
       ]
