@@ -146,12 +146,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       >
         <div className="flex flex-col h-full">
           {/* Logo & Close Button */}
-          <div className="flex items-center justify-between p-6 border-b border-neutral-200">
-            <h1 className="text-xl font-heading font-bold text-primary">ERP Inventory</h1>
+          <div className="flex items-center justify-between p-6 border-b border-neutral-200 bg-gradient-to-r from-blue-600 to-blue-700">
+            <h1 className="text-xl font-heading font-bold text-white">ERP Inventory</h1>
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="lg:hidden text-white hover:bg-blue-600"
               onClick={() => setIsOpen(false)}
               data-testid="sidebar-close-btn"
             >
