@@ -46,12 +46,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Dashboard',
       icon: LayoutDashboard,
       path: '/dashboard',
-      single: true
+      single: true,
+      color: 'from-blue-500 to-blue-600'
     },
     {
       title: 'Masters',
       icon: Package,
       key: 'masters',
+      color: 'from-emerald-500 to-emerald-600',
       items: [
         { title: 'Item Category', path: '/masters/item-categories' },
         { title: 'Fabric Category', path: '/masters/fabric-categories' },
