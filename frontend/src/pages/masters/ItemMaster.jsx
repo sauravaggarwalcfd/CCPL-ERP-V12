@@ -186,44 +186,7 @@ const ItemMaster = () => {
   };
 
   const handleEdit = (item) => {
-    setFormData({
-      item_code: item.item_code,
-      item_name: item.item_name,
-      item_type: item.item_type || 'FABRIC',
-      category_id: item.category_id,
-      sub_category: item.sub_category || '',
-      brand_id: item.brand_id || '',
-      description: item.description || '',
-      stock_uom: item.stock_uom || item.uom,
-      conversion_uom: item.conversion_uom || '',
-      conversion_factor: item.conversion_factor?.toString() || '1',
-      min_stock_level: item.min_stock_level?.toString() || item.min_stock?.toString() || '',
-      reorder_qty: item.reorder_qty?.toString() || item.reorder_level?.toString() || '',
-      opening_stock: item.opening_stock?.toString() || '',
-      opening_rate: item.opening_rate?.toString() || '',
-      costing_method: item.costing_method || 'FIFO',
-      is_batch_controlled: item.is_batch_controlled || false,
-      is_serial_controlled: item.is_serial_controlled || false,
-      has_expiry_tracking: item.has_expiry_tracking || false,
-      shelf_life_days: item.shelf_life_days?.toString() || '',
-      hsn_code: item.hsn_code || item.hsn || '',
-      tax_group: item.tax_group || '',
-      gst_rate: item.gst_rate?.toString() || '',
-      gsm: item.gsm?.toString() || '',
-      width: item.width?.toString() || '',
-      shade: item.shade || '',
-      composition: item.composition || '',
-      trim_size: item.trim_size || '',
-      trim_color: item.trim_color || '',
-      trim_material: item.trim_material || '',
-      barcode: item.barcode || '',
-      remarks: item.remarks || '',
-      status: item.status,
-      is_active: item.is_active !== false
-    });
-    setCurrentId(item.id);
-    setEditMode(true);
-    setDialogOpen(true);
+    navigate(`/masters/items/edit/${item.id}`);
   };
 
   const handleDelete = async (id) => {
