@@ -123,6 +123,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Settings',
       icon: Settings,
       key: 'settings',
+      color: 'from-slate-500 to-slate-600',
       items: [
         { title: 'Number Series', path: '/settings/number-series' },
         { title: 'Approval Flow Setup', path: '/settings/approval-flows' },
