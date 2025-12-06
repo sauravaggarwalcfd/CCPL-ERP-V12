@@ -131,7 +131,7 @@ const ItemMasterForm = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 border-b border-blue-800 sticky top-0 z-10 shadow-md">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 border-b border-blue-800 sticky top-0 z-50 shadow-md">
         <div className="px-8 py-5 flex items-center justify-between border-b border-blue-800/30">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate('/masters/items')} className="text-white hover:bg-blue-700" data-testid="back-btn">
@@ -173,10 +173,10 @@ const ItemMasterForm = () => {
         </div>
       </div>
 
-      <div className="max-w-full px-8 py-6">
+      <div className="max-w-full px-8 py-6 mt-4">
         <div className="max-w-full mx-auto">
           <form id="item-form" onSubmit={handleSubmit} className="space-y-6">
-            <Card id="basic" className="scroll-mt-20">
+            <Card id="basic" className="scroll-mt-48">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
                 <CardTitle className="flex items-center gap-2 text-xl text-blue-900"><FileText className="h-6 w-6 text-blue-600" />Product Classification</CardTitle>
               </CardHeader>
