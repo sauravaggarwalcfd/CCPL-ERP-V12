@@ -72,6 +72,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       title: 'Purchase',
       icon: ShoppingCart,
       key: 'purchase',
+      color: 'from-violet-500 to-violet-600',
       items: [
         { title: 'Purchase Indent', path: '/purchase/indents' },
         { title: 'Purchase Order', path: '/purchase/orders' },
