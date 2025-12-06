@@ -222,7 +222,7 @@ const ItemMasterForm = () => {
               </CardContent>
             </Card>
 
-            <Card id="details" className="scroll-mt-20">
+            <Card id="details" className="scroll-mt-48">
               <CardHeader className="bg-gradient-to-r from-green-50 to-green-100 border-b border-green-200">
                 <CardTitle className="flex items-center gap-2 text-xl text-green-900"><Package className="h-6 w-6 text-green-600" />Product Details</CardTitle>
               </CardHeader>
