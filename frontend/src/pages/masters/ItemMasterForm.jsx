@@ -250,7 +250,7 @@ const ItemMasterForm = () => {
               </CardContent>
             </Card>
 
-            <Card id="stock" className="scroll-mt-20">
+            <Card id="stock" className="scroll-mt-48">
               <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200">
                 <CardTitle className="flex items-center gap-2 text-xl text-purple-900"><TrendingUp className="h-6 w-6 text-purple-600" />Stock & Inventory Settings</CardTitle>
               </CardHeader>
