@@ -132,7 +132,7 @@ const ItemMasterForm = () => {
   return (
     <div className="min-h-screen bg-neutral-50">
       <div className="bg-white border-b border-neutral-200 sticky top-0 z-10">
-        <div className="px-8 py-4 flex items-center justify-between">
+        <div className="px-8 py-4 flex items-center justify-between border-b border-neutral-200">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate('/masters/items')} data-testid="back-btn">
               <ArrowLeft className="h-5 w-5" />
@@ -151,22 +151,30 @@ const ItemMasterForm = () => {
             </Button>
           </div>
         </div>
-      </div>
 
-      <div className="flex">
-        <div className="w-64 bg-white border-r border-neutral-200 min-h-screen sticky top-16 self-start">
-          <nav className="p-4 space-y-1">
+        <div className="px-8">
+          <nav className="flex gap-2 overflow-x-auto">
             {sections.map((section) => (
-              <button key={section.id} onClick={() => scrollToSection(section.id)} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors text-left ${activeSection === section.id ? 'bg-primary text-white' : 'text-neutral-700 hover:bg-neutral-100'}`} data-testid={`tab-${section.id}`}>
+              <button
+                key={section.id}
+                onClick={() => scrollToSection(section.id)}
+                className={`flex items-center gap-2 px-6 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  activeSection === section.id
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-neutral-600 hover:text-neutral-900 hover:border-neutral-300'
+                }`}
+                data-testid={`tab-${section.id}`}
+              >
                 <section.icon className="h-4 w-4" />
                 {section.label}
               </button>
             ))}
           </nav>
         </div>
+      </div>
 
-        <div className="flex-1 p-8 max-w-6xl">
-          <form id="item-form" onSubmit={handleSubmit} className="space-y-6">
+      <div className="max-w-full px-8 py-6">
+        <form id="item-form" onSubmit={handleSubmit} className="space-y-6 max-w-7xl mx-auto">
             <Card id="basic" className="scroll-mt-20">
               <CardHeader className="bg-neutral-50 border-b">
                 <CardTitle className="flex items-center gap-2 text-lg"><FileText className="h-5 w-5 text-primary" />Product Classification</CardTitle>
