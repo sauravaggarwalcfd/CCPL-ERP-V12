@@ -175,10 +175,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     <Link
                       key={section.path}
                       to={section.path}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-colors ${
                         isActive(section.path)
-                          ? 'bg-primary text-white'
-                          : 'text-neutral-700 hover:bg-neutral-100'
+                          ? `bg-gradient-to-r ${section.color} text-white shadow-sm`
+                          : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700'
                       }`}
                       data-testid={`nav-${section.title.toLowerCase()}`}
                     >
@@ -197,7 +197,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                       onClick={() => toggleSection(section.key)}
                       className={`w-full flex items-center justify-between px-3 py-2.5 rounded-md text-sm font-semibold transition-colors ${
                         sectionActive 
-                          ? 'text-white bg-gradient-to-r from-blue-600 to-blue-700 shadow-sm' 
+                          ? `text-white bg-gradient-to-r ${section.color} shadow-sm` 
                           : 'text-neutral-700 hover:bg-blue-50 hover:text-blue-700'
                       }`}
                       data-testid={`nav-section-${section.key}`}
