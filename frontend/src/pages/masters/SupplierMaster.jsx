@@ -221,7 +221,7 @@ const SupplierMaster = () => {
         </div>
         <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
           <DialogTrigger asChild>
-            <Button data-testid="create-supplier-btn" className="gap-2">
+            <Button data-testid="create-supplier-btn" className="gap-2" onClick={() => navigate('/masters/suppliers/new')}>
               <Plus className="h-4 w-4" />
               Create Supplier
             </Button>
