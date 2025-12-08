@@ -516,7 +516,21 @@ const ItemCategoryMaster = () => {
                 </Label>
                 <Select
                   value={formData.parent_category || 'none'}
-                  onValueChange={(value) => setFormData({ ...formData, parent_category: value === 'none' ? '' : value })}
+                  onValueChange={(value) => {
+                    const parentId = value === 'none' ? '' : value;
+                    const parentCat = parentId ? categories.find(c => c.id === parentId) : null;
+                    const inheritedType = parentCat ? (parentCat.item_type || 'RM') : formData.item_type;
+                    
+                    setFormData({ 
+                      ...formData, 
+                      parent_category: parentId,
+                      item_type: inheritedType
+                    });
+                    
+                    if (parentCat) {
+                      toast.info(`Item Type inherited: ${inheritedType}`, { duration: 2000 });
+                    }
+                  }}
                 >
                   <SelectTrigger className="h-11 text-base">
                     <SelectValue placeholder="Select parent category" />
@@ -548,11 +562,12 @@ const ItemCategoryMaster = () => {
                 </Select>
                 <p className="text-xs text-neutral-500">
                   {formData.parent_category && formData.parent_category !== 'none' ? (
-                    <span className="text-green-600 font-medium">
-                      Will create as child of {categories.find(c => c.id === formData.parent_category)?.category_name || categories.find(c => c.id === formData.parent_category)?.name}
+                    <span className="text-green-600 font-medium flex items-center gap-1">
+                      <Info className="h-3 w-3" />
+                      Will create as child. Item Type: {formData.item_type} (inherited from parent)
                     </span>
                   ) : (
-                    'Will create as root category'
+                    <span className="text-blue-600 font-medium">Will create as root category. Item Type: {formData.item_type} (editable)</span>
                   )}
                 </p>
               </div>
