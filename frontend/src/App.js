@@ -15,15 +15,14 @@ import ItemMaster from '@/pages/masters/ItemMaster';
 import ItemMasterForm from '@/pages/masters/ItemMasterForm';
 import ColorMaster from '@/pages/masters/ColorMaster';
 import ColorForm from '@/pages/masters/ColorForm';
+import SizeMaster from '@/pages/masters/SizeMaster';
+import BrandMaster from '@/pages/masters/BrandMaster';
 import UOMMaster from '@/pages/masters/UOMMaster';
 import SupplierMaster from '@/pages/masters/SupplierMaster';
 import WarehouseMaster from '@/pages/masters/WarehouseMaster';
 import BINLocationMaster from '@/pages/masters/BINLocationMaster';
 import TaxHSNMaster from '@/pages/masters/TaxHSNMaster';
 import FabricCategoryMaster from '@/pages/masters/FabricCategoryMaster';
-import ColorMaster from '@/pages/masters/ColorMaster';
-import SizeMaster from '@/pages/masters/SizeMaster';
-import BrandMaster from '@/pages/masters/BrandMaster';
 
 // Purchase
 import PurchaseIndents from '@/pages/purchase/PurchaseIndents';
