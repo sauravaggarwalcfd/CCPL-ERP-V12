@@ -803,47 +803,82 @@ const ItemMasterFormEnhanced = () => {
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               {/* Item Code & Name */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Item Code *</Label>
+                  <Label className="text-sm font-semibold">Item Code *</Label>
                   {id ? (
                     <Input
                       value={formData.item_code}
                       disabled
-                      className="bg-neutral-100 font-mono text-base"
+                      className="bg-neutral-100 font-mono"
                     />
                   ) : (
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="text-sm">Auto-Generated</Badge>
+                        <Badge variant="secondary" className="text-xs">Auto-Generated</Badge>
                         {codePreview && (
-                          <Badge className="bg-blue-600 text-sm font-mono">{codePreview}</Badge>
+                          <Badge className="bg-blue-600 text-xs font-mono">{codePreview}</Badge>
                         )}
                       </div>
                       <Input
                         value={formData.item_code}
                         disabled
                         placeholder="Select category to generate code"
-                        className="bg-neutral-100 font-mono text-base"
+                        className="bg-neutral-100 font-mono"
                       />
                     </div>
                   )}
-                  <p className="text-sm text-neutral-500">Format: TYPE-SHORTCODE-0001</p>
+                  <p className="text-xs text-neutral-500">Format: TYPE-SHORTCODE-0001</p>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Item Name *</Label>
+                  <Label className="text-sm font-semibold">Item Name *</Label>
                   <Input
                     value={formData.item_name}
                     onChange={(e) => setFormData({ ...formData, item_name: e.target.value })}
                     placeholder="Enter unique item name"
                     required
-                    className="text-base"
                   />
                 </div>
               </div>
 
+              {/* Image & Document Upload */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">Item Image</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e, 'item_image')}
+                      className="flex-1"
+                    />
+                    {formData.item_image && (
+                      <Badge variant="outline" className="text-xs">
+                        {formData.item_image}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold">Item Document</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => handleFileUpload(e, 'item_document')}
+                      className="flex-1"
+                    />
+                    {formData.item_document && (
+                      <Badge variant="outline" className="text-xs">
+                        {formData.item_document}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Category & Item Type */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label className="text-base font-semibold">Item Category *</Label>
