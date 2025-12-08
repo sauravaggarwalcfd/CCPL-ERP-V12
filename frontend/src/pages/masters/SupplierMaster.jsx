@@ -16,6 +16,7 @@ import { Search, Plus, Edit, Trash2, Save, X, Building2, Star } from 'lucide-rea
 import { toast } from 'sonner';
 
 const SupplierMaster = () => {
+  const navigate = useNavigate();
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
