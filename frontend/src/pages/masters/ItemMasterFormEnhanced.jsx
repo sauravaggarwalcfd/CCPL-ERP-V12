@@ -252,8 +252,21 @@ const ItemMasterFormEnhanced = () => {
   const handleFileUpload = (e, field) => {
     const file = e.target.files?.[0];
     if (file) {
-      // For now, store file name. In production, upload to server
-      setFormData({ ...formData, [field]: file.name });
+      // Create preview URL for images
+      if (field === 'item_image' && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFormData(prev => ({ 
+            ...prev, 
+            [field]: file.name,
+            item_image_preview: reader.result 
+          }));
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setFormData({ ...formData, [field]: file.name });
+      }
+      
       toast.success(`${field === 'item_image' ? 'Image' : 'Document'} selected: ${file.name}`);
     }
   };
