@@ -101,12 +101,15 @@ class ERPBackendTester:
         print("="*60)
         
         # Item Categories
-        self.run_test(
+        success, categories = self.run_test(
             "Get Item Categories",
             "GET",
             "masters/item-categories",
             200
         )
+        
+        # Store categories for later use
+        self.categories = categories if success else []
         
         # Items
         self.run_test(
