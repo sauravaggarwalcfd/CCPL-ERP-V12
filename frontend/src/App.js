@@ -112,8 +112,8 @@ function App() {
               <Route path="masters/item-categories/new" element={<CategoryForm />} />
               <Route path="masters/item-categories/edit/:id" element={<CategoryForm />} />
               <Route path="masters/items" element={<ItemMaster />} />
-              <Route path="masters/items/new" element={<ItemMasterForm />} />
-              <Route path="masters/items/edit/:id" element={<ItemMasterForm />} />
+              <Route path="masters/items/new" element={<ItemMasterFormEnhanced />} />
+              <Route path="masters/items/edit/:id" element={<ItemMasterFormEnhanced />} />
               <Route path="masters/colors" element={<ColorMaster />} />
               <Route path="masters/colors/new" element={<ColorForm />} />
               <Route path="masters/colors/edit/:id" element={<ColorForm />} />
