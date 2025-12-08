@@ -671,8 +671,20 @@ async def delete_item_category(category_id: str, current_user: Dict = Depends(ge
 # ============ Item Master Routes ============
 @api_router.post("/masters/items", response_model=ItemMaster)
 async def create_item(item: ItemMaster, current_user: Dict = Depends(get_current_user)):
+    # Auto-generate item_code if not provided or is "AUTO"
+    if not item.item_code or item.item_code.upper() == "AUTO":
+        item.item_code = await generate_next_item_code(item.category_id)
+    
+    # Get category details for item_type and category_name
+    category = await db.item_categories.find_one({"id": item.category_id}, {"_id": 0})
+    if category:
+        item.item_type = category.get('item_type', 'GENERAL')
+        item.category_name = category.get('name', '')
+    
     doc = item.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    if doc.get('updated_at'):
+        doc['updated_at'] = doc['updated_at'].isoformat()
     await db.items.insert_one(doc)
     return item
 
