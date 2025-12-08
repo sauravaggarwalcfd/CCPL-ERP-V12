@@ -117,6 +117,36 @@ const ItemCategoryMaster = () => {
     );
   };
 
+  const getDescendants = (categoryId) => {
+    const descendants = [];
+    const findChildren = (parentId) => {
+      const children = categories.filter(c => c.parent_category === parentId);
+      children.forEach(child => {
+        descendants.push(child);
+        findChildren(child.id);
+      });
+    };
+    findChildren(categoryId);
+    return descendants;
+  };
+
+  const updateDescendantsItemType = async (categoryId, newItemType) => {
+    const descendants = getDescendants(categoryId);
+    
+    for (const descendant of descendants) {
+      try {
+        const payload = {
+          ...descendant,
+          item_type: newItemType,
+          inventory_type: newItemType
+        };
+        await mastersAPI.updateItemCategory(descendant.id, payload);
+      } catch (error) {
+        console.error(`Failed to update descendant ${descendant.id}:`, error);
+      }
+    }
+  };
+
   const handleSave = async () => {
     // Validations
     if (!formData.category_name.trim()) {
@@ -139,6 +169,27 @@ const ItemCategoryMaster = () => {
       return;
     }
 
+    // Check if editing root category and item type changed
+    if (editMode && selectedCategory && !selectedCategory.parent_category) {
+      const oldItemType = selectedCategory.item_type || selectedCategory.inventory_type;
+      if (oldItemType !== formData.item_type) {
+        const descendants = getDescendants(selectedCategory.id);
+        if (descendants.length > 0) {
+          setPendingItemTypeChange({
+            newType: formData.item_type,
+            oldType: oldItemType,
+            affectedCount: descendants.length
+          });
+          setShowItemTypeWarning(true);
+          return; // Wait for user confirmation
+        }
+      }
+    }
+
+    await performSave();
+  };
+
+  const performSave = async () => {
     try {
       const level = formData.parent_category && formData.parent_category !== 'none'
         ? (categories.find(c => c.id === formData.parent_category)?.level || 0) + 1
@@ -153,19 +204,26 @@ const ItemCategoryMaster = () => {
         description: formData.description,
         is_active: formData.is_active,
         level,
-        // Backend required fields - USE FORM VALUES, NOT HARDCODED
+        // Backend required fields
         code: formData.category_short_code.toUpperCase(),
         name: formData.category_name.toUpperCase(),
-        inventory_type: formData.item_type,  // CRITICAL: Use selected item_type
+        inventory_type: formData.item_type,
         default_uom: 'PCS',
         status: formData.is_active ? 'Active' : 'Inactive'
       };
 
       console.log('Saving category with payload:', payload);
-      console.log('Item Type being saved:', formData.item_type);
 
       if (editMode && selectedCategory) {
         await mastersAPI.updateItemCategory(selectedCategory.id, payload);
+        
+        // Update all descendants if item type changed
+        if (pendingItemTypeChange) {
+          toast.info(`Updating ${pendingItemTypeChange.affectedCount} child categories...`);
+          await updateDescendantsItemType(selectedCategory.id, formData.item_type);
+          setPendingItemTypeChange(null);
+        }
+        
         toast.success(`Category updated successfully with Item Type: ${formData.item_type}`);
       } else {
         await mastersAPI.createItemCategory(payload);
