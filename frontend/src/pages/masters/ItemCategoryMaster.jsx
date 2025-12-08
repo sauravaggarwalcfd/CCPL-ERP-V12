@@ -140,42 +140,54 @@ const ItemCategoryMaster = () => {
 
   const updateDescendantsItemType = async (categoryId, newItemType) => {
     const descendants = getDescendants(categoryId);
+    const descendantIds = descendants.map(d => d.id);
     
-    console.log(`Updating ${descendants.length} descendants with Item Type: ${newItemType}`);
+    console.log(`Bulk updating ${descendants.length} descendants with Item Type: ${newItemType}`);
     
-    for (const descendant of descendants) {
-      try {
-        // Use MongoDB update to only change item_type fields
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/masters/item-categories/${descendant.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({
-            item_type: newItemType,
-            inventory_type: newItemType
-          })
-        });
-        
-        if (!response.ok) {
-          // If PATCH not supported, try minimal PUT
-          await mastersAPI.updateItemCategory(descendant.id, {
-            ...descendant,
-            item_type: newItemType,
-            inventory_type: newItemType,
-            created_at: undefined,  // Remove datetime to avoid serialization issues
-            updated_at: undefined
+    try {
+      // Use bulk update endpoint (safer - only updates item_type fields)
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/masters/item-categories/bulk-update-item-type`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          category_ids: descendantIds,
+          item_type: newItemType
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log(`✓ Bulk update successful: ${data.updated_count} categories updated`);
+        return data.updated_count;
+      } else {
+        throw new Error('Bulk update failed');
+      }
+    } catch (error) {
+      console.error('Bulk update error:', error);
+      // Fallback to individual updates
+      toast.warning('Using fallback update method...');
+      
+      for (const descendant of descendants) {
+        try {
+          await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/masters/item-categories/${descendant.id}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+              item_type: newItemType,
+              inventory_type: newItemType
+            })
           });
+        } catch (err) {
+          console.error(`Failed to update ${descendant.id}:`, err);
         }
-        
-        console.log(`✓ Updated: ${descendant.category_name || descendant.name}`);
-      } catch (error) {
-        console.error(`Failed to update descendant ${descendant.id}:`, error);
       }
     }
-    
-    console.log('All descendants updated successfully');
   };
 
   const handleSave = async () => {
