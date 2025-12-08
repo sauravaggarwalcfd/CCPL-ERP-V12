@@ -688,6 +688,18 @@ const ItemMasterFormEnhanced = () => {
             </div>
           </div>
           <div className="flex gap-3">
+            {id && (
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="lg"
+                onClick={handleCopyItem}
+                className="bg-white hover:bg-neutral-100 text-blue-700 border-white"
+              >
+                <Package className="h-5 w-5 mr-2" />
+                Copy Item
+              </Button>
+            )}
             <Button 
               type="button" 
               variant="outline" 
