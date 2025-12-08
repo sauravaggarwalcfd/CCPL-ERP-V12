@@ -803,7 +803,7 @@ const ItemMasterFormEnhanced = () => {
       </div>
 
       {/* Form Content */}
-      <form id="item-form" onSubmit={handleSubmit} className="max-w-6xl mx-auto px-8 py-8 space-y-8">
+      <form id="item-form" onSubmit={handleSubmit} className="max-w-full mx-auto px-8 py-6 space-y-6">
         {/* Basic Info Section */}
         <section id="basic" className="scroll-mt-32">
           <Card>
