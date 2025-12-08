@@ -257,20 +257,17 @@ const ItemCategoryMaster = () => {
         : 0;
 
       const payload = {
-        category_id: formData.category_id,
-        category_name: formData.category_name.toUpperCase(),
-        category_short_code: formData.category_short_code.toUpperCase(),
-        item_type: formData.item_type,
-        parent_category: formData.parent_category === 'none' ? null : formData.parent_category,
-        description: formData.description,
-        is_active: formData.is_active,
-        level,
-        // Backend required fields
+        id: formData.category_id || formData.id,  // Use existing ID or generate new one
         code: formData.category_short_code.toUpperCase(),
         name: formData.category_name.toUpperCase(),
+        parent_category: formData.parent_category === 'none' ? null : formData.parent_category,
+        item_type: formData.item_type,
+        category_short_code: formData.category_short_code.toUpperCase(),
         inventory_type: formData.item_type,
         default_uom: 'PCS',
-        status: formData.is_active ? 'Active' : 'Inactive'
+        is_active: formData.is_active,
+        status: formData.is_active ? 'Active' : 'Inactive',
+        level
       };
 
       console.log('Saving category with payload:', payload);
