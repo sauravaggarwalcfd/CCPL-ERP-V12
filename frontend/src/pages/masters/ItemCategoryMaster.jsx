@@ -118,6 +118,13 @@ const ItemCategoryMaster = () => {
     );
   };
 
+  const checkDuplicateShortCode = (shortCode) => {
+    return categories.some(cat => 
+      (cat.category_short_code || cat.code)?.toUpperCase() === shortCode.toUpperCase() &&
+      cat.id !== selectedCategory?.id
+    );
+  };
+
   const getDescendants = (categoryId) => {
     const descendants = [];
     const findChildren = (parentId) => {
