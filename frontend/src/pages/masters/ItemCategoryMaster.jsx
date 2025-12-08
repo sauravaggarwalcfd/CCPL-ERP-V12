@@ -272,7 +272,14 @@ const ItemCategoryMaster = () => {
 
   const filteredCategories = categories.filter(cat => {
     const catName = (cat.category_name || cat.name || '').toLowerCase();
-    return catName.includes(searchTerm.toLowerCase());
+    const matchesSearch = catName.includes(searchTerm.toLowerCase());
+    
+    const matchesType = itemTypeFilter === 'All' || cat.item_type === itemTypeFilter;
+    
+    const catStatus = cat.is_active !== false ? 'Active' : 'Inactive';
+    const matchesStatus = statusFilter === 'All' || catStatus === statusFilter;
+    
+    return matchesSearch && matchesType && matchesStatus;
   });
 
   return (
