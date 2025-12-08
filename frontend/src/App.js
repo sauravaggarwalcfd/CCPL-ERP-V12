@@ -26,6 +26,7 @@ import BrandMaster from '@/pages/masters/BrandMaster';
 import PurchaseIndents from '@/pages/purchase/PurchaseIndents';
 import PurchaseIndentForm from '@/pages/purchase/PurchaseIndentForm';
 import PurchaseOrders from '@/pages/purchase/PurchaseOrders';
+import PurchaseOrderForm from '@/pages/purchase/PurchaseOrderForm';
 import POApprovalPanel from '@/pages/purchase/POApprovalPanel';
 
 // Quality
