@@ -109,7 +109,7 @@ const BrandMaster = () => {
         </div>
         <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
           <DialogTrigger asChild>
-            <Button data-testid="create-brand-btn">
+            <Button data-testid="create-brand-btn" onClick={() => navigate('/masters/brands/new')}>
               <Plus className="h-4 w-4 mr-2" />
               Create Brand
             </Button>
