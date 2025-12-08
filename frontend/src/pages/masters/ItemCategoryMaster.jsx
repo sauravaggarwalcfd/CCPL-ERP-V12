@@ -80,6 +80,7 @@ const ItemCategoryMaster = () => {
     setFormData({
       category_id: generateCategoryID(),
       category_name: '',
+      category_short_code: '',
       parent_category: parentCategory.id,
       description: '',
       is_active: true
