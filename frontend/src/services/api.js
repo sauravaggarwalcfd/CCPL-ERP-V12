@@ -29,6 +29,13 @@ export const mastersAPI = {
   createItem: (data) => api.post('/masters/items', data),
   updateItem: (id, data) => api.put(`/masters/items/${id}`, data),
   deleteItem: (id) => api.delete(`/masters/items/${id}`),
+  previewNextItemCode: (categoryId) => api.get(`/masters/items/preview/next-code?category_id=${categoryId}`),
+  validateItemName: (itemName, categoryId, itemId = null) => {
+    const params = new URLSearchParams({ item_name: itemName, category_id: categoryId });
+    if (itemId) params.append('item_id', itemId);
+    return api.get(`/masters/items/validate/name?${params.toString()}`);
+  },
+  getLeafCategories: () => api.get('/masters/item-categories/leaf-only'),
 
   // UOMs
   getUOMs: () => api.get('/masters/uoms'),
