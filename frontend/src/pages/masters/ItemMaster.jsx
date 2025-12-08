@@ -407,7 +407,7 @@ const ItemMaster = () => {
                   <div className="flex flex-col items-center gap-2">
                     <Package className="h-12 w-12 text-neutral-300" />
                     <p className="text-neutral-600 font-medium">No items found</p>
-                    <p className="text-sm text-neutral-500">Click "Create Item" to add your first item</p>
+                    <p className="text-sm text-neutral-500">Click &quot;Create Item&quot; to add your first item</p>
                   </div>
                 </TableCell>
               </TableRow>
