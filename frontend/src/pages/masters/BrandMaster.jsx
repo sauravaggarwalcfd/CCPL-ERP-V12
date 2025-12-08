@@ -230,9 +230,43 @@ const BrandMaster = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell colSpan={8} className="text-center py-8 text-neutral-500">No brands found. Click "Create Brand" to add one.</TableCell>
-            </TableRow>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8 text-neutral-500">Loading...</TableCell>
+              </TableRow>
+            ) : brands.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center py-8 text-neutral-500">No brands found. Click "Create Brand" to add one.</TableCell>
+              </TableRow>
+            ) : (
+              brands
+                .filter(brand => 
+                  searchTerm === '' || 
+                  brand.brand_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  brand.brand_code?.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((brand) => (
+                  <TableRow key={brand.id}>
+                    <TableCell className="font-medium">{brand.brand_code}</TableCell>
+                    <TableCell>{brand.brand_name}</TableCell>
+                    <TableCell>{brand.brand_category}</TableCell>
+                    <TableCell>{brand.country_of_origin}</TableCell>
+                    <TableCell>{brand.target_market}</TableCell>
+                    <TableCell>{brand.contact_person}</TableCell>
+                    <TableCell><StatusBadge status={brand.status} /></TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => navigate(`/masters/brands/${brand.id}`)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
           </TableBody>
         </Table>
       </div>
