@@ -241,9 +241,44 @@ const SizeMaster = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell colSpan={9} className="text-center py-8 text-neutral-500">No sizes found. Click "Create Size" to add one.</TableCell>
-            </TableRow>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-8 text-neutral-500">Loading...</TableCell>
+              </TableRow>
+            ) : sizes.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-8 text-neutral-500">No sizes found. Click "Create Size" to add one.</TableCell>
+              </TableRow>
+            ) : (
+              sizes
+                .filter(size => 
+                  searchTerm === '' || 
+                  size.size_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  size.size_code?.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((size) => (
+                  <TableRow key={size.id}>
+                    <TableCell className="font-medium">{size.size_code}</TableCell>
+                    <TableCell>{size.size_name}</TableCell>
+                    <TableCell>{size.category}</TableCell>
+                    <TableCell>{size.age_group}</TableCell>
+                    <TableCell>{size.gender}</TableCell>
+                    <TableCell>{size.measurements?.chest || '-'}</TableCell>
+                    <TableCell>{size.measurements?.waist || '-'}</TableCell>
+                    <TableCell><StatusBadge status={size.status} /></TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => navigate(`/masters/sizes/${size.id}`)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
           </TableBody>
         </Table>
       </div>
