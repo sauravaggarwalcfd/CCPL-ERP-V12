@@ -610,7 +610,7 @@ class ERPBackendTester:
                 type_counts[item_type] = type_counts.get(item_type, 0) + 1
             
             print(f"   📊 Items by type:")
-            for itype, count in sorted(type_counts.items()):
+            for itype, count in sorted(type_counts.items(), key=lambda x: (x[0] is None, x[0])):
                 print(f"      - {itype}: {count}")
         
         print("\n" + "="*60)
