@@ -753,6 +753,169 @@ async def get_items(current_user: Dict = Depends(get_current_user)):
             item['created_at'] = datetime.fromisoformat(item['created_at'])
     return items
 
+@api_router.get("/masters/items/preview/next-code")
+async def preview_next_item_code(category_id: str, current_user: Dict = Depends(get_current_user)):
+    """Preview the next auto-generated item code for a category"""
+    try:
+        # Get category details
+        category = await db.item_categories.find_one({"id": category_id}, {"_id": 0})
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+        
+        item_type = category.get('item_type', 'GENERAL')
+        category_short_code = category.get('category_short_code') or category.get('code', 'GEN')
+        
+        # Get type code prefix
+        type_code = await get_item_type_code(item_type)
+        
+        # Get next running number (without incrementing)
+        counter_key = f"item_code_{category_id}"
+        counter = await db.counters.find_one({"key": counter_key})
+        next_num = (counter['value'] + 1) if counter else 1
+        
+        # Format preview code
+        preview_code = f"{type_code}-{category_short_code}-{str(next_num).zfill(4)}"
+        
+        return {
+            "preview_code": preview_code,
+            "item_type": item_type,
+            "type_code": type_code,
+            "category_short_code": category_short_code,
+            "running_number": next_num
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.get("/masters/items/validate/name")
+async def validate_item_name(item_name: str, category_id: str, item_id: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+    """Validate if item name is unique within the category"""
+    query = {"item_name": item_name, "category_id": category_id}
+    
+    # Exclude current item if updating
+    if item_id:
+        query["id"] = {"$ne": item_id}
+    
+    existing = await db.items.find_one(query, {"_id": 0})
+    
+    return {
+        "is_unique": existing is None,
+        "exists": existing is not None,
+        "message": "Item name already exists in this category" if existing else "Item name is unique"
+    }
+
+# ============ Integration-Ready Helper Endpoints (MUST come before {item_id} route) ============
+
+@api_router.get("/masters/items/by-code/{item_code}")
+async def get_item_by_code(item_code: str, current_user: Dict = Depends(get_current_user)):
+    """Get item details by item code - Useful for Purchase/GRN modules"""
+    item = await db.items.find_one({"item_code": item_code}, {"_id": 0})
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    if isinstance(item.get('created_at'), str):
+        item['created_at'] = datetime.fromisoformat(item['created_at'])
+    if isinstance(item.get('updated_at'), str):
+        item['updated_at'] = datetime.fromisoformat(item['updated_at'])
+    return item
+
+@api_router.get("/masters/items/by-category/{category_id}")
+async def get_items_by_category(category_id: str, current_user: Dict = Depends(get_current_user)):
+    """Get all items in a category - Useful for BOM/Production modules"""
+    items = await db.items.find({"category_id": category_id}, {"_id": 0}).to_list(1000)
+    for item in items:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+        if isinstance(item.get('updated_at'), str):
+            item['updated_at'] = datetime.fromisoformat(item['updated_at'])
+    return items
+
+@api_router.get("/masters/items/by-type/{item_type}")
+async def get_items_by_type(item_type: str, current_user: Dict = Depends(get_current_user)):
+    """Get all items of a specific type - Useful for filtering RM, FG, etc."""
+    items = await db.items.find({"item_type": item_type, "is_active": True}, {"_id": 0}).to_list(1000)
+    for item in items:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+        if isinstance(item.get('updated_at'), str):
+            item['updated_at'] = datetime.fromisoformat(item['updated_at'])
+    return items
+
+@api_router.get("/masters/items/components")
+async def get_component_items(current_user: Dict = Depends(get_current_user)):
+    """Get all items that can be used as components in BOM"""
+    items = await db.items.find({"is_component": True, "is_active": True}, {"_id": 0}).to_list(1000)
+    for item in items:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+        if isinstance(item.get('updated_at'), str):
+            item['updated_at'] = datetime.fromisoformat(item['updated_at'])
+    return items
+
+@api_router.get("/masters/items/finished-goods")
+async def get_finished_goods(current_user: Dict = Depends(get_current_user)):
+    """Get all finished good items"""
+    items = await db.items.find({"is_finished_good": True, "is_active": True}, {"_id": 0}).to_list(1000)
+    for item in items:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+        if isinstance(item.get('updated_at'), str):
+            item['updated_at'] = datetime.fromisoformat(item['updated_at'])
+    return items
+
+@api_router.get("/masters/items/low-stock")
+async def get_low_stock_items(current_user: Dict = Depends(get_current_user)):
+    """Get items below reorder level - For Purchase Indent automation"""
+    items = await db.items.find({"is_active": True}, {"_id": 0}).to_list(1000)
+    low_stock_items = []
+    
+    for item in items:
+        # Get current stock from stock_balance
+        stock = await db.stock_balance.find_one({"item_id": item['id']}, {"_id": 0})
+        current_stock = sum([s.get('qty', 0) for s in await db.stock_balance.find({"item_id": item['id']}, {"_id": 0}).to_list(100)]) if stock else 0
+        
+        if current_stock <= item.get('reorder_level', 0):
+            item['current_stock'] = current_stock
+            item['shortage'] = item.get('reorder_level', 0) - current_stock
+            if isinstance(item.get('created_at'), str):
+                item['created_at'] = datetime.fromisoformat(item['created_at'])
+            if isinstance(item.get('updated_at'), str):
+                item['updated_at'] = datetime.fromisoformat(item['updated_at'])
+            low_stock_items.append(item)
+    
+    return low_stock_items
+
+@api_router.get("/masters/items/search")
+async def search_items(
+    q: str,
+    item_type: Optional[str] = None,
+    category_id: Optional[str] = None,
+    limit: int = 50,
+    current_user: Dict = Depends(get_current_user)
+):
+    """Search items by name or code - Useful for all transaction modules"""
+    query = {
+        "$or": [
+            {"item_name": {"$regex": q, "$options": "i"}},
+            {"item_code": {"$regex": q, "$options": "i"}}
+        ],
+        "is_active": True
+    }
+    
+    if item_type:
+        query["item_type"] = item_type
+    if category_id:
+        query["category_id"] = category_id
+    
+    items = await db.items.find(query, {"_id": 0}).limit(limit).to_list(limit)
+    for item in items:
+        if isinstance(item.get('created_at'), str):
+            item['created_at'] = datetime.fromisoformat(item['created_at'])
+        if isinstance(item.get('updated_at'), str):
+            item['updated_at'] = datetime.fromisoformat(item['updated_at'])
+    
+    return items
+
 @api_router.get("/masters/items/{item_id}", response_model=ItemMaster)
 async def get_item(item_id: str, current_user: Dict = Depends(get_current_user)):
     item = await db.items.find_one({"id": item_id}, {"_id": 0})
