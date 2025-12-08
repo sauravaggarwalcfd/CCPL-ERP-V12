@@ -228,10 +228,18 @@ const ItemMaster = () => {
     setActiveTab('basic');
   };
 
-  const filteredItems = items.filter(item =>
-    item.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.item_code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredItems = items.filter(item => {
+    const matchesSearch = item.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.item_code.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesType = filterType === 'all' || item.item_type === filterType;
+    
+    const matchesStatus = filterStatus === 'all' || 
+      (filterStatus === 'active' && item.is_active !== false) ||
+      (filterStatus === 'inactive' && item.is_active === false);
+    
+    return matchesSearch && matchesType && matchesStatus;
+  });
 
   const isFabric = formData.item_type === 'FABRIC';
   const isTrim = formData.item_type === 'TRIM';
