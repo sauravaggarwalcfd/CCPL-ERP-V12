@@ -74,7 +74,7 @@ const ItemMasterFormEnhanced = () => {
           setFormData(parsedData);
           
           // Set category details if category exists
-          if (parsedData.category_id) {
+          if (parsedData.category_id && categories.length > 0) {
             handleCategoryChange(parsedData.category_id);
           }
           
@@ -85,6 +85,7 @@ const ItemMasterFormEnhanced = () => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchMasterData = async () => {
