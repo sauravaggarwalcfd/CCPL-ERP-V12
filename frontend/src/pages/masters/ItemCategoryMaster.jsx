@@ -210,6 +210,18 @@ const ItemCategoryMaster = () => {
 
   const performSave = async () => {
     try {
+      // Additional validation for short code
+      if (!formData.category_short_code.trim()) {
+        toast.error('Category Short Code is required');
+        return;
+      }
+      
+      // Check duplicate short code
+      if (checkDuplicateShortCode(formData.category_short_code)) {
+        toast.error('Category Short Code already exists. Please use a unique code.');
+        return;
+      }
+
       const level = formData.parent_category && formData.parent_category !== 'none'
         ? (categories.find(c => c.id === formData.parent_category)?.level || 0) + 1
         : 0;
@@ -241,6 +253,7 @@ const ItemCategoryMaster = () => {
           toast.info(`Updating ${pendingItemTypeChange.affectedCount} child categories...`);
           await updateDescendantsItemType(selectedCategory.id, formData.item_type);
           setPendingItemTypeChange(null);
+          toast.success(`Updated ${pendingItemTypeChange.affectedCount} child categories to Item Type: ${formData.item_type}`);
         }
         
         toast.success(`Category updated successfully with Item Type: ${formData.item_type}`);
@@ -249,7 +262,7 @@ const ItemCategoryMaster = () => {
         toast.success(`Category created successfully with Item Type: ${formData.item_type}`);
       }
       
-      fetchCategories();
+      await fetchCategories(); // Wait for refresh
       handleNew();
     } catch (error) {
       console.error('Save error:', error);
