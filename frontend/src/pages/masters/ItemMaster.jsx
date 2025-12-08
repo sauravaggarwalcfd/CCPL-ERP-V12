@@ -709,7 +709,7 @@ const ItemMaster = () => {
         </Dialog>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
           <Input
@@ -720,6 +720,31 @@ const ItemMaster = () => {
             data-testid="search-items-input"
           />
         </div>
+        <Select value={filterType} onValueChange={setFilterType}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Filter by Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="FABRIC">Fabric</SelectItem>
+            <SelectItem value="RM">Raw Material (Trims)</SelectItem>
+            <SelectItem value="FG">Finished Goods</SelectItem>
+            <SelectItem value="PACKING">Packing</SelectItem>
+            <SelectItem value="CONSUMABLE">Consumable</SelectItem>
+            <SelectItem value="GENERAL">General</SelectItem>
+            <SelectItem value="ACCESSORY">Accessory</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden">
