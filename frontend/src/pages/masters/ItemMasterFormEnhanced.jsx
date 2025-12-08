@@ -36,6 +36,7 @@ const ItemMasterFormEnhanced = () => {
     
     // Image & Document
     item_image: '',
+    item_image_preview: '',  // For thumbnail preview
     item_document: '',
     
     // UOM
