@@ -628,7 +628,18 @@ const ItemMasterFormEnhanced = () => {
       );
     }
 
-    // Default: No specific attributes
+    // Default: No specific attributes OR RM without Fabric/Trim category
+    if (itemType === 'RM' && !isFabricCategory && !isTrimCategory) {
+      return (
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            RM (Raw Material) selected but category is neither Fabric nor Trims. Please select appropriate fields manually or choose a Fabric/Trim category.
+          </AlertDescription>
+        </Alert>
+      );
+    }
+
     return (
       <Alert>
         <AlertCircle className="h-4 w-4" />
