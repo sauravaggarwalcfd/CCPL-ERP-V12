@@ -400,11 +400,11 @@ const ItemMaster = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-12 text-neutral-500">Loading items...</TableCell>
+                <TableCell colSpan={10} className="text-center py-12 text-neutral-500">Loading items...</TableCell>
               </TableRow>
             ) : filteredItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-12">
+                <TableCell colSpan={10} className="text-center py-12">
                   <div className="flex flex-col items-center gap-2">
                     <Package className="h-12 w-12 text-neutral-300" />
                     <p className="text-neutral-600 font-medium">No items found</p>
