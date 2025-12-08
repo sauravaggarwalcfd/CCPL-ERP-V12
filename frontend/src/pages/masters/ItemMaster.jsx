@@ -308,7 +308,7 @@ const ItemMaster = () => {
   const isTrim = formData.item_type === 'TRIM';
 
   return (
-    <div className="space-y-6" data-testid="item-master-page">
+    <div className="space-y-6 w-full max-w-full" data-testid="item-master-page">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-heading font-semibold tracking-tight text-neutral-900">Item Master</h1>
