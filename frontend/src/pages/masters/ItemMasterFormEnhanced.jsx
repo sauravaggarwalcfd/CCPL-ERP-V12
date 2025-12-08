@@ -784,7 +784,19 @@ const ItemMasterFormEnhanced = () => {
               {/* Category & Item Type */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Item Category *</Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-semibold">Item Category *</Label>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-blue-600 hover:text-blue-700 h-auto p-0"
+                      onClick={() => window.open('/masters/item-categories', '_blank')}
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      Create New Category
+                    </Button>
+                  </div>
                   <Select 
                     value={formData.category_id} 
                     onValueChange={handleCategoryChange}
@@ -806,9 +818,10 @@ const ItemMasterFormEnhanced = () => {
                     </SelectContent>
                   </Select>
                   {selectedCategoryDetails && (
-                    <p className="text-sm text-neutral-600">
-                      📂 {selectedCategoryDetails.path}
-                    </p>
+                    <div className="flex items-center gap-2 text-sm text-neutral-600 bg-neutral-50 px-3 py-2 rounded-md border border-neutral-200">
+                      <span className="font-medium">Path:</span>
+                      <span className="text-neutral-700">{selectedCategoryDetails.path}</span>
+                    </div>
                   )}
                 </div>
                 <div className="space-y-2">
