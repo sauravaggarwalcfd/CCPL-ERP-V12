@@ -144,15 +144,16 @@ const ItemCategoryMaster = () => {
 
       const payload = {
         category_id: formData.category_id,
-        category_name: formData.category_name,
+        category_name: formData.category_name.toUpperCase(),
         category_short_code: formData.category_short_code.toUpperCase(),
+        item_type: formData.item_type,
         parent_category: formData.parent_category === 'none' ? null : formData.parent_category,
         description: formData.description,
         is_active: formData.is_active,
         level,
         // Backend required fields
         code: formData.category_short_code.toUpperCase(),
-        name: formData.category_name,
+        name: formData.category_name.toUpperCase(),
         inventory_type: 'RAW',
         default_uom: 'PCS',
         status: formData.is_active ? 'Active' : 'Inactive'
