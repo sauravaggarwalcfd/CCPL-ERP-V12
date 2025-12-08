@@ -34,6 +34,10 @@ const ItemMasterFormEnhanced = () => {
     category_name: '',
     description: '',
     
+    // Image & Document
+    item_image: '',
+    item_document: '',
+    
     // UOM
     uom: '',
     purchase_uom: '',
