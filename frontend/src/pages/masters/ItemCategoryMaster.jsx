@@ -399,6 +399,77 @@ const ItemCategoryMaster = () => {
                 <p className="text-xs text-blue-600">Used for auto-generating item codes (e.g., LABL-0001, BTN-0045)</p>
               </div>
 
+              {/* Item Type - Conditional */}
+              <div className="space-y-2">
+                <Label htmlFor="item_type" className="text-base font-medium">
+                  Item Type {(!formData.parent_category || formData.parent_category === 'none') ? '*' : '(Inherited)'}
+                </Label>
+                {(!formData.parent_category || formData.parent_category === 'none') ? (
+                  <>
+                    <div className="flex gap-2">
+                      <Select value={formData.item_type} onValueChange={(value) => setFormData({ ...formData, item_type: value })}>
+                        <SelectTrigger className="h-11 text-base flex-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {itemTypes.map(type => (
+                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                          ))}
+                          <SelectItem value="_add_new" className="text-blue-600 font-medium">+ Add New Type...</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {showAddItemType && (
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="New type"
+                            value={newItemType}
+                            onChange={(e) => setNewItemType(e.target.value.toUpperCase())}
+                            className="h-11 w-40"
+                            maxLength={12}
+                          />
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => {
+                              if (newItemType.trim() && !itemTypes.includes(newItemType.trim())) {
+                                setItemTypes([...itemTypes, newItemType.trim()]);
+                                setFormData({ ...formData, item_type: newItemType.trim() });
+                                setNewItemType('');
+                                setShowAddItemType(false);
+                                toast.success(`Item type "${newItemType}" added`);
+                              }
+                            }}
+                          >
+                            Add
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setShowAddItemType(false);
+                              setNewItemType('');
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-green-600">Editable for root categories only</p>
+                  </>
+                ) : (
+                  <>
+                    <Input
+                      value={formData.item_type}
+                      disabled
+                      className="h-11 text-base bg-amber-50 border-amber-300 font-semibold"
+                    />
+                    <p className="text-xs text-amber-600">Inherited from parent category (read-only)</p>
+                  </>
+                )}
+              </div>
+
               {/* Parent Category */}
               <div className="space-y-2">
                 <Label htmlFor="parent_category" className="text-base font-medium">
