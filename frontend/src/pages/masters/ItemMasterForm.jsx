@@ -25,6 +25,7 @@ const ItemMasterForm = () => {
     // Auto-generated fields
     uid_code: '',
     item_code: '',
+    next_code_preview: '',
     
     // Basic Info
     item_image: '',
