@@ -87,6 +87,44 @@ const ItemMasterForm = () => {
     }
   };
 
+  // Category helper functions
+  const isLeafCategory = (categoryId) => {
+    return !categories.some(c => c.parent_category === categoryId);
+  };
+
+  const getCategoryPath = (categoryId) => {
+    const path = [];
+    let current = categories.find(c => c.id === categoryId);
+    while (current) {
+      path.unshift(current.category_name || current.name);
+      current = categories.find(c => c.id === current.parent_category);
+    }
+    return path.join(' > ');
+  };
+
+  const getActiveLeafCategories = () => {
+    return categories.filter(cat => {
+      const isActive = cat.is_active !== false && cat.status === 'Active';
+      const isLeaf = isLeafCategory(cat.id);
+      return isActive && isLeaf;
+    });
+  };
+
+  const handleCategoryChange = (categoryId) => {
+    if (!isLeafCategory(categoryId)) {
+      toast.error('Please select the lowest-level category. Parent categories cannot be selected.');
+      return;
+    }
+
+    const path = getCategoryPath(categoryId);
+    setFormData({
+      ...formData,
+      item_category: categoryId,
+      category_path: path
+    });
+    toast.success(`Category selected: ${path}`, { duration: 2000 });
+  };
+
   const fetchItem = async (itemId) => {
     try {
       setLoading(true);
