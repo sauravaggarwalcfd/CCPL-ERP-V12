@@ -111,17 +111,49 @@ const ItemMasterForm = () => {
     });
   };
 
-  const handleCategoryChange = (categoryId) => {
+  const getNextItemCode = async (categoryId) => {
+    try {
+      const category = categories.find(c => c.id === categoryId);
+      const shortCode = category?.category_short_code || category?.code?.substring(0, 4) || 'ITEM';
+      
+      // Get all items with this category to find next number
+      const response = await mastersAPI.getItems();
+      const items = response.data || [];
+      const categoryItems = items.filter(item => item.category_id === categoryId || item.item_category === categoryId);
+      
+      let maxNumber = 0;
+      categoryItems.forEach(item => {
+        const code = item.item_code || '';
+        const match = code.match(/-(\d{4})$/);
+        if (match) {
+          const num = parseInt(match[1]);
+          if (num > maxNumber) maxNumber = num;
+        }
+      });
+      
+      const nextNumber = maxNumber + 1;
+      const nextCode = `${shortCode}-${String(nextNumber).padStart(4, '0')}`;
+      return nextCode;
+    } catch (error) {
+      return 'XXXX-0001';
+    }
+  };
+
+  const handleCategoryChange = async (categoryId) => {
     if (!isLeafCategory(categoryId)) {
       toast.error('Please select the lowest-level category. Parent categories cannot be selected.');
       return;
     }
 
     const path = getCategoryPath(categoryId);
+    const nextCode = await getNextItemCode(categoryId);
+    
     setFormData({
       ...formData,
       item_category: categoryId,
-      category_path: path
+      category_path: path,
+      item_code: nextCode,
+      next_code_preview: nextCode
     });
     toast.success(`Category selected: ${path}`, { duration: 2000 });
   };
