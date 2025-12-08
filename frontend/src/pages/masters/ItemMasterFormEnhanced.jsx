@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Save, X, FileText, TrendingUp, ArrowLeft, Package, Settings, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Save, X, FileText, TrendingUp, ArrowLeft, Package, Settings, AlertCircle, CheckCircle2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 const ItemMasterFormEnhanced = () => {
