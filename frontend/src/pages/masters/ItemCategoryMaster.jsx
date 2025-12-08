@@ -23,10 +23,15 @@ const ItemCategoryMaster = () => {
     category_id: '',
     category_name: '',
     category_short_code: '',
+    item_type: 'RM',
     parent_category: '',
     description: '',
     is_active: true
   });
+
+  const [itemTypes, setItemTypes] = useState(['RM', 'FG', 'PACKING', 'ACCESSORY', 'CONSUMABLE', 'GENERAL', 'SERVICE']);
+  const [showAddItemType, setShowAddItemType] = useState(false);
+  const [newItemType, setNewItemType] = useState('');
 
   useEffect(() => {
     fetchCategories();
