@@ -415,24 +415,37 @@ const ItemMaster = () => {
             ) : (
               filteredItems.map((item) => (
                 <TableRow key={item.id} className="hover:bg-neutral-50 transition-colors">
-                  <TableCell className="font-mono text-sm">{item.item_code}</TableCell>
-                  <TableCell className="font-medium">{item.item_name}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{item.item_type || 'GENERAL'}</Badge>
+                  <TableCell className="p-2">
+                    {item.item_image || item.item_image_preview ? (
+                      <img 
+                        src={item.item_image_preview || item.item_image || '/placeholder-item.png'} 
+                        alt={item.item_name}
+                        className="h-10 w-10 object-cover rounded border border-neutral-200"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 bg-neutral-100 rounded border border-neutral-200 flex items-center justify-center">
+                        <Package className="h-5 w-5 text-neutral-400" />
+                      </div>
+                    )}
                   </TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>{item.stock_uom || item.uom}</TableCell>
-                  <TableCell>{item.min_stock_level || item.reorder_level || '-'}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono text-sm p-2">{item.item_code}</TableCell>
+                  <TableCell className="font-medium p-2">{item.item_name}</TableCell>
+                  <TableCell className="p-2">
+                    <Badge variant="outline" className="text-xs">{item.item_type || 'GENERAL'}</Badge>
+                  </TableCell>
+                  <TableCell className="p-2">{item.category}</TableCell>
+                  <TableCell className="p-2">{item.stock_uom || item.uom}</TableCell>
+                  <TableCell className="p-2">{item.min_stock_level || item.reorder_level || '-'}</TableCell>
+                  <TableCell className="p-2">
                     <div className="flex gap-1">
                       {item.is_batch_controlled && <Badge variant="secondary" className="text-xs">Batch</Badge>}
                       {item.is_serial_controlled && <Badge variant="secondary" className="text-xs">Serial</Badge>}
                       {item.has_expiry_tracking && <Badge variant="secondary" className="text-xs">Expiry</Badge>}
                     </div>
                   </TableCell>
-                  <TableCell><StatusBadge status={item.status} /></TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
+                  <TableCell className="p-2"><StatusBadge status={item.status} /></TableCell>
+                  <TableCell className="text-right p-2">
+                    <div className="flex items-center justify-end gap-1">
                       <Button variant="ghost" size="icon" onClick={() => viewAuditTrail(item)} data-testid={`audit-item-${item.id}`}>
                         <History className="h-4 w-4 text-blue-600" />
                       </Button>
