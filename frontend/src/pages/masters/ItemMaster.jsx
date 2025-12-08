@@ -382,21 +382,22 @@ const ItemMaster = () => {
       </div>
 
       <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-neutral-50">
-              <TableHead className="font-semibold w-12">Image</TableHead>
-              <TableHead className="font-semibold w-32">Item Code</TableHead>
-              <TableHead className="font-semibold">Item Name</TableHead>
-              <TableHead className="font-semibold w-28">Type</TableHead>
-              <TableHead className="font-semibold w-32">Category</TableHead>
-              <TableHead className="font-semibold w-20">UOM</TableHead>
-              <TableHead className="font-semibold w-24">Min Stock</TableHead>
-              <TableHead className="font-semibold w-28">Controls</TableHead>
-              <TableHead className="font-semibold w-20">Status</TableHead>
-              <TableHead className="font-semibold text-right w-28">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+        <div className="overflow-x-auto">
+          <Table className="table-compact">
+            <TableHeader>
+              <TableRow className="bg-neutral-50">
+                <TableHead className="font-semibold w-12 px-2 py-2">Image</TableHead>
+                <TableHead className="font-semibold w-32 px-2 py-2">Item Code</TableHead>
+                <TableHead className="font-semibold px-3 py-2">Item Name</TableHead>
+                <TableHead className="font-semibold w-28 px-2 py-2">Type</TableHead>
+                <TableHead className="font-semibold w-32 px-2 py-2">Category</TableHead>
+                <TableHead className="font-semibold w-20 px-2 py-2">UOM</TableHead>
+                <TableHead className="font-semibold w-24 px-2 py-2">Min Stock</TableHead>
+                <TableHead className="font-semibold w-28 px-2 py-2">Controls</TableHead>
+                <TableHead className="font-semibold w-20 px-2 py-2">Status</TableHead>
+                <TableHead className="font-semibold text-right w-28 px-2 py-2">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
