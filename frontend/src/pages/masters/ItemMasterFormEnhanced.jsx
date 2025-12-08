@@ -1114,34 +1114,31 @@ const ItemMasterFormEnhanced = () => {
               <CardTitle className="text-2xl text-purple-900">Additional Information</CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">HSN Code</Label>
+                  <Label className="text-sm font-semibold">HSN Code</Label>
                   <Input
                     value={formData.hsn}
                     onChange={(e) => setFormData({ ...formData, hsn: e.target.value })}
                     placeholder="6302"
-                    className="text-base"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Barcode</Label>
+                  <Label className="text-sm font-semibold">Barcode</Label>
                   <Input
                     value={formData.barcode}
                     onChange={(e) => setFormData({ ...formData, barcode: e.target.value })}
                     placeholder="Scan or enter barcode"
-                    className="text-base"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-base font-semibold">Remarks</Label>
+                <Label className="text-sm font-semibold">Remarks</Label>
                 <Textarea
                   value={formData.remarks}
                   onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
                   placeholder="Additional notes"
-                  rows={3}
-                  className="text-base"
+                  rows={2}
                 />
               </div>
               <div className="flex items-center space-x-4">
