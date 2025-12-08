@@ -305,9 +305,25 @@ const ItemMasterFormEnhanced = () => {
   // Render type-specific attribute fields
   const renderTypeSpecificFields = () => {
     const itemType = formData.item_type;
+    const categoryName = formData.category_name || '';
     const attrs = formData.type_specific_attributes || {};
 
-    if (itemType === 'FABRIC') {
+    // Check if category is Fabric-related (within RM)
+    const isFabricCategory = categoryName.toLowerCase().includes('fabric') || 
+                             categoryName.toLowerCase().includes('knit') ||
+                             categoryName.toLowerCase().includes('woven') ||
+                             categoryName.toLowerCase().includes('fleece');
+    
+    // Check if category is Trim-related (within RM)
+    const isTrimCategory = categoryName.toLowerCase().includes('trim') ||
+                           categoryName.toLowerCase().includes('label') ||
+                           categoryName.toLowerCase().includes('button') ||
+                           categoryName.toLowerCase().includes('zip') ||
+                           categoryName.toLowerCase().includes('tape') ||
+                           categoryName.toLowerCase().includes('elastic');
+
+    // RM + Fabric Category = Show Fabric Fields
+    if (itemType === 'RM' && isFabricCategory) {
       return (
         <Card className="border-blue-200 bg-blue-50">
           <CardHeader>
