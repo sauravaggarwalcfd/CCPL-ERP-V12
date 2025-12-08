@@ -103,7 +103,7 @@
 #====================================================================================================
 
 
-user_problem_statement: "CRITICAL BUG - Item Category tree children disappear after updating parent's Item Type. Database verification confirms children are NOT deleted from MongoDB. This is a FRONTEND RENDERING issue with the tree view component."
+user_problem_statement: "Testing Item Master Enhanced Features - New endpoints for auto-code generation, name validation, leaf categories, and enhanced item model with type-specific attributes, purchase UOM, and conversion factors."
 
 frontend:
   - task: "Item Category Master - Tree View Rendering"
