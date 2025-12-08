@@ -403,14 +403,37 @@ const ItemMasterForm = () => {
                 <div className="grid grid-cols-4 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="item_category" className="text-base font-medium">Item Category *</Label>
-                    <Select value={formData.item_category} onValueChange={(value) => setFormData({ ...formData, item_category: value })}>
+                    <Select value={formData.item_category} onValueChange={handleCategoryChange}>
                       <SelectTrigger className="h-11 text-base" data-testid="category-select">
-                        <SelectValue placeholder="Select category" />
+                        <SelectValue placeholder="Select leaf category only" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map(cat => <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>)}
+                        {getActiveLeafCategories().map(cat => {
+                          const catName = cat.category_name || cat.name;
+                          const path = getCategoryPath(cat.id);
+                          const level = cat.level || 0;
+                          return (
+                            <SelectItem key={cat.id} value={cat.id}>
+                              <div className="flex flex-col">
+                                <div className="flex items-center gap-2">
+                                  {'  '.repeat(level)}
+                                  <span>{catName}</span>
+                                  <Badge variant="outline" className="text-xs">Leaf</Badge>
+                                </div>
+                                <div className="text-xs text-neutral-500 mt-0.5">{path}</div>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
+                    <p className="text-xs text-neutral-500">Only leaf categories (no children) can be selected</p>
+                    {formData.category_path && (
+                      <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded">
+                        <p className="text-xs text-green-700 font-medium mb-1">Selected Category Path:</p>
+                        <p className="text-sm font-semibold text-green-900">{formData.category_path}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="item_group_1" className="text-base font-medium">Item Group 1</Label>
