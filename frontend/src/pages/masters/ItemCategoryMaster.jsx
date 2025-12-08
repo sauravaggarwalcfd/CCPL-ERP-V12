@@ -22,6 +22,7 @@ const ItemCategoryMaster = () => {
   const [formData, setFormData] = useState({
     category_id: '',
     category_name: '',
+    category_short_code: '',
     parent_category: '',
     description: '',
     is_active: true
