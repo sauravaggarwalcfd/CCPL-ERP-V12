@@ -137,9 +137,20 @@ const ItemCategoryMaster = () => {
     for (const descendant of descendants) {
       try {
         const payload = {
-          ...descendant,
+          id: descendant.id,
+          category_id: descendant.category_id || descendant.id,
+          category_name: descendant.category_name || descendant.name,
+          category_short_code: descendant.category_short_code || descendant.code,
+          code: descendant.category_short_code || descendant.code,
+          name: descendant.category_name || descendant.name,
+          parent_category: descendant.parent_category,
+          level: descendant.level,
           item_type: newItemType,
-          inventory_type: newItemType
+          inventory_type: newItemType,
+          default_uom: descendant.default_uom || 'PCS',
+          description: descendant.description || '',
+          is_active: descendant.is_active !== false,
+          status: descendant.is_active !== false ? 'Active' : 'Inactive'
         };
         await mastersAPI.updateItemCategory(descendant.id, payload);
       } catch (error) {
