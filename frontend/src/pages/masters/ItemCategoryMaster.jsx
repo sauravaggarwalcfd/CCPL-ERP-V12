@@ -67,6 +67,7 @@ const ItemCategoryMaster = () => {
     setFormData({
       category_id: category.category_id || category.id,
       category_name: category.category_name || category.name,
+      category_short_code: category.category_short_code || category.code?.substring(0, 4) || '',
       parent_category: category.parent_category || '',
       description: category.description || '',
       is_active: category.is_active !== false
