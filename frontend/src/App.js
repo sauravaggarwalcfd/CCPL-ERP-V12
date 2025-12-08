@@ -125,6 +125,11 @@ function App() {
               <Route path="masters/suppliers/new" element={<SupplierForm />} />
               <Route path="masters/suppliers/edit/:id" element={<SupplierForm />} />
               <Route path="masters/uoms" element={<UOMMaster />} />
+              <Route path="masters/uoms/new" element={<UOMForm />} />
+              <Route path="masters/uoms/edit/:id" element={<UOMForm />} />
+              <Route path="masters/warehouses" element={<WarehouseMaster />} />
+              <Route path="masters/warehouses/new" element={<WarehouseForm />} />
+              <Route path="masters/warehouses/edit/:id" element={<WarehouseForm />} />
               <Route path="masters/suppliers" element={<SupplierMaster />} />
               <Route path="masters/warehouses" element={<WarehouseMaster />} />
               <Route path="masters/bin-locations" element={<BINLocationMaster />} />
