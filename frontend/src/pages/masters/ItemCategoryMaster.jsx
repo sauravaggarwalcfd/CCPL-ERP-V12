@@ -17,6 +17,8 @@ const ItemCategoryMaster = () => {
   const [expandedCategories, setExpandedCategories] = useState(new Set());
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [itemTypeFilter, setItemTypeFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
   const [editMode, setEditMode] = useState(false);
 
   const [formData, setFormData] = useState({
