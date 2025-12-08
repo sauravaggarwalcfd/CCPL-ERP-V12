@@ -1,0 +1,481 @@
+import React, { useState, useEffect } from 'react';
+import { mastersAPI } from '@/services/api';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Save, X, Plus, Edit, Trash2, ChevronRight, ChevronDown, FolderTree, Search } from 'lucide-react';
+import { toast } from 'sonner';
+
+const ItemCategoryMaster = () => {
+  const [categories, setCategories] = useState([]);
+  const [expandedCategories, setExpandedCategories] = useState(new Set());
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editMode, setEditMode] = useState(false);
+
+  const [formData, setFormData] = useState({
+    category_id: '',
+    category_name: '',
+    parent_category: '',
+    description: '',
+    is_active: true
+  });
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await mastersAPI.getItemCategories();
+      const data = response.data || [];
+      setCategories(data);
+      // Expand root categories by default
+      const rootIds = data.filter(c => !c.parent_category).map(c => c.id);
+      setExpandedCategories(new Set(rootIds));
+    } catch (error) {
+      toast.error('Failed to load categories');
+    }
+  };
+
+  const generateCategoryID = () => {
+    const count = categories.length + 1;
+    return `CAT-${String(count).padStart(4, '0')}`;
+  };
+
+  const handleNew = () => {
+    setFormData({
+      category_id: generateCategoryID(),
+      category_name: '',
+      parent_category: '',
+      description: '',
+      is_active: true
+    });
+    setSelectedCategory(null);
+    setEditMode(false);
+  };
+
+  const handleEdit = (category) => {
+    setFormData({
+      category_id: category.category_id || category.id,
+      category_name: category.category_name || category.name,
+      parent_category: category.parent_category || '',
+      description: category.description || '',
+      is_active: category.is_active !== false
+    });
+    setSelectedCategory(category);
+    setEditMode(true);
+  };
+
+  const handleAddChild = (parentCategory) => {
+    setFormData({
+      category_id: generateCategoryID(),
+      category_name: '',
+      parent_category: parentCategory.id,
+      description: '',
+      is_active: true
+    });
+    setSelectedCategory(null);
+    setEditMode(false);
+    toast.info(`Adding child category under ${parentCategory.category_name || parentCategory.name}`);
+  };
+
+  const checkDuplicateName = (name, parentId) => {
+    return categories.some(cat => 
+      (cat.category_name || cat.name)?.toLowerCase() === name.toLowerCase() && 
+      (cat.parent_category || '') === (parentId || '') &&
+      cat.id !== selectedCategory?.id
+    );
+  };
+
+  const handleSave = async () => {
+    // Validations
+    if (!formData.category_name.trim()) {
+      toast.error('Category Name is required');
+      return;
+    }
+
+    // Check duplicate under same parent
+    const parentId = formData.parent_category === 'none' ? '' : formData.parent_category;
+    if (checkDuplicateName(formData.category_name, parentId)) {
+      toast.error('Category name already exists under this parent. Please use a unique name.');
+      return;
+    }
+
+    try {
+      const level = formData.parent_category && formData.parent_category !== 'none'
+        ? (categories.find(c => c.id === formData.parent_category)?.level || 0) + 1
+        : 0;
+
+      const payload = {
+        ...formData,
+        level,
+        parent_category: formData.parent_category === 'none' ? '' : formData.parent_category,
+        // Store in both formats for compatibility
+        code: formData.category_name,
+        name: formData.category_name
+      };
+
+      if (editMode && selectedCategory) {
+        await mastersAPI.updateItemCategory(selectedCategory.id, payload);
+        toast.success('Category updated successfully');
+      } else {
+        await mastersAPI.createItemCategory(payload);
+        toast.success('Category created successfully');
+      }
+      
+      fetchCategories();
+      handleNew();
+    } catch (error) {
+      toast.error('Failed to save category');
+    }
+  };
+
+  const handleDelete = async (category) => {
+    const hasChildren = categories.some(c => c.parent_category === category.id);
+    if (hasChildren) {
+      toast.error('Cannot delete category with sub-categories. Delete children first.');
+      return;
+    }
+
+    if (window.confirm(`Delete category "${category.category_name || category.name}"?`)) {
+      try {
+        await mastersAPI.deleteItemCategory(category.id);
+        toast.success('Category deleted successfully');
+        fetchCategories();
+        handleNew();
+      } catch (error) {
+        toast.error('Failed to delete category');
+      }
+    }
+  };
+
+  const toggleExpand = (categoryId) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId);
+    } else {
+      newExpanded.add(categoryId);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  const renderCategoryTree = (parentId = null, depth = 0) => {
+    const children = categories.filter(c => (c.parent_category || null) === parentId);
+    
+    return children.map(category => {
+      const hasChildren = categories.some(c => c.parent_category === category.id);
+      const isExpanded = expandedCategories.has(category.id);
+      const isSelected = selectedCategory?.id === category.id;
+      const catName = category.category_name || category.name;
+
+      return (
+        <div key={category.id}>
+          <div
+            className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors hover:bg-emerald-50 ${
+              isSelected ? 'bg-emerald-100 border-l-4 border-emerald-600' : ''
+            }`}
+            style={{ paddingLeft: `${depth * 20 + 12}px` }}
+          >
+            {hasChildren ? (
+              <button
+                onClick={() => toggleExpand(category.id)}
+                className="p-1 hover:bg-emerald-200 rounded"
+              >
+                {isExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-emerald-600" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-emerald-600" />
+                )}
+              </button>
+            ) : (
+              <span className="w-6" />
+            )}
+            <div className="flex-1" onClick={() => handleEdit(category)}>
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-sm">{catName}</span>
+                {category.level === 0 && (
+                  <Badge variant="outline" className="text-xs bg-blue-50">Root</Badge>
+                )}
+              </div>
+              <div className="text-xs text-neutral-500">{category.category_id || category.code}</div>
+            </div>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={(e) => { e.stopPropagation(); handleAddChild(category); }}
+                title="Add Child"
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={(e) => { e.stopPropagation(); handleDelete(category); }}
+                title="Delete"
+              >
+                <Trash2 className="h-3 w-3 text-red-600" />
+              </Button>
+            </div>
+          </div>
+          {hasChildren && isExpanded && renderCategoryTree(category.id, depth + 1)}
+        </div>
+      );
+    });
+  };
+
+  const filteredCategories = categories.filter(cat => {
+    const catName = (cat.category_name || cat.name || '').toLowerCase();
+    return catName.includes(searchTerm.toLowerCase());
+  });
+
+  return (
+    <div className="flex h-screen bg-neutral-50">
+      {/* Left Panel - Tree View */}
+      <div className="w-1/3 bg-white border-r border-neutral-200 flex flex-col">
+        <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-6 border-b border-emerald-800">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-heading font-semibold text-white">Category Tree</h2>
+              <p className="text-sm text-emerald-100 mt-1">{categories.length} categories</p>
+            </div>
+            <Button onClick={handleNew} size="sm" className="gap-2 bg-white text-emerald-700 hover:bg-neutral-100">
+              <Plus className="h-4 w-4" />
+              New
+            </Button>
+          </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-emerald-200" />
+            <Input
+              placeholder="Search categories..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-white/10 border-emerald-500 text-white placeholder:text-emerald-200"
+            />
+          </div>
+        </div>
+
+        <ScrollArea className="flex-1 p-4">
+          {filteredCategories.length === 0 ? (
+            <div className="text-center py-12 text-neutral-500">
+              <FolderTree className="h-12 w-12 mx-auto mb-2 text-neutral-300" />
+              <p>No categories found</p>
+              <Button onClick={handleNew} size="sm" className="mt-3">Create First Category</Button>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              {renderCategoryTree()}
+            </div>
+          )}
+        </ScrollArea>
+
+        <div className="p-4 border-t border-neutral-200 bg-neutral-50">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setExpandedCategories(new Set(categories.map(c => c.id)))}
+              className="flex-1"
+            >
+              Expand All
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setExpandedCategories(new Set())}
+              className="flex-1"
+            >
+              Collapse All
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Panel - Form */}
+      <div className="flex-1 flex flex-col">
+        <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-6 border-b border-emerald-800">
+          <h2 className="text-2xl font-heading font-semibold text-white">
+            {editMode ? 'Edit Category' : 'Create New Category'}
+          </h2>
+          <p className="text-sm text-emerald-100 mt-1">
+            {editMode ? `Editing: ${formData.category_name}` : 'Add a new category to the hierarchy'}
+          </p>
+        </div>
+
+        <ScrollArea className="flex-1 p-8">
+          <Card>
+            <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b">
+              <CardTitle className="flex items-center gap-2 text-lg text-blue-900">
+                <FolderTree className="h-5 w-5 text-blue-600" />
+                Category Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
+              {/* Auto-generated Category ID */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
+                <Label className="text-base font-medium text-blue-900 mb-2 block">Category ID (Auto-generated)</Label>
+                <Input
+                  value={formData.category_id}
+                  disabled
+                  className="h-11 text-base bg-white font-mono font-bold text-blue-900"
+                />
+                <p className="text-xs text-blue-600 mt-1">Format: CAT-0001</p>
+              </div>
+
+              {/* Category Name */}
+              <div className="space-y-2">
+                <Label htmlFor="category_name" className="text-base font-medium">
+                  Category Name *
+                </Label>
+                <Input
+                  id="category_name"
+                  value={formData.category_name}
+                  onChange={(e) => setFormData({ ...formData, category_name: e.target.value })}
+                  placeholder="e.g., Trims, Labels, Main Label"
+                  required
+                  className="h-11 text-base"
+                />
+              </div>
+
+              {/* Parent Category */}
+              <div className="space-y-2">
+                <Label htmlFor="parent_category" className="text-base font-medium">
+                  Parent Category (Optional)
+                </Label>
+                <Select
+                  value={formData.parent_category || 'none'}
+                  onValueChange={(value) => setFormData({ ...formData, parent_category: value === 'none' ? '' : value })}
+                >
+                  <SelectTrigger className="h-11 text-base">
+                    <SelectValue placeholder="Select parent category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">
+                      <div className="flex items-center gap-2">
+                        <span>🏠</span>
+                        <span>No Parent (Root Level)</span>
+                      </div>
+                    </SelectItem>
+                    {categories
+                      .filter(c => c.id !== selectedCategory?.id)
+                      .map(cat => {
+                        const catName = cat.category_name || cat.name;
+                        const level = cat.level || 0;
+                        return (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            <div className="flex items-center gap-2">
+                              {'  '.repeat(level)}
+                              <span className="text-neutral-400">{'└─'.repeat(Math.min(level, 1))}</span>
+                              <span>{catName}</span>
+                              <Badge variant="outline" className="text-xs ml-1">L{level}</Badge>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-neutral-500">
+                  {formData.parent_category && formData.parent_category !== 'none' ? (
+                    <span className="text-green-600 font-medium">
+                      Will create as child of {categories.find(c => c.id === formData.parent_category)?.category_name || categories.find(c => c.id === formData.parent_category)?.name}
+                    </span>
+                  ) : (
+                    'Will create as root category'
+                  )}
+                </p>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description" className="text-base font-medium">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Optional category description"
+                  rows={3}
+                  className="text-base"
+                />
+              </div>
+
+              {/* Is Active Toggle */}
+              <div className="flex items-center justify-between p-5 border-2 border-neutral-200 rounded-lg bg-neutral-50">
+                <div className="space-y-1">
+                  <Label htmlFor="is_active" className="text-base font-medium cursor-pointer">
+                    Is Active
+                  </Label>
+                  <p className="text-xs text-neutral-500">Enable this category for use</p>
+                </div>
+                <Switch
+                  id="is_active"
+                  checked={formData.is_active}
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                  className="data-[state=checked]:bg-green-600"
+                />
+              </div>
+
+              {/* Example Structure */}
+              <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <FolderTree className="h-5 w-5 text-purple-600" />
+                  <Label className="text-base font-semibold text-purple-900">
+                    Example: Hierarchical Structure
+                  </Label>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2 text-purple-900">
+                    <Badge className="bg-purple-200 text-purple-900">Level 0</Badge>
+                    <span className="font-medium">Trims</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-purple-800 ml-6">
+                    <span className="text-purple-400">└─</span>
+                    <Badge className="bg-purple-200 text-purple-800">Level 1</Badge>
+                    <span className="font-medium">Labels</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-purple-700 ml-12">
+                    <span className="text-purple-400">└─</span>
+                    <Badge className="bg-purple-200 text-purple-700">Level 2</Badge>
+                    <span className="font-medium">Main Label</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </ScrollArea>
+
+        {/* Form Actions */}
+        <div className="p-6 border-t border-neutral-200 bg-white flex justify-between">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleNew}
+            className="gap-2"
+          >
+            <X className="h-4 w-4" />
+            Clear Form
+          </Button>
+          <Button
+            onClick={handleSave}
+            className="gap-2"
+          >
+            <Save className="h-4 w-4" />
+            {editMode ? 'Update' : 'Save'} Category
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ItemCategoryMaster;
