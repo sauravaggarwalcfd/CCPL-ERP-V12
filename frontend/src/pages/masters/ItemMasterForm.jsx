@@ -391,15 +391,21 @@ const ItemMasterForm = () => {
                       <p className="text-xs text-blue-600">Auto-generated unique identifier</p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="item_code" className="text-base font-medium">Item Code (Sequential)</Label>
+                      <Label htmlFor="item_code" className="text-base font-medium">Item Code (Auto from Category)</Label>
                       <Input
                         id="item_code"
                         value={formData.item_code}
                         disabled
-                        className="h-11 text-base bg-white font-mono"
+                        className="h-11 text-base bg-white font-mono font-semibold text-green-700"
                         data-testid="item-code-input"
                       />
-                      <p className="text-xs text-blue-600">Auto-generated sequential code</p>
+                      <p className="text-xs text-blue-600">Format: CategoryCode-0001 (e.g., LABL-0045)</p>
+                      {formData.next_code_preview && (
+                        <div className="mt-2 p-3 bg-green-100 border border-green-300 rounded">
+                          <p className="text-xs text-green-700 font-medium">Next Code Preview:</p>
+                          <p className="text-lg font-bold text-green-900 font-mono">{formData.next_code_preview}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
