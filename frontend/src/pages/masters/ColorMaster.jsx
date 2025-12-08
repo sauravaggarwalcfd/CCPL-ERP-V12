@@ -115,7 +115,7 @@ const ColorMaster = () => {
         </div>
         <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
           <DialogTrigger asChild>
-            <Button data-testid="create-color-btn">
+            <Button data-testid="create-color-btn" onClick={() => navigate('/masters/colors/new')}>
               <Plus className="h-4 w-4 mr-2" />
               Create Color
             </Button>
