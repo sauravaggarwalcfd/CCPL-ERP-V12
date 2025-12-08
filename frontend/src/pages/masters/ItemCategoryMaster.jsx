@@ -407,7 +407,13 @@ const ItemCategoryMaster = () => {
                 {(!formData.parent_category || formData.parent_category === 'none') ? (
                   <>
                     <div className="flex gap-2">
-                      <Select value={formData.item_type} onValueChange={(value) => setFormData({ ...formData, item_type: value })}>
+                      <Select value={formData.item_type} onValueChange={(value) => {
+                        if (value === '_add_new') {
+                          setShowAddItemType(true);
+                        } else {
+                          setFormData({ ...formData, item_type: value });
+                        }
+                      }}>
                         <SelectTrigger className="h-11 text-base flex-1">
                           <SelectValue />
                         </SelectTrigger>
