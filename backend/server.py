@@ -707,8 +707,19 @@ async def get_item(item_id: str, current_user: Dict = Depends(get_current_user))
 
 @api_router.put("/masters/items/{item_id}", response_model=ItemMaster)
 async def update_item(item_id: str, item: ItemMaster, current_user: Dict = Depends(get_current_user)):
+    # Set updated_at timestamp
+    item.updated_at = datetime.now(timezone.utc)
+    
+    # Get category details for item_type and category_name
+    category = await db.item_categories.find_one({"id": item.category_id}, {"_id": 0})
+    if category:
+        item.item_type = category.get('item_type', 'GENERAL')
+        item.category_name = category.get('name', '')
+    
     doc = item.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    if doc.get('updated_at'):
+        doc['updated_at'] = doc['updated_at'].isoformat()
     await db.items.update_one({"id": item_id}, {"$set": doc})
     return item
 
