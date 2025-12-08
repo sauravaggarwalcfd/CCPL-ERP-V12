@@ -65,6 +65,25 @@ const ItemMasterFormEnhanced = () => {
     fetchMasterData();
     if (id) {
       fetchItem(id);
+    } else {
+      // Check for copied item data
+      const copiedData = sessionStorage.getItem('copiedItemData');
+      if (copiedData) {
+        try {
+          const parsedData = JSON.parse(copiedData);
+          setFormData(parsedData);
+          
+          // Set category details if category exists
+          if (parsedData.category_id) {
+            handleCategoryChange(parsedData.category_id);
+          }
+          
+          toast.info('Item data loaded from copy');
+          sessionStorage.removeItem('copiedItemData'); // Clear after loading
+        } catch (error) {
+          console.error('Failed to load copied data:', error);
+        }
+      }
     }
   }, [id]);
 
