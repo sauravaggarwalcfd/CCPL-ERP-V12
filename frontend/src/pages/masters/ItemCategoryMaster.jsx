@@ -151,10 +151,10 @@ const ItemCategoryMaster = () => {
         description: formData.description,
         is_active: formData.is_active,
         level,
-        // Backend required fields
+        // Backend required fields - USE FORM VALUES, NOT HARDCODED
         code: formData.category_short_code.toUpperCase(),
         name: formData.category_name.toUpperCase(),
-        inventory_type: 'RAW',
+        inventory_type: formData.item_type,  // FIXED: Use selected item_type
         default_uom: 'PCS',
         status: formData.is_active ? 'Active' : 'Inactive'
       };
