@@ -228,6 +228,69 @@ const ItemMaster = () => {
     setActiveTab('basic');
   };
 
+  const handleBulkImportTemplate = () => {
+    // Create CSV template with headers
+    const headers = [
+      'item_code',
+      'item_name',
+      'item_type',
+      'category_id',
+      'uom',
+      'purchase_uom',
+      'conversion_factor',
+      'description',
+      'brand',
+      'color',
+      'size',
+      'min_stock',
+      'reorder_level',
+      'hsn',
+      'barcode',
+      'is_active',
+      'type_specific_attributes_json'
+    ];
+    
+    const sampleRow = [
+      'AUTO',
+      'Sample Item Name',
+      'RM',
+      'category_id_here',
+      'pcs',
+      'box',
+      '12',
+      'Sample description',
+      'Brand Name',
+      'Red',
+      'Medium',
+      '100',
+      '50',
+      '6302',
+      '',
+      'true',
+      '{"gsm": 180, "width": 60}'
+    ];
+    
+    const csvContent = [
+      headers.join(','),
+      sampleRow.join(','),
+      // Add empty row for user input
+      Array(headers.length).fill('').join(',')
+    ].join('\n');
+    
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'item_master_bulk_import_template.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast.success('Bulk import template downloaded successfully');
+  };
+
   const filteredItems = items.filter(item => {
     const matchesSearch = item.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.item_code.toLowerCase().includes(searchTerm.toLowerCase());
