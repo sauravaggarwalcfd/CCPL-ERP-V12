@@ -954,12 +954,12 @@ const ItemMasterFormEnhanced = () => {
               {/* UOM Fields */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Stock UOM *</Label>
+                  <Label className="text-sm font-semibold">Stock UOM *</Label>
                   <Select 
                     value={formData.uom} 
                     onValueChange={(val) => setFormData({ ...formData, uom: val })}
                   >
-                    <SelectTrigger className="text-base">
+                    <SelectTrigger>
                       <SelectValue placeholder="Select UOM" />
                     </SelectTrigger>
                     <SelectContent>
@@ -975,12 +975,12 @@ const ItemMasterFormEnhanced = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Purchase UOM</Label>
+                  <Label className="text-sm font-semibold">Purchase UOM</Label>
                   <Select 
                     value={formData.purchase_uom} 
                     onValueChange={(val) => setFormData({ ...formData, purchase_uom: val })}
                   >
-                    <SelectTrigger className="text-base">
+                    <SelectTrigger>
                       <SelectValue placeholder="Same as Stock UOM" />
                     </SelectTrigger>
                     <SelectContent>
@@ -993,45 +993,41 @@ const ItemMasterFormEnhanced = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Conversion Factor</Label>
+                  <Label className="text-sm font-semibold">Conversion Factor</Label>
                   <Input
                     type="number"
                     step="0.001"
                     value={formData.conversion_factor}
                     onChange={(e) => setFormData({ ...formData, conversion_factor: e.target.value })}
-                    className="text-base"
                   />
                   <p className="text-xs text-neutral-500">1 Purchase UOM = ? Stock UOM</p>
                 </div>
               </div>
 
               {/* Optional Fields */}
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-base">Brand</Label>
+                  <Label className="text-sm">Brand</Label>
                   <Input
                     value={formData.brand}
                     onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                     placeholder="Optional"
-                    className="text-base"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base">Color</Label>
+                  <Label className="text-sm">Color</Label>
                   <Input
                     value={formData.color}
                     onChange={(e) => setFormData({ ...formData, color: e.target.value })}
                     placeholder="Optional"
-                    className="text-base"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base">Size / Dimension</Label>
+                  <Label className="text-sm">Size / Dimension</Label>
                   <Input
                     value={formData.size}
                     onChange={(e) => setFormData({ ...formData, size: e.target.value })}
                     placeholder="Optional"
-                    className="text-base"
                   />
                 </div>
               </div>
