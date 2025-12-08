@@ -263,7 +263,7 @@ const ItemCategoryMaster = () => {
         
         // Update all descendants if item type changed
         if (pendingItemTypeChange) {
-          toast.info(`Updating ${pendingItemTypeChange.affectedCount} child categories...`);
+          toast.info(`Updating ${pendingItemTypeChange.affectedCount} child categories...`, { duration: 3000 });
           await updateDescendantsItemType(selectedCategory.id, formData.item_type);
           setPendingItemTypeChange(null);
           toast.success(`Updated ${pendingItemTypeChange.affectedCount} child categories to Item Type: ${formData.item_type}`);
@@ -275,7 +275,14 @@ const ItemCategoryMaster = () => {
         toast.success(`Category created successfully with Item Type: ${formData.item_type}`);
       }
       
-      await fetchCategories(); // Wait for refresh
+      // Refresh categories and maintain expanded state
+      const currentExpanded = new Set(expandedCategories);
+      await fetchCategories();
+      // Restore expanded state after refresh
+      setTimeout(() => {
+        setExpandedCategories(currentExpanded);
+      }, 100);
+      
       handleNew();
     } catch (error) {
       console.error('Save error:', error);
