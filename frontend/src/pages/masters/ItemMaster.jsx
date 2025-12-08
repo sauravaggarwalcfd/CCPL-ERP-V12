@@ -463,6 +463,7 @@ const ItemMaster = () => {
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
 
       {/* Audit Trail Dialog */}
