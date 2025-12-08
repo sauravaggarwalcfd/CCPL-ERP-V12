@@ -890,12 +890,12 @@ const ItemMasterFormEnhanced = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className="text-base font-semibold">Item Category *</Label>
+                    <Label className="text-sm font-semibold">Item Category *</Label>
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="text-blue-600 hover:text-blue-700 h-auto p-0"
+                      className="text-blue-600 hover:text-blue-700 h-auto p-0 text-xs"
                       onClick={() => window.open('/masters/item-categories', '_blank')}
                     >
                       <Plus className="h-3 w-3 mr-1" />
@@ -907,7 +907,7 @@ const ItemMasterFormEnhanced = () => {
                     onValueChange={handleCategoryChange}
                     disabled={!!id}
                   >
-                    <SelectTrigger className="text-base">
+                    <SelectTrigger>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -923,16 +923,16 @@ const ItemMasterFormEnhanced = () => {
                     </SelectContent>
                   </Select>
                   {selectedCategoryDetails && (
-                    <div className="flex items-center gap-2 text-sm text-neutral-600 bg-neutral-50 px-3 py-2 rounded-md border border-neutral-200">
+                    <div className="flex items-center gap-2 text-xs text-neutral-600 bg-neutral-50 px-2 py-1.5 rounded border border-neutral-200">
                       <span className="font-medium">Path:</span>
                       <span className="text-neutral-700">{selectedCategoryDetails.path}</span>
                     </div>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Item Type</Label>
+                  <Label className="text-sm font-semibold">Item Type</Label>
                   <div className="flex items-center gap-2 h-10 px-3 rounded-md border border-neutral-200 bg-neutral-50">
-                    <Badge variant="outline" className="text-sm">
+                    <Badge variant="outline" className="text-xs">
                       {formData.item_type ? getItemTypeName(formData.item_type, formData.category_name) : 'Select category first'}
                     </Badge>
                     <span className="text-xs text-neutral-500 ml-auto">Auto-inherited</span>
@@ -942,18 +942,17 @@ const ItemMasterFormEnhanced = () => {
 
               {/* Description */}
               <div className="space-y-2">
-                <Label className="text-base font-semibold">Description</Label>
+                <Label className="text-sm font-semibold">Description</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Detailed item description"
-                  rows={3}
-                  className="text-base"
+                  rows={2}
                 />
               </div>
 
               {/* UOM Fields */}
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label className="text-base font-semibold">Stock UOM *</Label>
                   <Select 
