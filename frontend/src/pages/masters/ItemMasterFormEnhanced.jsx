@@ -248,6 +248,15 @@ const ItemMasterFormEnhanced = () => {
     }, 500);
   };
 
+  const handleFileUpload = (e, field) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // For now, store file name. In production, upload to server
+      setFormData({ ...formData, [field]: file.name });
+      toast.success(`${field === 'item_image' ? 'Image' : 'Document'} selected: ${file.name}`);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
