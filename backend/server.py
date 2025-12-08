@@ -124,8 +124,17 @@ class ItemMaster(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     item_code: str
     item_name: str
+    item_type: Optional[str] = None  # Auto-inherited from category (FAB, RM, FG, PKG, CNS, GEN, ACC)
     category_id: str
+    category_name: Optional[str] = None
+    description: Optional[str] = None
     uom: str
+    purchase_uom: Optional[str] = None
+    conversion_factor: float = 1.0
+    brand: Optional[str] = None
+    color: Optional[str] = None
+    size: Optional[str] = None
+    type_specific_attributes: Optional[Dict[str, Any]] = None  # JSON field for type-specific data
     hsn: Optional[str] = None
     preferred_supplier_id: Optional[str] = None
     reorder_level: float = 0.0
@@ -136,7 +145,9 @@ class ItemMaster(BaseModel):
     barcode: Optional[str] = None
     remarks: Optional[str] = None
     status: str = "Active"
+    is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime] = None
 
 class UOMMaster(BaseModel):
     model_config = ConfigDict(extra="ignore")
