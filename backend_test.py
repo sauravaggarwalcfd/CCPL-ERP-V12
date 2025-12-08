@@ -645,19 +645,25 @@ def main():
     
     tester = ERPBackendTester()
     
-    # Test login
-    if not tester.test_login("admin@erp.com", "admin123"):
-        print("\n❌ Login failed. Cannot proceed with other tests.")
-        print("   Please ensure:")
-        print("   1. Backend server is running")
-        print("   2. Admin user exists in database")
-        print("   3. Credentials are correct (admin@erp.com / admin123)")
-        tester.print_summary()
-        return 1
+    # Test login - use credentials from review request
+    if not tester.test_login("testuser@erp.com", "testpass123"):
+        print("\n⚠️  Login with testuser@erp.com failed. Trying admin credentials...")
+        if not tester.test_login("admin@erp.com", "admin123"):
+            print("\n❌ Login failed with both credentials. Cannot proceed with other tests.")
+            print("   Please ensure:")
+            print("   1. Backend server is running")
+            print("   2. User exists in database")
+            print("   3. Credentials are correct")
+            tester.print_summary()
+            return 1
     
     # Run all tests
     tester.test_dashboard()
     tester.test_masters()
+    
+    # NEW: Test Item Master Enhanced Features
+    tester.test_item_master_enhanced_features()
+    
     tester.test_purchase()
     tester.test_quality()
     tester.test_inventory()
