@@ -717,6 +717,59 @@ const ItemCategoryMaster = () => {
           </Button>
         </div>
       </div>
+
+      {/* Item Type Change Warning Dialog */}
+      <AlertDialog open={showItemTypeWarning} onOpenChange={setShowItemTypeWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl text-amber-900 flex items-center gap-2">
+              <Info className="h-6 w-6 text-amber-600" />
+              Warning: Item Type Change
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3 pt-3">
+              <p className="text-base text-neutral-700">
+                You are changing the Item Type of a root category that has child categories.
+              </p>
+              <div className="bg-amber-50 border border-amber-300 rounded-lg p-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Current Type:</span>
+                    <span className="font-bold text-red-700">{pendingItemTypeChange?.oldType}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">New Type:</span>
+                    <span className="font-bold text-green-700">{pendingItemTypeChange?.newType}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium">Affected Child Categories:</span>
+                    <span className="font-bold text-blue-700">{pendingItemTypeChange?.affectedCount}</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-base font-semibold text-amber-900">
+                All {pendingItemTypeChange?.affectedCount} child categories will be updated to Item Type: {pendingItemTypeChange?.newType}
+              </p>
+              <p className="text-sm text-neutral-600">
+                This will ensure consistency across the hierarchy. Do you want to continue?
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setShowItemTypeWarning(false);
+              setPendingItemTypeChange(null);
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              setShowItemTypeWarning(false);
+              performSave();
+            }} className="bg-amber-600 hover:bg-amber-700">
+              Yes, Update All
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
