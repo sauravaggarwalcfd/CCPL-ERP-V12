@@ -251,21 +251,31 @@ const ItemMaster = () => {
           <h1 className="text-3xl font-heading font-semibold tracking-tight text-neutral-900">Item Master</h1>
           <p className="text-neutral-600 mt-1">Comprehensive garment inventory item management</p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={(open) => { 
-          if (!open) {
-            setDialogOpen(false);
-            resetForm();
-          } else {
-            // Navigate to form page instead of opening dialog
-            navigate('/masters/items/new');
-          }
-        }}>
-          <DialogTrigger asChild>
-            <Button data-testid="create-item-btn" className="gap-2" onClick={() => navigate('/masters/items/new')}>
-              <Plus className="h-4 w-4" />
-              Create Item
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-3">
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={handleBulkImportTemplate}
+            data-testid="bulk-import-btn"
+          >
+            <FileText className="h-4 w-4" />
+            Download Bulk Import Template
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={(open) => { 
+            if (!open) {
+              setDialogOpen(false);
+              resetForm();
+            } else {
+              // Navigate to form page instead of opening dialog
+              navigate('/masters/items/new');
+            }
+          }}>
+            <DialogTrigger asChild>
+              <Button data-testid="create-item-btn" className="gap-2" onClick={() => navigate('/masters/items/new')}>
+                <Plus className="h-4 w-4" />
+                Create Item
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-heading">{editMode ? 'Edit' : 'Create'} Item Master</DialogTitle>
