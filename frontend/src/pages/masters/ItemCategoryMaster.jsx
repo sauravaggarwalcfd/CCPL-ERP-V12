@@ -114,12 +114,18 @@ const ItemCategoryMaster = () => {
         : 0;
 
       const payload = {
-        ...formData,
+        category_id: formData.category_id,
+        category_name: formData.category_name,
+        parent_category: formData.parent_category === 'none' ? null : formData.parent_category,
+        description: formData.description,
+        is_active: formData.is_active,
         level,
-        parent_category: formData.parent_category === 'none' ? '' : formData.parent_category,
-        // Store in both formats for compatibility
-        code: formData.category_name,
-        name: formData.category_name
+        // Backend required fields (using category_name as defaults)
+        code: formData.category_id,
+        name: formData.category_name,
+        inventory_type: 'RAW',
+        default_uom: 'PCS',
+        status: formData.is_active ? 'Active' : 'Inactive'
       };
 
       if (editMode && selectedCategory) {
@@ -133,7 +139,8 @@ const ItemCategoryMaster = () => {
       fetchCategories();
       handleNew();
     } catch (error) {
-      toast.error('Failed to save category');
+      console.error('Save error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to save category');
     }
   };
 
