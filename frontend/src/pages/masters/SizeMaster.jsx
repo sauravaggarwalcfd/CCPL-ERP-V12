@@ -104,7 +104,7 @@ const SizeMaster = () => {
         </div>
         <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
           <DialogTrigger asChild>
-            <Button data-testid="create-size-btn">
+            <Button data-testid="create-size-btn" onClick={() => navigate('/masters/sizes/new')}>
               <Plus className="h-4 w-4 mr-2" />
               Create Size
             </Button>
