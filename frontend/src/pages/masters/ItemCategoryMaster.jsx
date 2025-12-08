@@ -357,6 +357,23 @@ const ItemCategoryMaster = () => {
                 />
               </div>
 
+              {/* Category Short Code */}
+              <div className="space-y-2">
+                <Label htmlFor="category_short_code" className="text-base font-medium">
+                  Category Short Code *
+                </Label>
+                <Input
+                  id="category_short_code"
+                  value={formData.category_short_code}
+                  onChange={(e) => setFormData({ ...formData, category_short_code: e.target.value.toUpperCase() })}
+                  placeholder="e.g., LABL, BTN, TRM (4 chars max)"
+                  required
+                  maxLength={4}
+                  className="h-11 text-base font-mono font-semibold"
+                />
+                <p className="text-xs text-blue-600">Used for auto-generating item codes (e.g., LABL-0001, BTN-0045)</p>
+              </div>
+
               {/* Parent Category */}
               <div className="space-y-2">
                 <Label htmlFor="parent_category" className="text-base font-medium">
