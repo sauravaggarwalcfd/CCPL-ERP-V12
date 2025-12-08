@@ -128,22 +128,57 @@ class ItemMaster(BaseModel):
     category_id: str
     category_name: Optional[str] = None
     description: Optional[str] = None
+    
+    # UOM & Conversion
     uom: str
     purchase_uom: Optional[str] = None
     conversion_factor: float = 1.0
+    
+    # Basic Attributes
     brand: Optional[str] = None
     color: Optional[str] = None
     size: Optional[str] = None
     type_specific_attributes: Optional[Dict[str, Any]] = None  # JSON field for type-specific data
+    
+    # Stock Management
     hsn: Optional[str] = None
     preferred_supplier_id: Optional[str] = None
     reorder_level: float = 0.0
     min_stock: float = 0.0
     max_stock: float = 0.0
+    
+    # Integration Fields - Future Ready
+    # For Purchase Module
+    last_purchase_rate: Optional[float] = None
+    standard_cost: Optional[float] = None
+    lead_time_days: Optional[int] = None
+    
+    # For Quality/GRN Module
+    inspection_required: bool = False
+    qc_template_id: Optional[str] = None
+    
+    # For Inventory Control
+    is_batch_controlled: bool = False
+    is_serial_controlled: bool = False
+    shelf_life_days: Optional[int] = None
+    
+    # For BOM & Production Module
+    make_or_buy: Optional[str] = "BUY"  # BUY, MAKE, or BOTH
+    is_component: bool = False  # Can be used in BOM
+    is_finished_good: bool = False  # Final product
+    default_bom_id: Optional[str] = None
+    
+    # For Store Issue/Return
+    issue_method: Optional[str] = "FIFO"  # FIFO, LIFO, BATCH
+    default_issue_warehouse: Optional[str] = None
+    
+    # Accounting
     stock_account: Optional[str] = None
     expense_account: Optional[str] = None
     barcode: Optional[str] = None
     remarks: Optional[str] = None
+    
+    # Status
     status: str = "Active"
     is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
