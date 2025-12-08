@@ -11,6 +11,7 @@ import { Plus, Edit, Trash2, ChevronRight, ChevronDown, FolderTree, Save, X, Sea
 import { toast } from 'sonner';
 
 const ItemCategories = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [expandedCategories, setExpandedCategories] = useState(new Set());
   const [loading, setLoading] = useState(true);
