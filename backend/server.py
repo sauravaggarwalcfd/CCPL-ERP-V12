@@ -1106,25 +1106,29 @@ logger = logging.getLogger(__name__)
 async def shutdown_db_client():
     client.close()
 
+# Pydantic model for bulk update request
+class BulkUpdateItemTypeRequest(BaseModel):
+    category_ids: List[str]
+    item_type: str
+
 # Bulk update item type for categories (PATCH endpoint)
 @api_router.patch("/masters/item-categories/bulk-update-item-type")
 async def bulk_update_item_type(
-    category_ids: List[str],
-    item_type: str,
+    request: BulkUpdateItemTypeRequest,
     current_user: Dict = Depends(get_current_user)
 ):
     """Update item_type for multiple categories without affecting other fields"""
     try:
         result = await db.item_categories.update_many(
-            {"id": {"$in": category_ids}},
+            {"id": {"$in": request.category_ids}},
             {"$set": {
-                "item_type": item_type,
-                "inventory_type": item_type
+                "item_type": request.item_type,
+                "inventory_type": request.item_type
             }}
         )
         return {
             "updated_count": result.modified_count,
-            "item_type": item_type
+            "item_type": request.item_type
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
