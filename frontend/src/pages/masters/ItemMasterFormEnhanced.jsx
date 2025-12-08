@@ -815,7 +815,7 @@ const ItemMasterFormEnhanced = () => {
                   <Label className="text-base font-semibold">Item Type</Label>
                   <div className="flex items-center gap-2 h-10 px-3 rounded-md border border-neutral-200 bg-neutral-50">
                     <Badge variant="outline" className="text-sm">
-                      {formData.item_type ? getItemTypeName(formData.item_type) : 'Select category first'}
+                      {formData.item_type ? getItemTypeName(formData.item_type, formData.category_name) : 'Select category first'}
                     </Badge>
                     <span className="text-xs text-neutral-500 ml-auto">Auto-inherited</span>
                   </div>
