@@ -400,7 +400,8 @@ const ItemMasterFormEnhanced = () => {
       );
     }
 
-    if (itemType === 'RM') {  // Trims
+    // RM + Trim Category = Show Trim Fields
+    if (itemType === 'RM' && isTrimCategory) {
       return (
         <Card className="border-green-200 bg-green-50">
           <CardHeader>
