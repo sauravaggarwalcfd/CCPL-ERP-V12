@@ -107,7 +107,8 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
 
               {/* Masters */}
-              <Route path="masters/item-categories" element={<ItemCategories />} />
+              <Route path="masters/item-categories" element={<ItemCategoryMaster />} />
+              <Route path="masters/item-categories/old" element={<ItemCategories />} />
               <Route path="masters/item-categories/new" element={<CategoryForm />} />
               <Route path="masters/item-categories/edit/:id" element={<CategoryForm />} />
               <Route path="masters/items" element={<ItemMaster />} />
