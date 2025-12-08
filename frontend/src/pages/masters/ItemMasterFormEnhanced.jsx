@@ -289,15 +289,20 @@ const ItemMasterFormEnhanced = () => {
   ];
 
   // Get item type name for display
-  const getItemTypeName = (type) => {
+  const getItemTypeName = (type, categoryName = '') => {
     const typeMap = {
+      'FAB': 'Fabric',
       'FABRIC': 'Fabric',
-      'RM': 'Raw Material (Trims)',
+      'RM': categoryName ? `Raw Material (${categoryName})` : 'Raw Material',
       'FG': 'Finished Goods',
       'PACKING': 'Packing Material',
+      'PKG': 'Packing Material',
       'CONSUMABLE': 'Consumable',
+      'CNS': 'Consumable',
       'GENERAL': 'General Store',
-      'ACCESSORY': 'Accessory'
+      'GEN': 'General Store',
+      'ACCESSORY': 'Accessory',
+      'ACC': 'Accessory'
     };
     return typeMap[type] || type;
   };
