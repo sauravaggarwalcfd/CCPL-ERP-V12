@@ -707,6 +707,83 @@ async def delete_item(item_id: str, current_user: Dict = Depends(get_current_use
         raise HTTPException(status_code=404, detail="Item not found")
     return {"message": "Item deleted successfully"}
 
+@api_router.get("/masters/items/preview/next-code")
+async def preview_next_item_code(category_id: str, current_user: Dict = Depends(get_current_user)):
+    """Preview the next auto-generated item code for a category"""
+    try:
+        # Get category details
+        category = await db.item_categories.find_one({"id": category_id}, {"_id": 0})
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+        
+        item_type = category.get('item_type', 'GENERAL')
+        category_short_code = category.get('category_short_code') or category.get('code', 'GEN')
+        
+        # Get type code prefix
+        type_code = await get_item_type_code(item_type)
+        
+        # Get next running number (without incrementing)
+        counter_key = f"item_code_{category_id}"
+        counter = await db.counters.find_one({"key": counter_key})
+        next_num = (counter['value'] + 1) if counter else 1
+        
+        # Format preview code
+        preview_code = f"{type_code}-{category_short_code}-{str(next_num).zfill(4)}"
+        
+        return {
+            "preview_code": preview_code,
+            "item_type": item_type,
+            "type_code": type_code,
+            "category_short_code": category_short_code,
+            "running_number": next_num
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@api_router.get("/masters/items/validate/name")
+async def validate_item_name(item_name: str, category_id: str, item_id: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+    """Validate if item name is unique within the category"""
+    query = {"item_name": item_name, "category_id": category_id}
+    
+    # Exclude current item if updating
+    if item_id:
+        query["id"] = {"$ne": item_id}
+    
+    existing = await db.items.find_one(query, {"_id": 0})
+    
+    return {
+        "is_unique": existing is None,
+        "exists": existing is not None,
+        "message": "Item name already exists in this category" if existing else "Item name is unique"
+    }
+
+@api_router.get("/masters/item-categories/leaf-only")
+async def get_leaf_categories(current_user: Dict = Depends(get_current_user)):
+    """Get only leaf categories (categories without children)"""
+    all_categories = await db.item_categories.find({}, {"_id": 0}).to_list(1000)
+    
+    # Get all parent category IDs
+    parent_ids = set()
+    for cat in all_categories:
+        if cat.get('parent_category'):
+            parent_ids.add(cat['parent_category'])
+    
+    # Filter leaf categories (categories whose ID is not in parent_ids)
+    leaf_categories = [cat for cat in all_categories if cat['id'] not in parent_ids]
+    
+    # Add is_leaf flag to all categories
+    result = []
+    for cat in all_categories:
+        cat_copy = cat.copy()
+        cat_copy['is_leaf'] = cat['id'] not in parent_ids
+        if isinstance(cat_copy.get('created_at'), str):
+            cat_copy['created_at'] = datetime.fromisoformat(cat_copy['created_at'])
+        result.append(cat_copy)
+    
+    return result
+
 # ============ UOM Master Routes ============
 @api_router.post("/masters/uoms", response_model=UOMMaster)
 async def create_uom(uom: UOMMaster, current_user: Dict = Depends(get_current_user)):
