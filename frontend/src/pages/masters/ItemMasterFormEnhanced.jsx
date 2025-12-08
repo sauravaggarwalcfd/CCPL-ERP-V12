@@ -321,30 +321,6 @@ const ItemMasterFormEnhanced = () => {
     }
   };
 
-  const handleCopyItem = () => {
-    // Copy current item data and navigate to create new item
-    const copiedData = {
-      ...formData,
-      item_id: '',
-      item_code: 'AUTO',
-      item_name: `${formData.item_name} (Copy)`,
-      barcode: '', // Clear barcode for new item
-      opening_stock: '',
-      opening_rate: ''
-    };
-    
-    // Store copied data in sessionStorage
-    sessionStorage.setItem('copiedItemData', JSON.stringify(copiedData));
-    
-    toast.success('Item data copied! Redirecting to create new item...');
-    
-    // Navigate to create page
-    setTimeout(() => {
-      navigate('/masters/items/new');
-      window.location.reload(); // Reload to load copied data
-    }, 500);
-  };
-
   const scrollToSection = (section) => {
     setActiveSection(section);
     document.getElementById(section)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
