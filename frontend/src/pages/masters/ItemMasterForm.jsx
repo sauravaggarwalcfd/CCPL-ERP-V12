@@ -670,7 +670,7 @@ const ItemMasterForm = () => {
                 ) : (
                   <div className="bg-neutral-100 border border-neutral-300 rounded-lg p-12 text-center">
                     <p className="text-base text-neutral-600 font-medium">Stock tracking is disabled for this item</p>
-                    <p className="text-sm text-neutral-500 mt-2">Enable "Maintain Stock" to track inventory</p>
+                    <p className="text-sm text-neutral-500 mt-2">Enable &quot;Maintain Stock&quot; to track inventory</p>
                   </div>
                 )}
               </CardContent>
