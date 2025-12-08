@@ -458,7 +458,8 @@ const ItemMasterFormEnhanced = () => {
       );
     }
 
-    if (itemType === 'PACKING') {
+    // PACKING Material
+    if (itemType === 'PACKING' || itemType === 'PKG') {
       return (
         <Card className="border-purple-200 bg-purple-50">
           <CardHeader>
