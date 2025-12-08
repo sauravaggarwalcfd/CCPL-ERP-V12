@@ -118,6 +118,8 @@ function App() {
               <Route path="purchase/indents/new" element={<PurchaseIndentForm />} />
               <Route path="purchase/indents/edit/:id" element={<PurchaseIndentForm />} />
               <Route path="purchase/orders" element={<PurchaseOrders />} />
+              <Route path="purchase/orders/new" element={<PurchaseOrderForm />} />
+              <Route path="purchase/orders/edit/:id" element={<PurchaseOrderForm />} />
               <Route path="purchase/approvals" element={<POApprovalPanel />} />
 
               {/* Quality */}
