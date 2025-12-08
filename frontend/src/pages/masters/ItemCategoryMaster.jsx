@@ -141,29 +141,42 @@ const ItemCategoryMaster = () => {
   const updateDescendantsItemType = async (categoryId, newItemType) => {
     const descendants = getDescendants(categoryId);
     
+    console.log(`Updating ${descendants.length} descendants with Item Type: ${newItemType}`);
+    
     for (const descendant of descendants) {
       try {
+        // Fetch fresh data for this category to avoid stale state
+        const currentCat = await mastersAPI.getItemCategory(descendant.id);
+        const catData = currentCat.data;
+        
         const payload = {
           id: descendant.id,
-          category_id: descendant.category_id || descendant.id,
-          category_name: descendant.category_name || descendant.name,
-          category_short_code: descendant.category_short_code || descendant.code,
-          code: descendant.category_short_code || descendant.code,
-          name: descendant.category_name || descendant.name,
-          parent_category: descendant.parent_category,
-          level: descendant.level,
-          item_type: newItemType,
-          inventory_type: newItemType,
-          default_uom: descendant.default_uom || 'PCS',
-          description: descendant.description || '',
-          is_active: descendant.is_active !== false,
-          status: descendant.is_active !== false ? 'Active' : 'Inactive'
+          category_id: catData.category_id || descendant.id,
+          category_name: catData.category_name || catData.name || '',
+          category_short_code: catData.category_short_code || catData.code || '',
+          code: catData.category_short_code || catData.code || '',
+          name: catData.category_name || catData.name || '',
+          parent_category: catData.parent_category,  // CRITICAL: Preserve parent link
+          level: catData.level,  // CRITICAL: Preserve level
+          item_type: newItemType,  // UPDATE: New item type
+          inventory_type: newItemType,  // UPDATE: New inventory type
+          default_uom: catData.default_uom || 'PCS',
+          description: catData.description || '',
+          is_active: catData.is_active !== false,
+          status: catData.is_active !== false ? 'Active' : 'Inactive',
+          allow_purchase: catData.allow_purchase !== false,
+          allow_issue: catData.allow_issue !== false
         };
+        
+        console.log(`Updating descendant: ${catData.category_name || catData.name} (Level ${catData.level})`);
+        
         await mastersAPI.updateItemCategory(descendant.id, payload);
       } catch (error) {
         console.error(`Failed to update descendant ${descendant.id}:`, error);
       }
     }
+    
+    console.log('All descendants updated successfully');
   };
 
   const handleSave = async () => {
