@@ -88,17 +88,21 @@ const ItemCategoryMaster = () => {
   };
 
   const handleAddChild = (parentCategory) => {
+    // Inherit item type from parent
+    const inheritedType = parentCategory.item_type || 'RM';
+    
     setFormData({
       category_id: generateCategoryID(),
       category_name: '',
       category_short_code: '',
+      item_type: inheritedType,
       parent_category: parentCategory.id,
       description: '',
       is_active: true
     });
     setSelectedCategory(null);
     setEditMode(false);
-    toast.info(`Adding child category under ${parentCategory.category_name || parentCategory.name}`);
+    toast.info(`Adding child category under ${parentCategory.category_name || parentCategory.name}. Item Type: ${inheritedType} (inherited)`);
   };
 
   const checkDuplicateName = (name, parentId) => {
