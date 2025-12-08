@@ -10,6 +10,7 @@ import { inventoryRoutes } from '@/router/inventoryRoutes';
 
 // Masters
 import ItemCategories from '@/pages/masters/ItemCategories';
+import ItemCategoryMaster from '@/pages/masters/ItemCategoryMaster';
 import CategoryForm from '@/pages/masters/CategoryForm';
 import ItemMaster from '@/pages/masters/ItemMaster';
 import ItemMasterForm from '@/pages/masters/ItemMasterForm';
