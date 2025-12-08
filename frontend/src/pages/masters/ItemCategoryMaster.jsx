@@ -60,6 +60,7 @@ const ItemCategoryMaster = () => {
       category_id: generateCategoryID(),
       category_name: '',
       category_short_code: '',
+      item_type: 'RM',
       parent_category: '',
       description: '',
       is_active: true
