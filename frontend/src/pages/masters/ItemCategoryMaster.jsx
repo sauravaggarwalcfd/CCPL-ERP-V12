@@ -70,10 +70,15 @@ const ItemCategoryMaster = () => {
   };
 
   const handleEdit = (category) => {
+    // Get inherited item type from parent if not root
+    const parentCat = category.parent_category ? categories.find(c => c.id === category.parent_category) : null;
+    const inheritedType = parentCat ? (parentCat.item_type || 'RM') : (category.item_type || 'RM');
+
     setFormData({
       category_id: category.category_id || category.id,
       category_name: category.category_name || category.name,
       category_short_code: category.category_short_code || category.code?.substring(0, 4) || '',
+      item_type: inheritedType,
       parent_category: category.parent_category || '',
       description: category.description || '',
       is_active: category.is_active !== false
