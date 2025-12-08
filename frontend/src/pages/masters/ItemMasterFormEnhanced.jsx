@@ -72,14 +72,15 @@ const ItemMasterFormEnhanced = () => {
         try {
           const parsedData = JSON.parse(copiedData);
           setFormData(parsedData);
-          
-          // Set category details if category exists
-          if (parsedData.category_id && categories.length > 0) {
-            handleCategoryChange(parsedData.category_id);
-          }
-          
           toast.info('Item data loaded from copy');
           sessionStorage.removeItem('copiedItemData'); // Clear after loading
+          
+          // Trigger category change if category exists
+          if (parsedData.category_id) {
+            setTimeout(() => {
+              handleCategoryChange(parsedData.category_id);
+            }, 500);
+          }
         } catch (error) {
           console.error('Failed to load copied data:', error);
         }
