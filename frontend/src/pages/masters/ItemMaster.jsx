@@ -344,7 +344,7 @@ const ItemMaster = () => {
       </div>
 
       <div className="flex items-center gap-4 flex-wrap">
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <div className="relative flex-1 max-w-md">
                 <TabsList className="grid grid-cols-4 gap-1">
                   <TabsTrigger value="basic">Basic Info</TabsTrigger>
                   <TabsTrigger value="stock">Stock & Costing</TabsTrigger>
