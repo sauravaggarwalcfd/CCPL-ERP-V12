@@ -113,6 +113,15 @@ function App() {
               <Route path="masters/colors" element={<ColorMaster />} />
               <Route path="masters/colors/new" element={<ColorForm />} />
               <Route path="masters/colors/edit/:id" element={<ColorForm />} />
+              <Route path="masters/sizes" element={<SizeMaster />} />
+              <Route path="masters/sizes/new" element={<SizeForm />} />
+              <Route path="masters/sizes/edit/:id" element={<SizeForm />} />
+              <Route path="masters/brands" element={<BrandMaster />} />
+              <Route path="masters/brands/new" element={<BrandForm />} />
+              <Route path="masters/brands/edit/:id" element={<BrandForm />} />
+              <Route path="masters/suppliers" element={<SupplierMaster />} />
+              <Route path="masters/suppliers/new" element={<SupplierForm />} />
+              <Route path="masters/suppliers/edit/:id" element={<SupplierForm />} />
               <Route path="masters/uoms" element={<UOMMaster />} />
               <Route path="masters/suppliers" element={<SupplierMaster />} />
               <Route path="masters/warehouses" element={<WarehouseMaster />} />
