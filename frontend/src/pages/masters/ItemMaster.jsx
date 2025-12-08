@@ -342,11 +342,8 @@ const ItemMaster = () => {
           </Dialog>
         </div>
       </div>
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-heading">{editMode ? 'Edit' : 'Create'} Item Master</DialogTitle>
-            </DialogHeader>
 
-            <form onSubmit={handleSubmit}>
+      <div className="flex items-center gap-4 flex-wrap">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid grid-cols-4 gap-1">
                   <TabsTrigger value="basic">Basic Info</TabsTrigger>
