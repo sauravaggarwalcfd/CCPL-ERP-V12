@@ -3,7 +3,7 @@ import sys
 from datetime import datetime
 
 class ERPBackendTester:
-    def __init__(self, base_url="https://textile-track-1.preview.emergentagent.com"):
+    def __init__(self, base_url="https://threads-inventory-2.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.token = None
