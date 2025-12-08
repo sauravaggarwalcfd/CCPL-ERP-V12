@@ -290,14 +290,37 @@ const ItemCategoryMaster = () => {
               New
             </Button>
           </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-emerald-200" />
-            <Input
-              placeholder="Search categories..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white/10 border-emerald-500 text-white placeholder:text-emerald-200"
-            />
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-emerald-200" />
+              <Input
+                placeholder="Search categories..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white/10 border-emerald-500 text-white placeholder:text-emerald-200"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <Select value={itemTypeFilter} onValueChange={setItemTypeFilter}>
+                <SelectTrigger className="h-9 text-sm bg-white/10 border-emerald-500 text-white">
+                  <SelectValue placeholder="Filter by Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Types</SelectItem>
+                  {itemTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-9 text-sm bg-white/10 border-emerald-500 text-white">
+                  <SelectValue placeholder="Filter by Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Status</SelectItem>
+                  <SelectItem value="Active">Active</SelectItem>
+                  <SelectItem value="Inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
