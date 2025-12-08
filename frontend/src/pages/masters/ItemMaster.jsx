@@ -345,7 +345,7 @@ const ItemMaster = () => {
 
       <div className="flex items-center gap-4 flex-wrap">
         <div className="relative flex-1 max-w-md">
-                <TabsList className="grid grid-cols-4 gap-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
                   <TabsTrigger value="basic">Basic Info</TabsTrigger>
                   <TabsTrigger value="stock">Stock & Costing</TabsTrigger>
                   <TabsTrigger value="specifications">Specifications</TabsTrigger>
