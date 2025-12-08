@@ -43,8 +43,13 @@ class UserRole(str, Enum):
 
 class InventoryType(str, Enum):
     RAW = "RAW"
+    RM = "RM"
     CONSUMABLE = "CONSUMABLE"
     FG = "FG"
+    PACKING = "PACKING"
+    ACCESSORY = "ACCESSORY"
+    GENERAL = "GENERAL"
+    SERVICE = "SERVICE"
 
 class ApprovalStatus(str, Enum):
     DRAFT = "Draft"
