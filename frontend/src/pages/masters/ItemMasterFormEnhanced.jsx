@@ -520,7 +520,8 @@ const ItemMasterFormEnhanced = () => {
       );
     }
 
-    if (itemType === 'CONSUMABLE') {
+    // CONSUMABLE
+    if (itemType === 'CONSUMABLE' || itemType === 'CNS') {
       return (
         <Card className="border-orange-200 bg-orange-50">
           <CardHeader>
