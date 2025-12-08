@@ -24,6 +24,7 @@ import BrandMaster from '@/pages/masters/BrandMaster';
 
 // Purchase
 import PurchaseIndents from '@/pages/purchase/PurchaseIndents';
+import PurchaseIndentForm from '@/pages/purchase/PurchaseIndentForm';
 import PurchaseOrders from '@/pages/purchase/PurchaseOrders';
 import POApprovalPanel from '@/pages/purchase/POApprovalPanel';
 
