@@ -1059,51 +1059,47 @@ const ItemMasterFormEnhanced = () => {
               <CardTitle className="text-2xl text-green-900">Stock & Inventory</CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Minimum Stock Level</Label>
+                  <Label className="text-sm font-semibold">Minimum Stock Level</Label>
                   <Input
                     type="number"
                     step="0.01"
                     value={formData.min_stock}
                     onChange={(e) => setFormData({ ...formData, min_stock: e.target.value })}
                     placeholder="0"
-                    className="text-base"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Reorder Quantity</Label>
+                  <Label className="text-sm font-semibold">Reorder Quantity</Label>
                   <Input
                     type="number"
                     step="0.01"
                     value={formData.reorder_level}
                     onChange={(e) => setFormData({ ...formData, reorder_level: e.target.value })}
                     placeholder="0"
-                    className="text-base"
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Opening Stock</Label>
+                  <Label className="text-sm font-semibold">Opening Stock</Label>
                   <Input
                     type="number"
                     step="0.01"
                     value={formData.opening_stock}
                     onChange={(e) => setFormData({ ...formData, opening_stock: e.target.value })}
                     placeholder="0"
-                    className="text-base"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">Opening Rate</Label>
+                  <Label className="text-sm font-semibold">Opening Rate</Label>
                   <Input
                     type="number"
                     step="0.01"
                     value={formData.opening_rate}
                     onChange={(e) => setFormData({ ...formData, opening_rate: e.target.value })}
                     placeholder="0.00"
-                    className="text-base"
                   />
                 </div>
               </div>
