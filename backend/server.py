@@ -104,8 +104,10 @@ class ItemCategory(BaseModel):
     code: str
     name: str
     parent_category: Optional[str] = None
-    inventory_type: InventoryType
-    default_uom: str
+    item_type: Optional[str] = "RM"
+    category_short_code: Optional[str] = None
+    inventory_type: Optional[str] = "RM"
+    default_uom: str = "PCS"
     default_hsn: Optional[str] = None
     stock_account: Optional[str] = None
     expense_account: Optional[str] = None
@@ -113,6 +115,8 @@ class ItemCategory(BaseModel):
     allow_purchase: bool = True
     allow_issue: bool = True
     status: str = "Active"
+    level: Optional[int] = 0
+    is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ItemMaster(BaseModel):
