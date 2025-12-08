@@ -193,6 +193,12 @@ const ItemCategoryMaster = () => {
       toast.error('Short Code must be 2-4 characters');
       return;
     }
+    
+    // Check duplicate short code
+    if (checkDuplicateShortCode(formData.category_short_code)) {
+      toast.error('Category Short Code already exists. Please use a unique code.');
+      return;
+    }
 
     // Check duplicate under same parent
     const parentId = formData.parent_category === 'none' ? '' : formData.parent_category;
