@@ -385,15 +385,16 @@ const ItemMaster = () => {
         <Table>
           <TableHeader>
             <TableRow className="bg-neutral-50">
-              <TableHead className="font-semibold">Item Code</TableHead>
+              <TableHead className="font-semibold w-12">Image</TableHead>
+              <TableHead className="font-semibold w-32">Item Code</TableHead>
               <TableHead className="font-semibold">Item Name</TableHead>
-              <TableHead className="font-semibold">Type</TableHead>
-              <TableHead className="font-semibold">Category</TableHead>
-              <TableHead className="font-semibold">UOM</TableHead>
-              <TableHead className="font-semibold">Min Stock</TableHead>
-              <TableHead className="font-semibold">Controls</TableHead>
-              <TableHead className="font-semibold">Status</TableHead>
-              <TableHead className="font-semibold text-right">Actions</TableHead>
+              <TableHead className="font-semibold w-28">Type</TableHead>
+              <TableHead className="font-semibold w-32">Category</TableHead>
+              <TableHead className="font-semibold w-20">UOM</TableHead>
+              <TableHead className="font-semibold w-24">Min Stock</TableHead>
+              <TableHead className="font-semibold w-28">Controls</TableHead>
+              <TableHead className="font-semibold w-20">Status</TableHead>
+              <TableHead className="font-semibold text-right w-28">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
