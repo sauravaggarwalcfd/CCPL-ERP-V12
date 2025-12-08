@@ -154,23 +154,27 @@ const ItemCategoryMaster = () => {
         // Backend required fields - USE FORM VALUES, NOT HARDCODED
         code: formData.category_short_code.toUpperCase(),
         name: formData.category_name.toUpperCase(),
-        inventory_type: formData.item_type,  // FIXED: Use selected item_type
+        inventory_type: formData.item_type,  // CRITICAL: Use selected item_type
         default_uom: 'PCS',
         status: formData.is_active ? 'Active' : 'Inactive'
       };
 
+      console.log('Saving category with payload:', payload);
+      console.log('Item Type being saved:', formData.item_type);
+
       if (editMode && selectedCategory) {
         await mastersAPI.updateItemCategory(selectedCategory.id, payload);
-        toast.success('Category updated successfully');
+        toast.success(`Category updated successfully with Item Type: ${formData.item_type}`);
       } else {
         await mastersAPI.createItemCategory(payload);
-        toast.success('Category created successfully');
+        toast.success(`Category created successfully with Item Type: ${formData.item_type}`);
       }
       
       fetchCategories();
       handleNew();
     } catch (error) {
       console.error('Save error:', error);
+      console.error('Error response:', error.response?.data);
       toast.error(error.response?.data?.detail || 'Failed to save category');
     }
   };
