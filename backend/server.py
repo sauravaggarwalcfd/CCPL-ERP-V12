@@ -804,31 +804,6 @@ async def validate_item_name(item_name: str, category_id: str, item_id: Optional
         "message": "Item name already exists in this category" if existing else "Item name is unique"
     }
 
-@api_router.get("/masters/item-categories/leaf-only")
-async def get_leaf_categories(current_user: Dict = Depends(get_current_user)):
-    """Get only leaf categories (categories without children)"""
-    all_categories = await db.item_categories.find({}, {"_id": 0}).to_list(1000)
-    
-    # Get all parent category IDs
-    parent_ids = set()
-    for cat in all_categories:
-        if cat.get('parent_category'):
-            parent_ids.add(cat['parent_category'])
-    
-    # Filter leaf categories (categories whose ID is not in parent_ids)
-    leaf_categories = [cat for cat in all_categories if cat['id'] not in parent_ids]
-    
-    # Add is_leaf flag to all categories
-    result = []
-    for cat in all_categories:
-        cat_copy = cat.copy()
-        cat_copy['is_leaf'] = cat['id'] not in parent_ids
-        if isinstance(cat_copy.get('created_at'), str):
-            cat_copy['created_at'] = datetime.fromisoformat(cat_copy['created_at'])
-        result.append(cat_copy)
-    
-    return result
-
 # ============ UOM Master Routes ============
 @api_router.post("/masters/uoms", response_model=UOMMaster)
 async def create_uom(uom: UOMMaster, current_user: Dict = Depends(get_current_user)):
