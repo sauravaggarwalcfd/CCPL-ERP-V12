@@ -682,7 +682,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All Item Master Enhanced Features tested and working"
+    - "All Item Master UI Improvements tested and working"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
