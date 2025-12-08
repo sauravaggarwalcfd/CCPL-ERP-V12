@@ -104,6 +104,14 @@ const ItemCategoryMaster = () => {
       toast.error('Category Name is required');
       return;
     }
+    if (!formData.category_short_code.trim()) {
+      toast.error('Category Short Code is required');
+      return;
+    }
+    if (formData.category_short_code.length < 2 || formData.category_short_code.length > 4) {
+      toast.error('Short Code must be 2-4 characters');
+      return;
+    }
 
     // Check duplicate under same parent
     const parentId = formData.parent_category === 'none' ? '' : formData.parent_category;
@@ -120,12 +128,13 @@ const ItemCategoryMaster = () => {
       const payload = {
         category_id: formData.category_id,
         category_name: formData.category_name,
+        category_short_code: formData.category_short_code.toUpperCase(),
         parent_category: formData.parent_category === 'none' ? null : formData.parent_category,
         description: formData.description,
         is_active: formData.is_active,
         level,
-        // Backend required fields (using category_name as defaults)
-        code: formData.category_id,
+        // Backend required fields
+        code: formData.category_short_code.toUpperCase(),
         name: formData.category_name,
         inventory_type: 'RAW',
         default_uom: 'PCS',
