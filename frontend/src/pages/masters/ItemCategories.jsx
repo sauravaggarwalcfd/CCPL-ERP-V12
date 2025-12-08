@@ -109,19 +109,7 @@ const ItemCategories = () => {
   };
 
   const handleEdit = (category) => {
-    setFormData({
-      code: category.code,
-      name: category.name,
-      parent_category: category.parent_category || '',
-      level: category.level,
-      inventory_type: category.inventory_type || 'RAW',
-      default_uom: category.default_uom || '',
-      default_hsn: category.default_hsn || '',
-      status: category.status
-    });
-    setCurrentId(category.id);
-    setEditMode(true);
-    setDialogOpen(true);
+    navigate(`/masters/item-categories/edit/${category.id}`);
   };
 
   const getCategoryPath = (categoryId) => {
