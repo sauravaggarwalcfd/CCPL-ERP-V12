@@ -555,6 +555,33 @@ async def update_item_category(category_id: str, category: ItemCategory, current
     await db.item_categories.update_one({"id": category_id}, {"$set": doc})
     return category
 
+# Pydantic model for bulk update request
+class BulkUpdateItemTypeRequest(BaseModel):
+    category_ids: List[str]
+    item_type: str
+
+# Bulk update item type for categories (PATCH endpoint) - MUST come before parametrized routes
+@api_router.patch("/masters/item-categories/bulk-update-item-type")
+async def bulk_update_item_type(
+    request: BulkUpdateItemTypeRequest,
+    current_user: Dict = Depends(get_current_user)
+):
+    """Update item_type for multiple categories without affecting other fields"""
+    try:
+        result = await db.item_categories.update_many(
+            {"id": {"$in": request.category_ids}},
+            {"$set": {
+                "item_type": request.item_type,
+                "inventory_type": request.item_type
+            }}
+        )
+        return {
+            "updated_count": result.modified_count,
+            "item_type": request.item_type
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @api_router.patch("/masters/item-categories/{category_id}")
 async def patch_item_category(category_id: str, updates: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
     """Partially update a category - only updates the provided fields"""
