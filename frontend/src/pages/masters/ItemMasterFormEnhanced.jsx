@@ -868,6 +868,15 @@ const ItemMasterFormEnhanced = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-sm font-semibold">Item Image</Label>
+                  {formData.item_image_preview && (
+                    <div className="mb-2 flex justify-center">
+                      <img 
+                        src={formData.item_image_preview} 
+                        alt="Item preview" 
+                        className="h-24 w-24 object-cover rounded-md border-2 border-neutral-200 shadow-sm"
+                      />
+                    </div>
+                  )}
                   <div className="flex gap-2">
                     <Input
                       type="file"
@@ -884,7 +893,7 @@ const ItemMasterFormEnhanced = () => {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-sm font-semibold">Item Document</Label>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mt-9">
                     <Input
                       type="file"
                       accept=".pdf,.doc,.docx"
