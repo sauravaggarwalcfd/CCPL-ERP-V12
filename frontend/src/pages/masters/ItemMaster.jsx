@@ -339,7 +339,9 @@ const ItemMaster = () => {
                 Create Item
               </Button>
             </DialogTrigger>
-          <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          </Dialog>
+        </div>
+      </div>
             <DialogHeader>
               <DialogTitle className="text-2xl font-heading">{editMode ? 'Edit' : 'Create'} Item Master</DialogTitle>
             </DialogHeader>
