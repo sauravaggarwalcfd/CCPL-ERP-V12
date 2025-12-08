@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/StatusBadge';
-import { Search, Plus, Edit, Trash2, Save, X, Package, AlertCircle, History } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Save, X, Package, AlertCircle, History, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 const ItemMaster = () => {
