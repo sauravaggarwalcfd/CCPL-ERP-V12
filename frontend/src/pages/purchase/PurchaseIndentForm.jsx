@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Save, X, FileText, Package, Users, Calculator, ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { Save, X, FileText, Package, Calculator, ArrowLeft, Plus, Trash2, Search, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 const PurchaseIndentForm = () => {
@@ -16,8 +17,11 @@ const PurchaseIndentForm = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
   const [activeSection, setActiveSection] = useState('header');
+  const [showItemPicker, setShowItemPicker] = useState(false);
+  const [currentItemIndex, setCurrentItemIndex] = useState(null);
+  const [itemSearchTerm, setItemSearchTerm] = useState('');
+  const [imageSize, setImageSize] = useState('medium');
 
   const [formData, setFormData] = useState({
     indent_number: '',
@@ -28,6 +32,7 @@ const PurchaseIndentForm = () => {
     justification: '',
     items: [
       {
+        item_id: '',
         item_code: '',
         description: '',
         uom: 'Pieces',
@@ -37,17 +42,22 @@ const PurchaseIndentForm = () => {
         estimated_amount: 0,
         cgst_percent: 9,
         sgst_percent: 9,
+        igst_percent: 0,
         tax_amount: 0,
         total_amount: 0,
-        specification: ''
+        specification: '',
+        image_url: null
       }
     ]
   });
 
   useEffect(() => {
     fetchMasterData();
-    if (id) fetchIndent(id);
-    else generateIndentNumber();
+    if (id) {
+      fetchIndent(id);
+    } else {
+      generateIndentNumber();
+    }
   }, [id]);
 
   const generateIndentNumber = () => {
@@ -57,12 +67,8 @@ const PurchaseIndentForm = () => {
 
   const fetchMasterData = async () => {
     try {
-      const [itemsRes, suppRes] = await Promise.all([
-        mastersAPI.getItems(),
-        mastersAPI.getSuppliers()
-      ]);
-      setItems(itemsRes.data || []);
-      setSuppliers(suppRes.data || []);
+      const response = await mastersAPI.getItems();
+      setItems(response.data || []);
     } catch (error) {
       toast.error('Failed to load master data');
     }
@@ -72,7 +78,16 @@ const PurchaseIndentForm = () => {
     try {
       setLoading(true);
       const response = await purchaseAPI.getIndent(indentId);
-      setFormData(response.data);
+      const indent = response.data;
+      setFormData({
+        indent_number: indent.indent_number || indent.indent_no,
+        department: indent.department,
+        priority: indent.priority || 'Normal',
+        purpose: indent.purpose || '',
+        budget_head: indent.budget_head || '',
+        justification: indent.justification || '',
+        items: indent.items || []
+      });
     } catch (error) {
       toast.error('Failed to load indent');
     } finally {
@@ -80,13 +95,50 @@ const PurchaseIndentForm = () => {
     }
   };
 
+  const getImageSizes = () => {
+    const sizes = {
+      small: { form: 'w-16 h-16', picker: 'w-12 h-12' },
+      medium: { form: 'w-20 h-20', picker: 'w-16 h-16' },
+      large: { form: 'w-24 h-24', picker: 'w-20 h-20' }
+    };
+    return sizes[imageSize];
+  };
+
+  const handleOpenItemPicker = (index) => {
+    setCurrentItemIndex(index);
+    setShowItemPicker(true);
+    setItemSearchTerm('');
+  };
+
+  const handleSelectItem = (selectedItem) => {
+    if (currentItemIndex !== null) {
+      const newItems = [...formData.items];
+      newItems[currentItemIndex] = {
+        ...newItems[currentItemIndex],
+        item_id: selectedItem.id,
+        item_code: selectedItem.item_code,
+        description: selectedItem.item_name,
+        image_url: selectedItem.image_url || null
+      };
+      setFormData({ ...formData, items: newItems });
+      setShowItemPicker(false);
+      setCurrentItemIndex(null);
+    }
+  };
+
+  const filteredItems = items.filter(item =>
+    item.item_code?.toLowerCase().includes(itemSearchTerm.toLowerCase()) ||
+    item.item_name?.toLowerCase().includes(itemSearchTerm.toLowerCase())
+  );
+
   const handleAddItem = () => {
     setFormData({
       ...formData,
       items: [...formData.items, {
-        item_code: '', description: '', uom: 'Pieces', required_quantity: '',
-        required_date: '', estimated_rate: '', estimated_amount: 0,
-        cgst_percent: 9, sgst_percent: 9, tax_amount: 0, total_amount: 0, specification: ''
+        item_id: '', item_code: '', description: '', uom: 'Pieces',
+        required_quantity: '', required_date: '', estimated_rate: '',
+        estimated_amount: 0, cgst_percent: 9, sgst_percent: 9, igst_percent: 0,
+        tax_amount: 0, total_amount: 0, specification: '', image_url: null
       }]
     });
   };
@@ -99,13 +151,15 @@ const PurchaseIndentForm = () => {
     const newItems = [...formData.items];
     newItems[index][field] = value;
 
-    if (field === 'required_quantity' || field === 'estimated_rate' || field === 'cgst_percent' || field === 'sgst_percent') {
+    if (field === 'required_quantity' || field === 'estimated_rate' || 
+        field === 'cgst_percent' || field === 'sgst_percent' || field === 'igst_percent') {
       const qty = parseFloat(newItems[index].required_quantity) || 0;
       const rate = parseFloat(newItems[index].estimated_rate) || 0;
       const baseAmount = qty * rate;
       const cgst = parseFloat(newItems[index].cgst_percent) || 0;
       const sgst = parseFloat(newItems[index].sgst_percent) || 0;
-      const taxAmount = baseAmount * ((cgst + sgst) / 100);
+      const igst = parseFloat(newItems[index].igst_percent) || 0;
+      const taxAmount = baseAmount * ((cgst + sgst + igst) / 100);
 
       newItems[index].estimated_amount = baseAmount;
       newItems[index].tax_amount = taxAmount;
@@ -127,15 +181,30 @@ const PurchaseIndentForm = () => {
 
     if (!formData.department || !formData.purpose) {
       toast.error('Department and Purpose are required');
+      scrollToSection('header');
       return;
     }
     if (formData.items.length === 0 || !formData.items[0].item_code) {
       toast.error('Please add at least one item');
+      scrollToSection('items');
       return;
     }
 
+    for (let item of formData.items) {
+      if (!item.item_code || !item.description || !item.required_quantity || !item.estimated_rate) {
+        toast.error('Please fill all item details');
+        scrollToSection('items');
+        return;
+      }
+    }
+
     try {
-      const payload = { ...formData, requested_by: 'Current User' };
+      const payload = {
+        ...formData,
+        requested_by: 'Current User',
+        estimated_total: calculateTotals().total
+      };
+
       if (id) {
         toast.success('Indent updated successfully');
       } else {
@@ -166,15 +235,21 @@ const PurchaseIndentForm = () => {
       <div className="bg-gradient-to-r from-violet-600 to-violet-700 border-b border-violet-800 sticky top-0 z-50 shadow-md">
         <div className="px-8 py-5 flex items-center justify-between border-b border-violet-800/30">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate('/purchase/indents')} className="text-white hover:bg-violet-700" data-testid="back-btn">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/purchase/indents')} className="text-white hover:bg-violet-700">
               <ArrowLeft className="h-6 w-6" />
             </Button>
             <div>
               <h1 className="text-3xl font-heading font-semibold text-white">{id ? 'Edit' : 'Create'} Purchase Indent</h1>
-              <p className="text-base text-violet-100">Purchase requisition and approval request</p>
+              <p className="text-base text-violet-100">Purchase requisition with image support</p>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-white/10 rounded-md p-1">
+              <span className="text-xs text-white px-2">Image:</span>
+              <Button size="sm" variant={imageSize === 'small' ? 'default' : 'outline'} onClick={() => setImageSize('small')} className="h-7 px-2 text-xs bg-white text-violet-700">S</Button>
+              <Button size="sm" variant={imageSize === 'medium' ? 'default' : 'outline'} onClick={() => setImageSize('medium')} className="h-7 px-2 text-xs bg-white text-violet-700">M</Button>
+              <Button size="sm" variant={imageSize === 'large' ? 'default' : 'outline'} onClick={() => setImageSize('large')} className="h-7 px-2 text-xs bg-white text-violet-700">L</Button>
+            </div>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate('/purchase/indents')} className="bg-white hover:bg-neutral-100 text-violet-700 border-white">
               <X className="h-5 w-5 mr-2" />Cancel
             </Button>
@@ -207,7 +282,7 @@ const PurchaseIndentForm = () => {
                 <div className="grid grid-cols-4 gap-6">
                   <div className="space-y-2">
                     <Label className="text-base font-medium">Indent Number</Label>
-                    <Input value={formData.indent_number} disabled className="h-11 text-base bg-neutral-100 font-mono" />
+                    <Input value={formData.indent_number} disabled className="h-11 text-base bg-blue-50 font-mono font-semibold" />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="department" className="text-base font-medium">Department *</Label>
@@ -254,32 +329,49 @@ const PurchaseIndentForm = () => {
               </CardHeader>
               <CardContent className="p-8 space-y-5">
                 {formData.items.map((item, index) => (
-                  <div key={index} className="bg-neutral-50 border border-neutral-200 rounded-lg p-6 relative">
+                  <div key={index} className="bg-white border-2 border-neutral-200 rounded-lg p-6 relative hover:border-green-300 transition-colors">
                     {formData.items.length > 1 && (
                       <Button type="button" variant="destructive" size="sm" onClick={() => handleRemoveItem(index)} className="absolute top-4 right-4">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
 
-                    <div className="grid grid-cols-3 gap-4 mb-4">
-                      <div className="space-y-2">
-                        <Label className="text-base font-medium">Item Code *</Label>
-                        <Select value={item.item_code} onValueChange={(value) => handleItemChange(index, 'item_code', value)}>
-                          <SelectTrigger className="h-11 text-base"><SelectValue placeholder="Select item" /></SelectTrigger>
-                          <SelectContent>
-                            {items.map(it => <SelectItem key={it.id} value={it.item_code}>{it.item_code} - {it.item_name}</SelectItem>)}
-                          </SelectContent>
-                        </Select>
+                    <div className="flex gap-6 mb-5">
+                      <div className="flex-shrink-0">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt={item.description} className={`${getImageSizes().form} object-cover rounded-lg border-2 border-neutral-300`} onError={(e) => { e.target.src = 'https://via.placeholder.com/80?text=No+Image'; }} />
+                        ) : (
+                          <div className={`${getImageSizes().form} bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-lg border-2 border-dashed border-neutral-300 flex items-center justify-center text-neutral-400`}>
+                            <div className="text-center">
+                              <Upload className="h-6 w-6 mx-auto mb-1" />
+                              <span className="text-xs">No Image</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="col-span-2 space-y-2">
-                        <Label className="text-base font-medium">Description *</Label>
-                        <Input value={item.description} onChange={(e) => handleItemChange(index, 'description', e.target.value)} placeholder="Item description" className="h-11 text-base" />
+
+                      <div className="flex-1">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-base font-medium">Item Code *</Label>
+                            <div className="flex gap-2">
+                              <Input value={item.item_code} onChange={(e) => handleItemChange(index, 'item_code', e.target.value)} placeholder="FAB-001" className="h-11 text-base" />
+                              <Button type="button" variant="outline" size="icon" onClick={() => handleOpenItemPicker(index)} title="Pick from Masters" className="h-11 w-11">
+                                <Search className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="col-span-2 space-y-2">
+                            <Label className="text-base font-medium">Description *</Label>
+                            <Input value={item.description} onChange={(e) => handleItemChange(index, 'description', e.target.value)} placeholder="Cotton Fabric - Navy Blue" className="h-11 text-base" />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-6 gap-4 mb-4">
                       <div className="space-y-2">
-                        <Label className="text-base font-medium">UOM</Label>
+                        <Label className="text-base font-medium">UOM *</Label>
                         <Select value={item.uom} onValueChange={(value) => handleItemChange(index, 'uom', value)}>
                           <SelectTrigger className="h-11 text-base"><SelectValue /></SelectTrigger>
                           <SelectContent>
@@ -287,6 +379,7 @@ const PurchaseIndentForm = () => {
                             <SelectItem value="Meters">Meters</SelectItem>
                             <SelectItem value="Kg">Kg</SelectItem>
                             <SelectItem value="Boxes">Boxes</SelectItem>
+                            <SelectItem value="Cones">Cones</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -303,7 +396,7 @@ const PurchaseIndentForm = () => {
                         <Input type="number" value={(item.estimated_amount || 0).toFixed(2)} disabled className="h-11 text-base bg-neutral-100 font-semibold" />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-base font-medium">Required Date</Label>
+                        <Label className="text-base font-medium">Required Date *</Label>
                         <Input type="date" value={item.required_date} onChange={(e) => handleItemChange(index, 'required_date', e.target.value)} className="h-11 text-base" />
                       </div>
                       <div className="space-y-2">
@@ -312,19 +405,23 @@ const PurchaseIndentForm = () => {
                       </div>
                     </div>
 
-                    <div className="bg-amber-50 border border-amber-200 rounded p-4">
-                      <Label className="text-sm font-semibold text-amber-900 mb-3 block">GST Details</Label>
-                      <div className="grid grid-cols-5 gap-4">
+                    <div className="bg-gradient-to-r from-amber-50 to-amber-100 border-2 border-amber-200 rounded-lg p-5">
+                      <Label className="text-sm font-semibold text-amber-900 mb-3 block">GST Calculation</Label>
+                      <div className="grid grid-cols-6 gap-4">
                         <div className="space-y-2">
-                          <Label className="text-sm">CGST %</Label>
+                          <Label className="text-sm font-medium">CGST %</Label>
                           <Input type="number" step="0.01" value={item.cgst_percent} onChange={(e) => handleItemChange(index, 'cgst_percent', e.target.value)} className="h-10 text-sm" />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-sm">SGST %</Label>
+                          <Label className="text-sm font-medium">SGST %</Label>
                           <Input type="number" step="0.01" value={item.sgst_percent} onChange={(e) => handleItemChange(index, 'sgst_percent', e.target.value)} className="h-10 text-sm" />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-sm">Tax Amount (₹)</Label>
+                          <Label className="text-sm font-medium">IGST %</Label>
+                          <Input type="number" step="0.01" value={item.igst_percent} onChange={(e) => handleItemChange(index, 'igst_percent', e.target.value)} placeholder="0" className="h-10 text-sm" />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">Tax Amount (₹)</Label>
                           <Input type="number" value={(item.tax_amount || 0).toFixed(2)} disabled className="h-10 text-sm bg-amber-100 font-semibold" />
                         </div>
                         <div className="col-span-2 space-y-2">
@@ -343,23 +440,23 @@ const PurchaseIndentForm = () => {
                 <CardTitle className="flex items-center gap-2 text-xl text-purple-900"><Calculator className="h-6 w-6 text-purple-600" />Summary</CardTitle>
               </CardHeader>
               <CardContent className="p-8">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border-l-4 border-blue-500">
-                  <div className="grid grid-cols-4 gap-6">
-                    <div>
-                      <div className="text-sm text-neutral-600 mb-1">Total Items</div>
-                      <div className="text-2xl font-bold text-blue-900">{formData.items.length}</div>
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-lg border-l-4 border-blue-500 shadow-sm">
+                  <div className="grid grid-cols-4 gap-8">
+                    <div className="text-center">
+                      <div className="text-sm text-neutral-600 mb-2 uppercase tracking-wide">Total Items</div>
+                      <div className="text-4xl font-bold text-blue-900">{formData.items.length}</div>
                     </div>
-                    <div>
-                      <div className="text-sm text-neutral-600 mb-1">Subtotal</div>
-                      <div className="text-2xl font-semibold">₹{totals.subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                    <div className="text-center">
+                      <div className="text-sm text-neutral-600 mb-2 uppercase tracking-wide">Subtotal</div>
+                      <div className="text-3xl font-semibold text-neutral-900">₹{totals.subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
                     </div>
-                    <div>
-                      <div className="text-sm text-neutral-600 mb-1">Total GST</div>
-                      <div className="text-2xl font-semibold text-amber-600">₹{totals.tax.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                    <div className="text-center">
+                      <div className="text-sm text-neutral-600 mb-2 uppercase tracking-wide">Total GST</div>
+                      <div className="text-3xl font-semibold text-amber-600">₹{totals.tax.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
                     </div>
-                    <div>
-                      <div className="text-sm text-neutral-600 mb-1">Grand Total</div>
-                      <div className="text-3xl font-bold text-green-600">₹{totals.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+                    <div className="text-center">
+                      <div className="text-sm text-neutral-600 mb-2 uppercase tracking-wide">Grand Total</div>
+                      <div className="text-4xl font-bold text-green-600">₹{totals.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
                     </div>
                   </div>
                 </div>
@@ -368,6 +465,53 @@ const PurchaseIndentForm = () => {
           </form>
         </div>
       </div>
+
+      <Dialog open={showItemPicker} onOpenChange={setShowItemPicker}>
+        <DialogContent className="max-w-5xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Select Item from Master</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="mb-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-neutral-400" />
+                <Input placeholder="Search items..." value={itemSearchTerm} onChange={(e) => setItemSearchTerm(e.target.value)} className="pl-10 h-11" />
+              </div>
+            </div>
+            <div className="max-h-[500px] overflow-y-auto border rounded-lg">
+              {filteredItems.length === 0 ? (
+                <div className="text-center py-12 text-neutral-500">
+                  <div className="text-4xl mb-2">🔍</div>
+                  <p>No items found</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 p-3">
+                  {filteredItems.map((item) => (
+                    <div key={item.id} onClick={() => handleSelectItem(item)} className="flex items-center gap-4 p-4 border-2 rounded-lg hover:bg-blue-50 hover:border-blue-400 cursor-pointer transition">
+                      <div className="flex-shrink-0">
+                        {item.image_url ? (
+                          <img src={item.image_url} alt={item.item_name} className={`${getImageSizes().picker} object-cover rounded border`} onError={(e) => { e.target.src = 'https://via.placeholder.com/64?text=No'; }} />
+                        ) : (
+                          <div className={`${getImageSizes().picker} bg-neutral-100 rounded border flex items-center justify-center text-neutral-400 text-xs`}>📦</div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-semibold text-neutral-900">{item.item_code}</div>
+                        <div className="text-sm text-neutral-700">{item.item_name}</div>
+                        <Badge variant="outline" className="text-xs mt-1">{item.item_type || 'GENERAL'}</Badge>
+                      </div>
+                      <Button size="sm" variant="outline">Select</Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex justify-end pt-4 border-t">
+            <Button variant="outline" onClick={() => setShowItemPicker(false)}>Cancel</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
