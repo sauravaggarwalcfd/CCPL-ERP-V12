@@ -106,6 +106,49 @@
 user_problem_statement: "Testing Item Master Enhanced Features - New endpoints for auto-code generation, name validation, leaf categories, and enhanced item model with type-specific attributes, purchase UOM, and conversion factors."
 
 frontend:
+  - task: "Item Master Enhanced Form - 4 Tabs Layout"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/masters/ItemMasterFormEnhanced.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: |
+          NOT TESTED - Frontend testing not performed as per system instructions.
+          
+          **Expected Features:**
+          - 4 tabs: Basic Info, Type Attributes, Stock & Inventory, Additional Info
+          - Auto-code preview on category selection
+          - Item type auto-inherited (read-only)
+          - Category path breadcrumb
+          - Leaf category warning for parent categories
+          - Type-specific attribute sections for 6 item types
+          
+          **Recommendation:** Use auto_frontend_testing_agent for E2E testing
+
+  - task: "Item Master List - Enhanced Filters"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/masters/ItemMasterList.jsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: |
+          NOT TESTED - Frontend testing not performed as per system instructions.
+          
+          **Expected Features:**
+          - Filter by Item Type
+          - Filter by Active/Inactive status
+          - Search by name or code
+          
+          **Recommendation:** Use auto_frontend_testing_agent for E2E testing
+
   - task: "Item Category Master - Tree View Rendering"
     implemented: true
     working: false
