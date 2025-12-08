@@ -359,11 +359,12 @@ const ItemCategoryMaster = () => {
                 <Input
                   id="category_name"
                   value={formData.category_name}
-                  onChange={(e) => setFormData({ ...formData, category_name: e.target.value })}
-                  placeholder="e.g., Trims, Labels, Main Label"
+                  onChange={(e) => setFormData({ ...formData, category_name: e.target.value.toUpperCase() })}
+                  placeholder="e.g., TRIMS, LABELS, MAIN LABEL"
                   required
-                  className="h-11 text-base"
+                  className="h-11 text-base font-bold uppercase"
                 />
+                <p className="text-xs text-neutral-500">Will be saved in uppercase</p>
               </div>
 
               {/* Category Short Code */}
