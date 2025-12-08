@@ -486,6 +486,50 @@ async def convert_uom(qty: float, from_uom_id: str, to_uom_id: str) -> float:
     
     return round(converted_qty, to_uom.get('decimal_precision', 2))
 
+async def get_item_type_code(item_type: str) -> str:
+    """Get the type code prefix for item code generation"""
+    type_code_mapping = {
+        "FABRIC": "FAB",
+        "RM": "RM",  # Raw Materials (Trims)
+        "FG": "FG",  # Finished Goods
+        "PACKING": "PKG",
+        "CONSUMABLE": "CNS",
+        "GENERAL": "GEN",
+        "ACCESSORY": "ACC"
+    }
+    return type_code_mapping.get(item_type, "GEN")
+
+async def generate_next_item_code(category_id: str) -> str:
+    """Generate next item code based on category and item type
+    Format: <TypeCode>-<CategoryShortCode>-<RunningNumber>
+    Example: RM-LBL-0045, CNS-NDL-0102
+    """
+    # Get category details
+    category = await db.item_categories.find_one({"id": category_id}, {"_id": 0})
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    item_type = category.get('item_type', 'GENERAL')
+    category_short_code = category.get('category_short_code') or category.get('code', 'GEN')
+    
+    # Get type code prefix
+    type_code = await get_item_type_code(item_type)
+    
+    # Get next running number for this category
+    counter_key = f"item_code_{category_id}"
+    counter = await db.counters.find_one({"key": counter_key})
+    
+    if not counter:
+        next_num = 1
+        await db.counters.insert_one({"key": counter_key, "value": 1})
+    else:
+        next_num = counter['value'] + 1
+        await db.counters.update_one({"key": counter_key}, {"$set": {"value": next_num}})
+    
+    # Format: TYPE-SHORTCODE-0001
+    item_code = f"{type_code}-{category_short_code}-{str(next_num).zfill(4)}"
+    return item_code
+
 # ============ Authentication Routes ============
 @api_router.post("/auth/register", response_model=User)
 async def register(user_create: UserCreate):
