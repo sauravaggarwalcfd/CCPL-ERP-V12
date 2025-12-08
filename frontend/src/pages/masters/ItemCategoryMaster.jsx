@@ -145,32 +145,31 @@ const ItemCategoryMaster = () => {
     
     for (const descendant of descendants) {
       try {
-        // Fetch fresh data for this category to avoid stale state
-        const currentCat = await mastersAPI.getItemCategory(descendant.id);
-        const catData = currentCat.data;
+        // Use MongoDB update to only change item_type fields
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/masters/item-categories/${descendant.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            item_type: newItemType,
+            inventory_type: newItemType
+          })
+        });
         
-        const payload = {
-          id: descendant.id,
-          category_id: catData.category_id || descendant.id,
-          category_name: catData.category_name || catData.name || '',
-          category_short_code: catData.category_short_code || catData.code || '',
-          code: catData.category_short_code || catData.code || '',
-          name: catData.category_name || catData.name || '',
-          parent_category: catData.parent_category,  // CRITICAL: Preserve parent link
-          level: catData.level,  // CRITICAL: Preserve level
-          item_type: newItemType,  // UPDATE: New item type
-          inventory_type: newItemType,  // UPDATE: New inventory type
-          default_uom: catData.default_uom || 'PCS',
-          description: catData.description || '',
-          is_active: catData.is_active !== false,
-          status: catData.is_active !== false ? 'Active' : 'Inactive',
-          allow_purchase: catData.allow_purchase !== false,
-          allow_issue: catData.allow_issue !== false
-        };
+        if (!response.ok) {
+          // If PATCH not supported, try minimal PUT
+          await mastersAPI.updateItemCategory(descendant.id, {
+            ...descendant,
+            item_type: newItemType,
+            inventory_type: newItemType,
+            created_at: undefined,  // Remove datetime to avoid serialization issues
+            updated_at: undefined
+          });
+        }
         
-        console.log(`Updating descendant: ${catData.category_name || catData.name} (Level ${catData.level})`);
-        
-        await mastersAPI.updateItemCategory(descendant.id, payload);
+        console.log(`✓ Updated: ${descendant.category_name || descendant.name}`);
       } catch (error) {
         console.error(`Failed to update descendant ${descendant.id}:`, error);
       }
