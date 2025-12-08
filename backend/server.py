@@ -594,6 +594,28 @@ async def get_item_categories(current_user: Dict = Depends(get_current_user)):
             cat['created_at'] = datetime.fromisoformat(cat['created_at'])
     return categories
 
+@api_router.get("/masters/item-categories/leaf-only")
+async def get_leaf_categories(current_user: Dict = Depends(get_current_user)):
+    """Get only leaf categories (categories without children) - MUST come before {category_id} route"""
+    all_categories = await db.item_categories.find({}, {"_id": 0}).to_list(1000)
+    
+    # Get all parent category IDs
+    parent_ids = set()
+    for cat in all_categories:
+        if cat.get('parent_category'):
+            parent_ids.add(cat['parent_category'])
+    
+    # Add is_leaf flag to all categories
+    result = []
+    for cat in all_categories:
+        cat_copy = cat.copy()
+        cat_copy['is_leaf'] = cat['id'] not in parent_ids
+        if isinstance(cat_copy.get('created_at'), str):
+            cat_copy['created_at'] = datetime.fromisoformat(cat_copy['created_at'])
+        result.append(cat_copy)
+    
+    return result
+
 @api_router.get("/masters/item-categories/{category_id}", response_model=ItemCategory)
 async def get_item_category(category_id: str, current_user: Dict = Depends(get_current_user)):
     category = await db.item_categories.find_one({"id": category_id}, {"_id": 0})
