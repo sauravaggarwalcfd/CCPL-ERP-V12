@@ -15,6 +15,7 @@ import { Search, Plus, Edit, Trash2, Save, X, Warehouse as WarehouseIcon, CheckC
 import { toast } from 'sonner';
 
 const WarehouseMaster = () => {
+  const navigate = useNavigate();
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
