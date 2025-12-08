@@ -1147,7 +1147,7 @@ const ItemMasterFormEnhanced = () => {
                     checked={formData.is_active}
                     onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                   />
-                  <Label className="text-base">Active</Label>
+                  <Label className="text-sm">Active</Label>
                 </div>
                 <Badge variant={formData.is_active ? 'default' : 'secondary'}>
                   {formData.is_active ? 'Active' : 'Inactive'}
