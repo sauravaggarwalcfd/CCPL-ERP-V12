@@ -32,6 +32,7 @@ const ItemMasterForm = () => {
     item_name: '',
     item_description: '',
     item_category: '',
+    category_path: '',
     item_group_1: '',
     item_sub_group_2: '',
     item_sub_group_3: '',
