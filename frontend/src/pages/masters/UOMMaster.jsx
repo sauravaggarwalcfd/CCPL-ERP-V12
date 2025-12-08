@@ -15,6 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
 const UOMMaster = () => {
+  const navigate = useNavigate();
   const [uoms, setUOMs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
