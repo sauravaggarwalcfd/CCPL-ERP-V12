@@ -555,6 +555,30 @@ async def update_item_category(category_id: str, category: ItemCategory, current
     await db.item_categories.update_one({"id": category_id}, {"$set": doc})
     return category
 
+@api_router.patch("/masters/item-categories/{category_id}")
+async def patch_item_category(category_id: str, updates: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+    """Partially update a category - only updates the provided fields"""
+    if not updates:
+        raise HTTPException(status_code=400, detail="No updates provided")
+    
+    # Check if category exists
+    existing = await db.item_categories.find_one({"id": category_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Category not found")
+    
+    # Update only the provided fields
+    result = await db.item_categories.update_one(
+        {"id": category_id},
+        {"$set": updates}
+    )
+    
+    if result.modified_count == 0:
+        return {"message": "No changes made", "category_id": category_id}
+    
+    # Return updated category
+    updated = await db.item_categories.find_one({"id": category_id}, {"_id": 0})
+    return updated
+
 @api_router.delete("/masters/item-categories/{category_id}")
 async def delete_item_category(category_id: str, current_user: Dict = Depends(get_current_user)):
     result = await db.item_categories.delete_one({"id": category_id})
