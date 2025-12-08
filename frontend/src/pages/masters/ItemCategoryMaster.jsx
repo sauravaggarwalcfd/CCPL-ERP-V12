@@ -34,6 +34,8 @@ const ItemCategoryMaster = () => {
   const [itemTypes, setItemTypes] = useState(['RM', 'FG', 'PACKING', 'ACCESSORY', 'CONSUMABLE', 'GENERAL', 'SERVICE']);
   const [showAddItemType, setShowAddItemType] = useState(false);
   const [newItemType, setNewItemType] = useState('');
+  const [showItemTypeWarning, setShowItemTypeWarning] = useState(false);
+  const [pendingItemTypeChange, setPendingItemTypeChange] = useState(null);
 
   useEffect(() => {
     fetchCategories();
