@@ -631,9 +631,28 @@ const ItemCategoryMaster = () => {
               <Button onClick={handleNew} size="sm" className="mt-3">Create First Category</Button>
             </div>
           ) : (
-            <div className="space-y-1">
-              {renderCategoryTree()}
-            </div>
+            <>
+              {/* Root Level Drop Zone */}
+              {draggedCategory && draggedCategory.parent_category && (
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                  }}
+                  onDrop={(e) => handleDrop(e, null)}
+                  className="mb-3 p-4 border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg text-center cursor-pointer hover:bg-blue-100 transition-colors"
+                >
+                  <div className="flex items-center justify-center gap-2 text-blue-700 font-medium">
+                    <Move className="h-4 w-4" />
+                    <span>Drop here to move to Root Level</span>
+                  </div>
+                </div>
+              )}
+              
+              <div className="space-y-1">
+                {renderCategoryTree()}
+              </div>
+            </>
           )}
         </ScrollArea>
 
