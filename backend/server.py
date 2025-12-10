@@ -684,6 +684,128 @@ class MoveCategoryResponse(BaseModel):
     items_count: int
     category_path: str
 
+# Move category to a new parent (PATCH endpoint) - MUST come before parametrized routes
+@api_router.patch("/masters/item-categories/move-category")
+async def move_category(
+    request: MoveCategoryRequest,
+    current_user: Dict = Depends(get_current_user)
+):
+    """
+    Move a category to a new parent with validation
+    - Prevents circular references (moving to own descendant)
+    - Returns impact analysis (children count, items count)
+    - Updates all descendants' item_type if needed
+    """
+    try:
+        # Get the category to move
+        category = await db.item_categories.find_one({"id": request.category_id}, {"_id": 0})
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+        
+        # Fetch all categories to perform validation
+        all_categories = await db.item_categories.find({}, {"_id": 0}).to_list(1000)
+        
+        # Helper function to get all descendants
+        def get_descendants(cat_id: str, categories: List[Dict]) -> List[str]:
+            descendants = []
+            children = [c for c in categories if c.get('parent_category') == cat_id]
+            for child in children:
+                descendants.append(child['id'])
+                descendants.extend(get_descendants(child['id'], categories))
+            return descendants
+        
+        # Validation 1: Prevent circular reference (can't move to own descendant)
+        if request.new_parent_id:
+            descendant_ids = get_descendants(request.category_id, all_categories)
+            if request.new_parent_id in descendant_ids:
+                raise HTTPException(
+                    status_code=400, 
+                    detail="Cannot move category to its own descendant. This would create a circular reference."
+                )
+            
+            # Validation 2: Prevent moving to self
+            if request.new_parent_id == request.category_id:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Cannot move category to itself."
+                )
+        
+        # Get new parent and determine new item_type
+        new_parent = None
+        new_item_type = category.get('item_type', 'RM')
+        
+        if request.new_parent_id:
+            new_parent = await db.item_categories.find_one({"id": request.new_parent_id}, {"_id": 0})
+            if not new_parent:
+                raise HTTPException(status_code=404, detail="New parent category not found")
+            new_item_type = new_parent.get('item_type', 'RM')
+        
+        # Calculate impact
+        descendant_ids = get_descendants(request.category_id, all_categories)
+        affected_children_count = len(descendant_ids)
+        
+        # Count items in this category
+        items_count = await db.items.count_documents({"item_category_id": request.category_id})
+        
+        # Build category path for display
+        def get_category_path(cat_id: str, categories: List[Dict]) -> str:
+            cat = next((c for c in categories if c['id'] == cat_id), None)
+            if not cat:
+                return ""
+            path = cat.get('category_name', cat.get('name', ''))
+            if cat.get('parent_category'):
+                parent_path = get_category_path(cat['parent_category'], categories)
+                if parent_path:
+                    path = f"{parent_path} > {path}"
+            return path
+        
+        old_path = get_category_path(request.category_id, all_categories)
+        new_parent_name = new_parent.get('category_name', new_parent.get('name', 'Root Level')) if new_parent else 'Root Level'
+        new_path = f"{new_parent_name} > {category.get('category_name', category.get('name', ''))}"
+        
+        # Update the category's parent
+        update_data = {
+            "parent_category": request.new_parent_id,
+            "item_type": new_item_type,
+            "inventory_type": new_item_type
+        }
+        
+        # Recalculate level
+        if request.new_parent_id and new_parent:
+            new_level = new_parent.get('level', 0) + 1
+            update_data["level"] = new_level
+        else:
+            update_data["level"] = 0
+        
+        await db.item_categories.update_one(
+            {"id": request.category_id},
+            {"$set": update_data}
+        )
+        
+        # Update all descendants' item_type if it changed
+        if descendant_ids and new_item_type != category.get('item_type'):
+            await db.item_categories.update_many(
+                {"id": {"$in": descendant_ids}},
+                {"$set": {
+                    "item_type": new_item_type,
+                    "inventory_type": new_item_type
+                }}
+            )
+        
+        return MoveCategoryResponse(
+            success=True,
+            message=f"Category moved successfully from '{old_path}' to '{new_path}'",
+            affected_children_count=affected_children_count,
+            items_count=items_count,
+            category_path=new_path
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error moving category: {str(e)}")
+
+
 
 # Bulk update item type for categories (PATCH endpoint) - MUST come before parametrized routes
 @api_router.patch("/masters/item-categories/bulk-update-item-type")
