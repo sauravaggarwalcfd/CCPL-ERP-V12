@@ -104,50 +104,50 @@ function App() {
             <Route path="masters/tax-hsn" element={<TaxHSNMaster />} />
             <Route path="masters/fabric-categories" element={<FabricCategoryMaster />} />
 
-              {/* Purchase */}
-              <Route path="purchase/indents" element={<PurchaseIndents />} />
-              <Route path="purchase/indents/new" element={<PurchaseIndentForm />} />
-              <Route path="purchase/indents/edit/:id" element={<PurchaseIndentForm />} />
-              <Route path="purchase/orders" element={<PurchaseOrders />} />
-              <Route path="purchase/orders/new" element={<PurchaseOrderForm />} />
-              <Route path="purchase/orders/edit/:id" element={<PurchaseOrderForm />} />
-              <Route path="purchase/approvals" element={<POApprovalPanel />} />
+            {/* Purchase */}
+            <Route path="purchase/indents" element={<PurchaseIndents />} />
+            <Route path="purchase/indents/new" element={<PurchaseIndentForm />} />
+            <Route path="purchase/indents/edit/:id" element={<PurchaseIndentForm />} />
+            <Route path="purchase/orders" element={<PurchaseOrders />} />
+            <Route path="purchase/orders/new" element={<PurchaseOrderForm />} />
+            <Route path="purchase/orders/edit/:id" element={<PurchaseOrderForm />} />
+            <Route path="purchase/approvals" element={<POApprovalPanel />} />
 
-              {/* Quality */}
-              <Route path="quality/checks" element={<QualityChecks />} />
+            {/* Quality */}
+            <Route path="quality/checks" element={<QualityChecks />} />
 
-              {/* Inventory Transactions */}
-              <Route path="inventory/opening-stock" element={<OpeningStockPage />} />
-              <Route path="inventory/grn" element={<GRN />} />
-              <Route path="inventory/stock-inward" element={<StockInward />} />
-              <Route path="inventory/stock-issue" element={<StockIssuePage />} />
-              <Route path="inventory/stock-transfer" element={<StockTransfer />} />
-              <Route path="inventory/adjustment" element={<StockAdjustment />} />
-              <Route path="inventory/audit" element={<StockAuditPage />} />
-              <Route path="inventory/issue" element={<IssueToDepartment />} />
-              <Route path="inventory/return" element={<ReturnFromDepartment />} />
+            {/* Inventory Transactions */}
+            <Route path="inventory/opening-stock" element={<OpeningStockPage />} />
+            <Route path="inventory/grn" element={<GRN />} />
+            <Route path="inventory/stock-inward" element={<StockInward />} />
+            <Route path="inventory/stock-issue" element={<StockIssuePage />} />
+            <Route path="inventory/stock-transfer" element={<StockTransfer />} />
+            <Route path="inventory/adjustment" element={<StockAdjustment />} />
+            <Route path="inventory/audit" element={<StockAuditPage />} />
+            <Route path="inventory/issue" element={<IssueToDepartment />} />
+            <Route path="inventory/return" element={<ReturnFromDepartment />} />
 
-              {/* Reports */}
-              <Route path="reports/stock-ledger" element={<StockLedger />} />
-              <Route path="reports/item-balance" element={<ItemBalanceReport />} />
-              <Route path="reports/bin-stock" element={<BINStockPage />} />
-              <Route path="reports/dead-stock" element={<DeadStockPage />} />
-              <Route path="reports/issue-return" element={<IssueReturnRegister />} />
-              <Route path="reports/pending-po" element={<PendingPOReport />} />
+            {/* Reports */}
+            <Route path="reports/stock-ledger" element={<StockLedger />} />
+            <Route path="reports/item-balance" element={<ItemBalanceReport />} />
+            <Route path="reports/bin-stock" element={<BINStockPage />} />
+            <Route path="reports/dead-stock" element={<DeadStockPage />} />
+            <Route path="reports/issue-return" element={<IssueReturnRegister />} />
+            <Route path="reports/pending-po" element={<PendingPOReport />} />
 
-              {/* Settings */}
-              <Route path="settings/approval-flows" element={<ApprovalFlows />} />
-              <Route path="settings/number-series" element={<NumberSeries />} />
-              <Route path="settings/roles" element={<RolesPermissions />} />
-              <Route path="settings/account-mapping" element={<AccountMapping />} />
-            </Route>
+            {/* Settings */}
+            <Route path="settings/approval-flows" element={<ApprovalFlows />} />
+            <Route path="settings/number-series" element={<NumberSeries />} />
+            <Route path="settings/roles" element={<RolesPermissions />} />
+            <Route path="settings/account-mapping" element={<AccountMapping />} />
+          </Route>
 
-            {/* 404 */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-          <Toaster position="top-right" richColors />
-        </div>
-      </BrowserRouter>
+          {/* 404 */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+        <Toaster position="top-right" richColors />
+      </div>
+    </BrowserRouter>
   );
 }
 
