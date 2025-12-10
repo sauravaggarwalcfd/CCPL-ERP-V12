@@ -334,6 +334,140 @@ const ItemCategoryMaster = () => {
     }
   };
 
+  // Drag and Drop Handlers
+  const handleDragStart = (e, category) => {
+    e.stopPropagation();
+    setDraggedCategory(category);
+    e.dataTransfer.effectAllowed = 'move';
+    // Add visual feedback
+    e.currentTarget.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e) => {
+    e.currentTarget.style.opacity = '1';
+    setDraggedCategory(null);
+    setDragOverCategory(null);
+  };
+
+  const handleDragOver = (e, category) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!draggedCategory || draggedCategory.id === category.id) {
+      return;
+    }
+    
+    // Check if dropping into own descendant (prevent circular reference)
+    const isDescendant = isInDescendants(category.id, draggedCategory.id);
+    if (isDescendant) {
+      e.dataTransfer.dropEffect = 'none';
+      return;
+    }
+    
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverCategory(category.id);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setDragOverCategory(null);
+  };
+
+  const handleDrop = async (e, newParent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!draggedCategory) return;
+    
+    // Don't allow dropping on itself
+    if (draggedCategory.id === newParent?.id) {
+      toast.error("Cannot move category to itself");
+      setDragOverCategory(null);
+      return;
+    }
+    
+    // Check if dropping into own descendant
+    if (newParent && isInDescendants(newParent.id, draggedCategory.id)) {
+      toast.error("Cannot move category to its own descendant");
+      setDragOverCategory(null);
+      return;
+    }
+    
+    // Calculate impact
+    const descendants = getDescendants(draggedCategory.id);
+    const itemsInCategory = 0; // We'll get this from backend
+    
+    const newParentName = newParent ? (newParent.category_name || newParent.name) : 'Root Level';
+    const draggedName = draggedCategory.category_name || draggedCategory.name;
+    
+    // Show confirmation dialog with impact
+    setMoveConfirmDialog({
+      open: true,
+      category: draggedCategory,
+      newParent: newParent,
+      impact: {
+        childrenCount: descendants.length,
+        itemsCount: itemsInCategory,
+        oldPath: getCategoryPath(draggedCategory.id),
+        newPath: newParent ? `${getCategoryPath(newParent.id)} > ${draggedName}` : draggedName
+      }
+    });
+    
+    setDragOverCategory(null);
+  };
+
+  const isInDescendants = (potentialDescendantId, ancestorId) => {
+    const descendants = getDescendants(ancestorId);
+    return descendants.some(d => d.id === potentialDescendantId);
+  };
+
+  const getCategoryPath = (categoryId) => {
+    const buildPath = (catId) => {
+      const cat = categories.find(c => c.id === catId);
+      if (!cat) return '';
+      
+      const catName = cat.category_name || cat.name;
+      if (cat.parent_category) {
+        const parentPath = buildPath(cat.parent_category);
+        return parentPath ? `${parentPath} > ${catName}` : catName;
+      }
+      return catName;
+    };
+    return buildPath(categoryId);
+  };
+
+  const confirmMoveCategory = async () => {
+    const { category, newParent } = moveConfirmDialog;
+    
+    try {
+      const response = await mastersAPI.moveCategory(
+        category.id,
+        newParent ? newParent.id : null
+      );
+      
+      toast.success(response.data.message);
+      
+      // Show additional info if children or items were affected
+      if (response.data.affected_children_count > 0) {
+        toast.info(`${response.data.affected_children_count} child categories updated`);
+      }
+      if (response.data.items_count > 0) {
+        toast.info(`${response.data.items_count} items remain in category (codes unchanged)`);
+      }
+      
+      // Refresh categories
+      await fetchCategories();
+      setMoveConfirmDialog({ open: false, category: null, newParent: null, impact: null });
+      setDraggedCategory(null);
+      
+    } catch (error) {
+      console.error('Move error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to move category');
+      setMoveConfirmDialog({ open: false, category: null, newParent: null, impact: null });
+    }
+  };
+
+
   const toggleExpand = (categoryId) => {
     const newExpanded = new Set(expandedCategories);
     if (newExpanded.has(categoryId)) {
