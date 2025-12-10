@@ -74,40 +74,35 @@ function App() {
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
 
-              {/* Masters */}
-              <Route path="masters/item-categories" element={<ItemCategoryMaster />} />
-              <Route path="masters/item-categories/old" element={<ItemCategories />} />
-              <Route path="masters/item-categories/new" element={<CategoryForm />} />
-              <Route path="masters/item-categories/edit/:id" element={<CategoryForm />} />
-              <Route path="masters/items" element={<ItemMaster />} />
-              <Route path="masters/items/new" element={<ItemMasterFormEnhanced />} />
-              <Route path="masters/items/edit/:id" element={<ItemMasterFormEnhanced />} />
-              <Route path="masters/colors" element={<ColorMaster />} />
-              <Route path="masters/colors/new" element={<ColorForm />} />
-              <Route path="masters/colors/edit/:id" element={<ColorForm />} />
-              <Route path="masters/sizes" element={<SizeMaster />} />
-              <Route path="masters/sizes/new" element={<SizeForm />} />
-              <Route path="masters/sizes/edit/:id" element={<SizeForm />} />
-              <Route path="masters/brands" element={<BrandMaster />} />
-              <Route path="masters/brands/new" element={<BrandForm />} />
-              <Route path="masters/brands/edit/:id" element={<BrandForm />} />
-              <Route path="masters/suppliers" element={<SupplierMaster />} />
-              <Route path="masters/suppliers/new" element={<SupplierForm />} />
-              <Route path="masters/suppliers/edit/:id" element={<SupplierForm />} />
-              <Route path="masters/uoms" element={<UOMMaster />} />
-              <Route path="masters/uoms/new" element={<UOMForm />} />
-              <Route path="masters/uoms/edit/:id" element={<UOMForm />} />
-              <Route path="masters/warehouses" element={<WarehouseMaster />} />
-              <Route path="masters/warehouses/new" element={<WarehouseForm />} />
-              <Route path="masters/warehouses/edit/:id" element={<WarehouseForm />} />
-              <Route path="masters/suppliers" element={<SupplierMaster />} />
-              <Route path="masters/warehouses" element={<WarehouseMaster />} />
-              <Route path="masters/bin-locations" element={<BINLocationMaster />} />
-              <Route path="masters/tax-hsn" element={<TaxHSNMaster />} />
-              <Route path="masters/fabric-categories" element={<FabricCategoryMaster />} />
-              <Route path="masters/colors" element={<ColorMaster />} />
-              <Route path="masters/sizes" element={<SizeMaster />} />
-              <Route path="masters/brands" element={<BrandMaster />} />
+            {/* Masters */}
+            <Route path="masters/item-categories" element={<ItemCategoryMaster />} />
+            <Route path="masters/item-categories/old" element={<ItemCategories />} />
+            <Route path="masters/item-categories/new" element={<CategoryForm />} />
+            <Route path="masters/item-categories/edit/:id" element={<CategoryForm />} />
+            <Route path="masters/items" element={<ItemMaster />} />
+            <Route path="masters/items/new" element={<ItemMasterFormEnhanced />} />
+            <Route path="masters/items/edit/:id" element={<ItemMasterFormEnhanced />} />
+            <Route path="masters/colors" element={<ColorMaster />} />
+            <Route path="masters/colors/new" element={<ColorForm />} />
+            <Route path="masters/colors/edit/:id" element={<ColorForm />} />
+            <Route path="masters/sizes" element={<SizeMaster />} />
+            <Route path="masters/sizes/new" element={<SizeForm />} />
+            <Route path="masters/sizes/edit/:id" element={<SizeForm />} />
+            <Route path="masters/brands" element={<BrandMaster />} />
+            <Route path="masters/brands/new" element={<BrandForm />} />
+            <Route path="masters/brands/edit/:id" element={<BrandForm />} />
+            <Route path="masters/suppliers" element={<SupplierMaster />} />
+            <Route path="masters/suppliers/new" element={<SupplierForm />} />
+            <Route path="masters/suppliers/edit/:id" element={<SupplierForm />} />
+            <Route path="masters/uoms" element={<UOMMaster />} />
+            <Route path="masters/uoms/new" element={<UOMForm />} />
+            <Route path="masters/uoms/edit/:id" element={<UOMForm />} />
+            <Route path="masters/warehouses" element={<WarehouseMaster />} />
+            <Route path="masters/warehouses/new" element={<WarehouseForm />} />
+            <Route path="masters/warehouses/edit/:id" element={<WarehouseForm />} />
+            <Route path="masters/bin-locations" element={<BINLocationMaster />} />
+            <Route path="masters/tax-hsn" element={<TaxHSNMaster />} />
+            <Route path="masters/fabric-categories" element={<FabricCategoryMaster />} />
 
               {/* Purchase */}
               <Route path="purchase/indents" element={<PurchaseIndents />} />
