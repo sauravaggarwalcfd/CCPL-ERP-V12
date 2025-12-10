@@ -615,7 +615,7 @@ async def get_users(current_user: Dict = Depends(get_current_user)):
 
 # ============ Item Category Routes ============
 @api_router.post("/masters/item-categories", response_model=ItemCategory)
-async def create_item_category(category: ItemCategory, current_user: Dict = Depends(get_current_user)):
+async def create_item_category(category: ItemCategory):
     doc = category.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.item_categories.insert_one(doc)
@@ -652,7 +652,7 @@ async def get_leaf_categories(current_user: Dict = Depends(get_current_user)):
     return result
 
 @api_router.get("/masters/item-categories/{category_id}", response_model=ItemCategory)
-async def get_item_category(category_id: str, current_user: Dict = Depends(get_current_user)):
+async def get_item_category(category_id: str):
     category = await db.item_categories.find_one({"id": category_id}, {"_id": 0})
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
@@ -661,7 +661,7 @@ async def get_item_category(category_id: str, current_user: Dict = Depends(get_c
     return ItemCategory(**category)
 
 @api_router.put("/masters/item-categories/{category_id}", response_model=ItemCategory)
-async def update_item_category(category_id: str, category: ItemCategory, current_user: Dict = Depends(get_current_user)):
+async def update_item_category(category_id: str, category: ItemCategory):
     doc = category.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.item_categories.update_one({"id": category_id}, {"$set": doc})
@@ -687,8 +687,7 @@ class MoveCategoryResponse(BaseModel):
 # Move category to a new parent (PATCH endpoint) - MUST come before parametrized routes
 @api_router.patch("/masters/item-categories/move-category")
 async def move_category(
-    request: MoveCategoryRequest,
-    current_user: Dict = Depends(get_current_user)
+    request: MoveCategoryRequest
 ):
     """
     Move a category to a new parent with validation
@@ -810,8 +809,7 @@ async def move_category(
 # Bulk update item type for categories (PATCH endpoint) - MUST come before parametrized routes
 @api_router.patch("/masters/item-categories/bulk-update-item-type")
 async def bulk_update_item_type(
-    request: BulkUpdateItemTypeRequest,
-    current_user: Dict = Depends(get_current_user)
+    request: BulkUpdateItemTypeRequest
 ):
     """Update item_type for multiple categories without affecting other fields"""
     try:
@@ -830,7 +828,7 @@ async def bulk_update_item_type(
         raise HTTPException(status_code=400, detail=str(e))
 
 @api_router.patch("/masters/item-categories/{category_id}")
-async def patch_item_category(category_id: str, updates: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+async def patch_item_category(category_id: str, updates: Dict[str, Any]):
     """Partially update a category - only updates the provided fields"""
     if not updates:
         raise HTTPException(status_code=400, detail="No updates provided")
@@ -854,7 +852,7 @@ async def patch_item_category(category_id: str, updates: Dict[str, Any], current
     return updated
 
 @api_router.delete("/masters/item-categories/{category_id}")
-async def delete_item_category(category_id: str, current_user: Dict = Depends(get_current_user)):
+async def delete_item_category(category_id: str):
     result = await db.item_categories.delete_one({"id": category_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Category not found")
@@ -862,7 +860,7 @@ async def delete_item_category(category_id: str, current_user: Dict = Depends(ge
 
 # ============ Item Master Routes ============
 @api_router.post("/masters/items", response_model=ItemMaster)
-async def create_item(item: ItemMaster, current_user: Dict = Depends(get_current_user)):
+async def create_item(item: ItemMaster):
     # Auto-generate item_code if not provided or is "AUTO"
     if not item.item_code or item.item_code.upper() == "AUTO":
         item.item_code = await generate_next_item_code(item.category_id)
@@ -889,7 +887,7 @@ async def get_items(current_user: Dict = Depends(get_current_user)):
     return items
 
 @api_router.get("/masters/items/preview/next-code")
-async def preview_next_item_code(category_id: str, current_user: Dict = Depends(get_current_user)):
+async def preview_next_item_code(category_id: str):
     """Preview the next auto-generated item code for a category"""
     try:
         # Get category details
@@ -924,7 +922,7 @@ async def preview_next_item_code(category_id: str, current_user: Dict = Depends(
         raise HTTPException(status_code=400, detail=str(e))
 
 @api_router.get("/masters/items/validate/name")
-async def validate_item_name(item_name: str, category_id: str, item_id: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+async def validate_item_name(item_name: str, category_id: str, item_id: Optional[str] = None):
     """Validate if item name is unique within the category"""
     query = {"item_name": item_name, "category_id": category_id}
     
@@ -943,7 +941,7 @@ async def validate_item_name(item_name: str, category_id: str, item_id: Optional
 # ============ Integration-Ready Helper Endpoints (MUST come before {item_id} route) ============
 
 @api_router.get("/masters/items/by-code/{item_code}")
-async def get_item_by_code(item_code: str, current_user: Dict = Depends(get_current_user)):
+async def get_item_by_code(item_code: str):
     """Get item details by item code - Useful for Purchase/GRN modules"""
     item = await db.items.find_one({"item_code": item_code}, {"_id": 0})
     if not item:
@@ -955,7 +953,7 @@ async def get_item_by_code(item_code: str, current_user: Dict = Depends(get_curr
     return item
 
 @api_router.get("/masters/items/by-category/{category_id}")
-async def get_items_by_category(category_id: str, current_user: Dict = Depends(get_current_user)):
+async def get_items_by_category(category_id: str):
     """Get all items in a category - Useful for BOM/Production modules"""
     items = await db.items.find({"category_id": category_id}, {"_id": 0}).to_list(1000)
     for item in items:
@@ -966,7 +964,7 @@ async def get_items_by_category(category_id: str, current_user: Dict = Depends(g
     return items
 
 @api_router.get("/masters/items/by-type/{item_type}")
-async def get_items_by_type(item_type: str, current_user: Dict = Depends(get_current_user)):
+async def get_items_by_type(item_type: str):
     """Get all items of a specific type - Useful for filtering RM, FG, etc."""
     items = await db.items.find({"item_type": item_type, "is_active": True}, {"_id": 0}).to_list(1000)
     for item in items:
@@ -1025,8 +1023,7 @@ async def search_items(
     q: str,
     item_type: Optional[str] = None,
     category_id: Optional[str] = None,
-    limit: int = 50,
-    current_user: Dict = Depends(get_current_user)
+    limit: int = 50
 ):
     """Search items by name or code - Useful for all transaction modules"""
     query = {
@@ -1052,7 +1049,7 @@ async def search_items(
     return items
 
 @api_router.get("/masters/items/{item_id}", response_model=ItemMaster)
-async def get_item(item_id: str, current_user: Dict = Depends(get_current_user)):
+async def get_item(item_id: str):
     item = await db.items.find_one({"id": item_id}, {"_id": 0})
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -1061,7 +1058,7 @@ async def get_item(item_id: str, current_user: Dict = Depends(get_current_user))
     return ItemMaster(**item)
 
 @api_router.put("/masters/items/{item_id}", response_model=ItemMaster)
-async def update_item(item_id: str, item: ItemMaster, current_user: Dict = Depends(get_current_user)):
+async def update_item(item_id: str, item: ItemMaster):
     # Set updated_at timestamp
     item.updated_at = datetime.now(timezone.utc)
     
@@ -1079,14 +1076,14 @@ async def update_item(item_id: str, item: ItemMaster, current_user: Dict = Depen
     return item
 
 @api_router.delete("/masters/items/{item_id}")
-async def delete_item(item_id: str, current_user: Dict = Depends(get_current_user)):
+async def delete_item(item_id: str):
     result = await db.items.delete_one({"id": item_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Item not found")
     return {"message": "Item deleted successfully"}
 
 @api_router.get("/masters/items/preview/next-code")
-async def preview_next_item_code(category_id: str, current_user: Dict = Depends(get_current_user)):
+async def preview_next_item_code(category_id: str):
     """Preview the next auto-generated item code for a category"""
     try:
         # Get category details
@@ -1121,7 +1118,7 @@ async def preview_next_item_code(category_id: str, current_user: Dict = Depends(
         raise HTTPException(status_code=400, detail=str(e))
 
 @api_router.get("/masters/items/validate/name")
-async def validate_item_name(item_name: str, category_id: str, item_id: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+async def validate_item_name(item_name: str, category_id: str, item_id: Optional[str] = None):
     """Validate if item name is unique within the category"""
     query = {"item_name": item_name, "category_id": category_id}
     
@@ -1141,8 +1138,7 @@ async def validate_item_name(item_name: str, category_id: str, item_id: Optional
 async def update_item_cost(
     item_id: str,
     last_purchase_rate: Optional[float] = None,
-    standard_cost: Optional[float] = None,
-    current_user: Dict = Depends(get_current_user)
+    standard_cost: Optional[float] = None
 ):
     """Update item cost after purchase - Called from GRN module"""
     updates = {}
@@ -1162,7 +1158,7 @@ async def update_item_cost(
 
 # ============ UOM Master Routes ============
 @api_router.post("/masters/uoms", response_model=UOMMaster)
-async def create_uom(uom: UOMMaster, current_user: Dict = Depends(get_current_user)):
+async def create_uom(uom: UOMMaster):
     doc = uom.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.uoms.insert_one(doc)
@@ -1180,8 +1176,7 @@ async def get_uoms(current_user: Dict = Depends(get_current_user)):
 async def convert_uom_quantity(
     qty: float,
     from_uom_id: str,
-    to_uom_id: str,
-    current_user: Dict = Depends(get_current_user)
+    to_uom_id: str
 ):
     """Convert quantity between UOMs"""
     try:
@@ -1199,7 +1194,7 @@ async def convert_uom_quantity(
 
 # ============ Supplier Master Routes ============
 @api_router.post("/masters/suppliers", response_model=SupplierMaster)
-async def create_supplier(supplier: SupplierMaster, current_user: Dict = Depends(get_current_user)):
+async def create_supplier(supplier: SupplierMaster):
     doc = supplier.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.suppliers.insert_one(doc)
@@ -1215,7 +1210,7 @@ async def get_suppliers(current_user: Dict = Depends(get_current_user)):
 
 # ============ Warehouse Master Routes ============
 @api_router.post("/masters/warehouses", response_model=WarehouseMaster)
-async def create_warehouse(warehouse: WarehouseMaster, current_user: Dict = Depends(get_current_user)):
+async def create_warehouse(warehouse: WarehouseMaster):
     doc = warehouse.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.warehouses.insert_one(doc)
@@ -1231,7 +1226,7 @@ async def get_warehouses(current_user: Dict = Depends(get_current_user)):
 
 # ============ BIN Location Routes ============
 @api_router.post("/masters/bin-locations", response_model=BINLocationMaster)
-async def create_bin_location(bin_loc: BINLocationMaster, current_user: Dict = Depends(get_current_user)):
+async def create_bin_location(bin_loc: BINLocationMaster):
     doc = bin_loc.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.bin_locations.insert_one(doc)
@@ -1247,7 +1242,7 @@ async def get_bin_locations(current_user: Dict = Depends(get_current_user)):
 
 # ============ Tax/HSN Master Routes ============
 @api_router.post("/masters/tax-hsn", response_model=TaxHSNMaster)
-async def create_tax_hsn(tax: TaxHSNMaster, current_user: Dict = Depends(get_current_user)):
+async def create_tax_hsn(tax: TaxHSNMaster):
     doc = tax.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
     await db.tax_hsn.insert_one(doc)
@@ -1268,7 +1263,7 @@ async def get_colors(current_user: Dict = Depends(get_current_user)):
     return colors
 
 @api_router.post("/masters/colors")
-async def create_color(data: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+async def create_color(data: Dict[str, Any]):
     await db.colors.insert_one(data)
     return data
 
@@ -1279,7 +1274,7 @@ async def get_sizes(current_user: Dict = Depends(get_current_user)):
     return sizes
 
 @api_router.post("/masters/sizes")
-async def create_size(data: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+async def create_size(data: Dict[str, Any]):
     await db.sizes.insert_one(data)
     return data
 
@@ -1290,13 +1285,13 @@ async def get_brands(current_user: Dict = Depends(get_current_user)):
     return brands
 
 @api_router.post("/masters/brands")
-async def create_brand(data: Dict[str, Any], current_user: Dict = Depends(get_current_user)):
+async def create_brand(data: Dict[str, Any]):
     await db.brands.insert_one(data)
     return data
 
 # ============ Purchase Indent Routes ============
 @api_router.post("/purchase/indents", response_model=PurchaseIndent)
-async def create_indent(indent: PurchaseIndent, current_user: Dict = Depends(get_current_user)):
+async def create_indent(indent: PurchaseIndent):
     if not indent.indent_no:
         indent.indent_no = await get_next_number("Purchase_Indent")
     doc = indent.model_dump()
@@ -1319,7 +1314,7 @@ async def get_indents(current_user: Dict = Depends(get_current_user)):
 
 # ============ Purchase Order Routes ============
 @api_router.post("/purchase/orders", response_model=PurchaseOrder)
-async def create_po(po: PurchaseOrder, current_user: Dict = Depends(get_current_user)):
+async def create_po(po: PurchaseOrder):
     if not po.po_no:
         po.po_no = await get_next_number("Purchase_Order")
     doc = po.model_dump()
@@ -1340,7 +1335,7 @@ async def get_pos(current_user: Dict = Depends(get_current_user)):
     return pos
 
 @api_router.put("/purchase/orders/{po_id}/approve")
-async def approve_po(po_id: str, remarks: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+async def approve_po(po_id: str, remarks: Optional[str] = None):
     await db.purchase_orders.update_one(
         {"id": po_id},
         {"$set": {
@@ -1353,7 +1348,7 @@ async def approve_po(po_id: str, remarks: Optional[str] = None, current_user: Di
     return {"message": "PO approved successfully"}
 
 @api_router.put("/purchase/orders/{po_id}/reject")
-async def reject_po(po_id: str, remarks: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+async def reject_po(po_id: str, remarks: Optional[str] = None):
     await db.purchase_orders.update_one(
         {"id": po_id},
         {"$set": {
@@ -1367,7 +1362,7 @@ async def reject_po(po_id: str, remarks: Optional[str] = None, current_user: Dic
 
 # ============ GRN Routes ============
 @api_router.post("/inventory/grn", response_model=GRN)
-async def create_grn(grn: GRN, current_user: Dict = Depends(get_current_user)):
+async def create_grn(grn: GRN):
     if not grn.grn_no:
         grn.grn_no = await get_next_number("GRN")
     doc = grn.model_dump()
@@ -1389,7 +1384,7 @@ async def get_grns(current_user: Dict = Depends(get_current_user)):
 
 # ============ Quality Check Routes ============
 @api_router.post("/quality/checks", response_model=QualityCheck)
-async def create_qc(qc: QualityCheck, current_user: Dict = Depends(get_current_user)):
+async def create_qc(qc: QualityCheck):
     if not qc.qc_no:
         qc.qc_no = await get_next_number("QC")
     doc = qc.model_dump()
@@ -1414,7 +1409,7 @@ async def get_qcs(current_user: Dict = Depends(get_current_user)):
 
 # ============ Stock Inward Routes ============
 @api_router.post("/inventory/stock-inward", response_model=StockInward)
-async def create_stock_inward(inward: StockInward, current_user: Dict = Depends(get_current_user)):
+async def create_stock_inward(inward: StockInward):
     if not inward.inward_no:
         inward.inward_no = await get_next_number("INWARD")
     doc = inward.model_dump()
@@ -1455,7 +1450,7 @@ async def get_stock_inwards(current_user: Dict = Depends(get_current_user)):
 
 # ============ Stock Transfer Routes ============
 @api_router.post("/inventory/stock-transfer", response_model=StockTransfer)
-async def create_stock_transfer(transfer: StockTransfer, current_user: Dict = Depends(get_current_user)):
+async def create_stock_transfer(transfer: StockTransfer):
     if not transfer.transfer_no:
         transfer.transfer_no = await get_next_number("TRANSFER")
     doc = transfer.model_dump()
@@ -1477,7 +1472,7 @@ async def get_stock_transfers(current_user: Dict = Depends(get_current_user)):
 
 # ============ Issue to Department Routes ============
 @api_router.post("/inventory/issue", response_model=IssueToDepartment)
-async def create_issue(issue: IssueToDepartment, current_user: Dict = Depends(get_current_user)):
+async def create_issue(issue: IssueToDepartment):
     if not issue.issue_no:
         issue.issue_no = await get_next_number("ISSUE")
     
@@ -1509,7 +1504,7 @@ async def get_issues(current_user: Dict = Depends(get_current_user)):
 
 # ============ Return from Department Routes ============
 @api_router.post("/inventory/return", response_model=ReturnFromDepartment)
-async def create_return(ret: ReturnFromDepartment, current_user: Dict = Depends(get_current_user)):
+async def create_return(ret: ReturnFromDepartment):
     if not ret.return_no:
         ret.return_no = await get_next_number("RETURN")
     doc = ret.model_dump()
@@ -1538,7 +1533,7 @@ async def get_returns(current_user: Dict = Depends(get_current_user)):
 
 # ============ Stock Adjustment Routes ============
 @api_router.post("/inventory/adjustment", response_model=StockAdjustment)
-async def create_adjustment(adjustment: StockAdjustment, current_user: Dict = Depends(get_current_user)):
+async def create_adjustment(adjustment: StockAdjustment):
     if not adjustment.adjustment_no:
         adjustment.adjustment_no = await get_next_number("ADJUSTMENT")
     doc = adjustment.model_dump()
@@ -1594,7 +1589,7 @@ async def get_dashboard_stats(current_user: Dict = Depends(get_current_user)):
 
 # ============ Reports ============
 @api_router.get("/reports/stock-ledger")
-async def stock_ledger_report(item_id: Optional[str] = None, warehouse_id: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+async def stock_ledger_report(item_id: Optional[str] = None, warehouse_id: Optional[str] = None):
     query = {}
     if item_id:
         query['item_id'] = item_id
@@ -1605,7 +1600,7 @@ async def stock_ledger_report(item_id: Optional[str] = None, warehouse_id: Optio
     return stocks
 
 @api_router.get("/reports/issue-register")
-async def issue_register_report(start_date: Optional[str] = None, end_date: Optional[str] = None, current_user: Dict = Depends(get_current_user)):
+async def issue_register_report(start_date: Optional[str] = None, end_date: Optional[str] = None):
     issues = await db.issues.find({}, {"_id": 0}).to_list(1000)
     for issue in issues:
         if isinstance(issue['issued_at'], str):
