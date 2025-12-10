@@ -35,10 +35,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const isActive = (path) => location.pathname === path;
   const isSectionActive = (paths) => paths.some(path => location.pathname.startsWith(path));
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  // Logout removed - no authentication needed
 
   const menuSections = [
     {
