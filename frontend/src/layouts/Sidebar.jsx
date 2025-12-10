@@ -232,27 +232,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
           {/* User Section */}
           <div className="p-4 border-t border-neutral-200">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-sm font-semibold text-primary">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-neutral-900 truncate">{user?.name}</p>
-                <p className="text-xs text-neutral-600 truncate">{user?.role}</p>
-              </div>
+            {/* Authentication removed - no user info or logout button needed */}
+            <div className="p-4 bg-neutral-50 border-t border-neutral-200">
+              <p className="text-xs text-neutral-500 text-center">
+                ERP Inventory System
+              </p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full justify-start"
-              onClick={handleLogout}
-              data-testid="logout-btn"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
           </div>
         </div>
       </aside>
