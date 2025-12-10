@@ -21,6 +21,16 @@ const ItemCategoryMaster = () => {
   const [itemTypeFilter, setItemTypeFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [editMode, setEditMode] = useState(false);
+  
+  // Drag and drop state
+  const [draggedCategory, setDraggedCategory] = useState(null);
+  const [dragOverCategory, setDragOverCategory] = useState(null);
+  const [moveConfirmDialog, setMoveConfirmDialog] = useState({
+    open: false,
+    category: null,
+    newParent: null,
+    impact: null
+  });
 
   const [formData, setFormData] = useState({
     category_id: '',
