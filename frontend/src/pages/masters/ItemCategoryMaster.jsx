@@ -1015,6 +1015,98 @@ const ItemCategoryMaster = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Move Category Confirmation Dialog */}
+      <AlertDialog open={moveConfirmDialog.open} onOpenChange={(open) => {
+        if (!open) setMoveConfirmDialog({ open: false, category: null, newParent: null, impact: null });
+      }}>
+        <AlertDialogContent className="max-w-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl text-blue-900 flex items-center gap-2">
+              <Move className="h-6 w-6 text-blue-600" />
+              Confirm Category Move
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4 pt-3">
+              <p className="text-base text-neutral-700">
+                You are about to move the following category:
+              </p>
+              
+              {/* Category Being Moved */}
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <FolderTree className="h-5 w-5 text-blue-600" />
+                  <span className="font-bold text-blue-900 text-lg">
+                    {moveConfirmDialog.category?.category_name || moveConfirmDialog.category?.name}
+                  </span>
+                </div>
+                <p className="text-sm text-blue-700">
+                  <span className="font-medium">Current Path:</span> {moveConfirmDialog.impact?.oldPath}
+                </p>
+                <p className="text-sm text-green-700 mt-1">
+                  <span className="font-medium">New Path:</span> {moveConfirmDialog.impact?.newPath}
+                </p>
+              </div>
+
+              {/* Impact Analysis */}
+              <div className="bg-amber-50 border border-amber-300 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle className="h-5 w-5 text-amber-600" />
+                  <span className="font-semibold text-amber-900">Impact Analysis</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-amber-900">Child Categories (will move along):</span>
+                    <Badge className="bg-amber-200 text-amber-900 font-bold">
+                      {moveConfirmDialog.impact?.childrenCount || 0}
+                    </Badge>
+                  </div>
+                  {moveConfirmDialog.impact?.itemsCount > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium text-amber-900">Items in Category:</span>
+                      <Badge className="bg-blue-200 text-blue-900 font-bold">
+                        {moveConfirmDialog.impact?.itemsCount}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Important Notes */}
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <div className="space-y-2 text-sm text-purple-900">
+                  <p className="font-semibold flex items-center gap-2">
+                    <Info className="h-4 w-4" />
+                    Important Notes:
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 ml-2">
+                    <li>All child categories will move with this category</li>
+                    <li>Item codes will remain unchanged (for audit trail)</li>
+                    <li>Item Type will be inherited from the new parent</li>
+                    <li>This action can be reversed by moving again</li>
+                  </ul>
+                </div>
+              </div>
+
+              <p className="text-base font-semibold text-neutral-700">
+                Do you want to proceed with this move?
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setMoveConfirmDialog({ open: false, category: null, newParent: null, impact: null });
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmMoveCategory} 
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Yes, Move Category
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
