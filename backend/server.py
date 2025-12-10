@@ -566,44 +566,49 @@ async def generate_next_item_code(category_id: str) -> str:
     return item_code
 
 # ============ Authentication Routes ============
-@api_router.post("/auth/register", response_model=User)
-async def register(user_create: UserCreate):
-    existing = await db.users.find_one({"email": user_create.email})
-    if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    user_dict = user_create.model_dump()
-    password = user_dict.pop('password')
-    hashed_pwd = hash_password(password)
-    user = User(**user_dict)
-    
-    doc = user.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    doc['password_hash'] = hashed_pwd  # Add password_hash to the document
-    await db.users.insert_one(doc)
-    return user
+# ============ Authentication Routes (DISABLED) ============
+# Authentication has been removed for direct access
+# Uncomment below to re-enable authentication
 
-@api_router.post("/auth/login", response_model=Token)
-async def login(credentials: UserLogin):
-    user_doc = await db.users.find_one({"email": credentials.email})
-    if not user_doc or not verify_password(credentials.password, user_doc['password_hash']):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    if isinstance(user_doc['created_at'], str):
-        user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
-    
-    user = User(**user_doc)
-    token = create_jwt_token(user)
-    return Token(access_token=token, token_type="bearer", user=user)
+# @api_router.post("/auth/register", response_model=User)
+# async def register(user_create: UserCreate):
+#     existing = await db.users.find_one({"email": user_create.email})
+#     if existing:
+#         raise HTTPException(status_code=400, detail="Email already registered")
+#     
+#     user_dict = user_create.model_dump()
+#     password = user_dict.pop('password')
+#     hashed_pwd = hash_password(password)
+#     user = User(**user_dict)
+#     
+#     doc = user.model_dump()
+#     doc['created_at'] = doc['created_at'].isoformat()
+#     doc['password_hash'] = hashed_pwd
+#     await db.users.insert_one(doc)
+#     return user
 
-@api_router.get("/auth/me", response_model=User)
-async def get_me():
-    user_doc = await db.users.find_one({"id": current_user['user_id']}, {"_id": 0})
-    if not user_doc:
-        raise HTTPException(status_code=404, detail="User not found")
-    if isinstance(user_doc['created_at'], str):
-        user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
-    return User(**user_doc)
+# @api_router.post("/auth/login", response_model=Token)
+# async def login(credentials: UserLogin):
+#     user_doc = await db.users.find_one({"email": credentials.email})
+#     if not user_doc or not verify_password(credentials.password, user_doc['password_hash']):
+#         raise HTTPException(status_code=401, detail="Invalid credentials")
+#     
+#     if isinstance(user_doc['created_at'], str):
+#         user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
+#     
+#     user = User(**user_doc)
+#     token = create_jwt_token(user)
+#     return Token(access_token=token, token_type="bearer", user=user)
+
+# @api_router.get("/auth/me", response_model=User)
+# async def get_me():
+#     # Returns first user as default
+#     user_doc = await db.users.find_one({}, {"_id": 0})
+#     if not user_doc:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     if isinstance(user_doc['created_at'], str):
+#         user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])
+#     return User(**user_doc)
 
 @api_router.get("/users", response_model=List[User])
 async def get_users():
