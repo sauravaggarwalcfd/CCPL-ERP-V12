@@ -10,7 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Save, X, Plus, Edit, Trash2, ChevronRight, ChevronDown, FolderTree, Search, Info } from 'lucide-react';
+import { Save, X, Plus, Edit, Trash2, ChevronRight, ChevronDown, FolderTree, Search, Info, Move, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
 const ItemCategoryMaster = () => {
