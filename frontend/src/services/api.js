@@ -22,6 +22,10 @@ export const mastersAPI = {
   createItemCategory: (data) => api.post('/masters/item-categories', data),
   updateItemCategory: (id, data) => api.put(`/masters/item-categories/${id}`, data),
   deleteItemCategory: (id) => api.delete(`/masters/item-categories/${id}`),
+  moveCategory: (categoryId, newParentId) => api.patch('/masters/item-categories/move-category', { 
+    category_id: categoryId, 
+    new_parent_id: newParentId 
+  }),
 
   // Items
   getItems: () => api.get('/masters/items'),
