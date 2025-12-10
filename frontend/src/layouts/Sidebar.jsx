@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard,
   Package,
@@ -22,7 +21,7 @@ import { Separator } from '@/components/ui/separator';
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  // Authentication removed - no user context needed
   const [expandedSections, setExpandedSections] = React.useState(['masters', 'purchase', 'quality', 'inventory', 'reports']);
 
   const toggleSection = (section) => {
