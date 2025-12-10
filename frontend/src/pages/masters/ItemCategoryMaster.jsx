@@ -486,18 +486,32 @@ const ItemCategoryMaster = () => {
       const isExpanded = expandedCategories.has(category.id);
       const isSelected = selectedCategory?.id === category.id;
       const catName = category.category_name || category.name;
+      const isDragOver = dragOverCategory === category.id;
+      const isDragging = draggedCategory?.id === category.id;
 
       return (
         <div key={category.id}>
           <div
-            className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer transition-colors hover:bg-emerald-50 ${
+            draggable
+            onDragStart={(e) => handleDragStart(e, category)}
+            onDragEnd={handleDragEnd}
+            onDragOver={(e) => handleDragOver(e, category)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, category)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-md cursor-move transition-all ${
               isSelected ? 'bg-emerald-100 border-l-4 border-emerald-600' : ''
+            } ${
+              isDragOver ? 'bg-blue-100 border-2 border-dashed border-blue-500' : 'hover:bg-emerald-50'
+            } ${
+              isDragging ? 'opacity-50' : ''
             }`}
             style={{ paddingLeft: `${depth * 20 + 12}px` }}
+            title="Drag to move category"
           >
+            <Move className="h-3 w-3 text-neutral-400" />
             {hasChildren ? (
               <button
-                onClick={() => toggleExpand(category.id)}
+                onClick={(e) => { e.stopPropagation(); toggleExpand(category.id); }}
                 className="p-1 hover:bg-emerald-200 rounded"
               >
                 {isExpanded ? (
@@ -509,11 +523,14 @@ const ItemCategoryMaster = () => {
             ) : (
               <span className="w-6" />
             )}
-            <div className="flex-1" onClick={() => handleEdit(category)}>
+            <div className="flex-1" onClick={(e) => { e.stopPropagation(); handleEdit(category); }}>
               <div className="flex items-center gap-2">
                 <span className="font-medium text-sm">{catName}</span>
                 {category.level === 0 && (
                   <Badge variant="outline" className="text-xs bg-blue-50">Root</Badge>
+                )}
+                {isDragOver && (
+                  <Badge className="text-xs bg-blue-500 text-white">Drop Here</Badge>
                 )}
               </div>
               <div className="text-xs text-neutral-500">{category.category_id || category.code}</div>
