@@ -597,7 +597,7 @@ async def login(credentials: UserLogin):
     return Token(access_token=token, token_type="bearer", user=user)
 
 @api_router.get("/auth/me", response_model=User)
-async def get_me(current_user: Dict = Depends(get_current_user)):
+async def get_me():
     user_doc = await db.users.find_one({"id": current_user['user_id']}, {"_id": 0})
     if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
@@ -606,7 +606,7 @@ async def get_me(current_user: Dict = Depends(get_current_user)):
     return User(**user_doc)
 
 @api_router.get("/users", response_model=List[User])
-async def get_users(current_user: Dict = Depends(get_current_user)):
+async def get_users():
     users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(1000)
     for user in users:
         if isinstance(user['created_at'], str):
@@ -622,7 +622,7 @@ async def create_item_category(category: ItemCategory):
     return category
 
 @api_router.get("/masters/item-categories", response_model=List[ItemCategory])
-async def get_item_categories(current_user: Dict = Depends(get_current_user)):
+async def get_item_categories():
     categories = await db.item_categories.find({}, {"_id": 0}).to_list(1000)
     for cat in categories:
         if isinstance(cat['created_at'], str):
@@ -630,7 +630,7 @@ async def get_item_categories(current_user: Dict = Depends(get_current_user)):
     return categories
 
 @api_router.get("/masters/item-categories/leaf-only")
-async def get_leaf_categories(current_user: Dict = Depends(get_current_user)):
+async def get_leaf_categories():
     """Get only leaf categories (categories without children) - MUST come before {category_id} route"""
     all_categories = await db.item_categories.find({}, {"_id": 0}).to_list(1000)
     
@@ -879,7 +879,7 @@ async def create_item(item: ItemMaster):
     return item
 
 @api_router.get("/masters/items", response_model=List[ItemMaster])
-async def get_items(current_user: Dict = Depends(get_current_user)):
+async def get_items():
     items = await db.items.find({}, {"_id": 0}).to_list(1000)
     for item in items:
         if isinstance(item['created_at'], str):
@@ -975,7 +975,7 @@ async def get_items_by_type(item_type: str):
     return items
 
 @api_router.get("/masters/items/components")
-async def get_component_items(current_user: Dict = Depends(get_current_user)):
+async def get_component_items():
     """Get all items that can be used as components in BOM"""
     items = await db.items.find({"is_component": True, "is_active": True}, {"_id": 0}).to_list(1000)
     for item in items:
@@ -986,7 +986,7 @@ async def get_component_items(current_user: Dict = Depends(get_current_user)):
     return items
 
 @api_router.get("/masters/items/finished-goods")
-async def get_finished_goods(current_user: Dict = Depends(get_current_user)):
+async def get_finished_goods():
     """Get all finished good items"""
     items = await db.items.find({"is_finished_good": True, "is_active": True}, {"_id": 0}).to_list(1000)
     for item in items:
@@ -997,7 +997,7 @@ async def get_finished_goods(current_user: Dict = Depends(get_current_user)):
     return items
 
 @api_router.get("/masters/items/low-stock")
-async def get_low_stock_items(current_user: Dict = Depends(get_current_user)):
+async def get_low_stock_items():
     """Get items below reorder level - For Purchase Indent automation"""
     items = await db.items.find({"is_active": True}, {"_id": 0}).to_list(1000)
     low_stock_items = []
@@ -1165,7 +1165,7 @@ async def create_uom(uom: UOMMaster):
     return uom
 
 @api_router.get("/masters/uoms", response_model=List[UOMMaster])
-async def get_uoms(current_user: Dict = Depends(get_current_user)):
+async def get_uoms():
     uoms = await db.uoms.find({}, {"_id": 0}).to_list(1000)
     for uom in uoms:
         if isinstance(uom['created_at'], str):
@@ -1201,7 +1201,7 @@ async def create_supplier(supplier: SupplierMaster):
     return supplier
 
 @api_router.get("/masters/suppliers", response_model=List[SupplierMaster])
-async def get_suppliers(current_user: Dict = Depends(get_current_user)):
+async def get_suppliers():
     suppliers = await db.suppliers.find({}, {"_id": 0}).to_list(1000)
     for supplier in suppliers:
         if isinstance(supplier['created_at'], str):
@@ -1217,7 +1217,7 @@ async def create_warehouse(warehouse: WarehouseMaster):
     return warehouse
 
 @api_router.get("/masters/warehouses", response_model=List[WarehouseMaster])
-async def get_warehouses(current_user: Dict = Depends(get_current_user)):
+async def get_warehouses():
     warehouses = await db.warehouses.find({}, {"_id": 0}).to_list(1000)
     for warehouse in warehouses:
         if isinstance(warehouse['created_at'], str):
@@ -1233,7 +1233,7 @@ async def create_bin_location(bin_loc: BINLocationMaster):
     return bin_loc
 
 @api_router.get("/masters/bin-locations", response_model=List[BINLocationMaster])
-async def get_bin_locations(current_user: Dict = Depends(get_current_user)):
+async def get_bin_locations():
     bins = await db.bin_locations.find({}, {"_id": 0}).to_list(1000)
     for bin_loc in bins:
         if isinstance(bin_loc['created_at'], str):
@@ -1249,7 +1249,7 @@ async def create_tax_hsn(tax: TaxHSNMaster):
     return tax
 
 @api_router.get("/masters/tax-hsn", response_model=List[TaxHSNMaster])
-async def get_tax_hsn(current_user: Dict = Depends(get_current_user)):
+async def get_tax_hsn():
     taxes = await db.tax_hsn.find({}, {"_id": 0}).to_list(1000)
     for tax in taxes:
         if isinstance(tax['created_at'], str):
@@ -1258,7 +1258,7 @@ async def get_tax_hsn(current_user: Dict = Depends(get_current_user)):
 
 # ============ Color Master Routes ============
 @api_router.get("/masters/colors")
-async def get_colors(current_user: Dict = Depends(get_current_user)):
+async def get_colors():
     colors = await db.colors.find({}, {"_id": 0}).to_list(1000)
     return colors
 
@@ -1269,7 +1269,7 @@ async def create_color(data: Dict[str, Any]):
 
 # ============ Size Master Routes ============
 @api_router.get("/masters/sizes")
-async def get_sizes(current_user: Dict = Depends(get_current_user)):
+async def get_sizes():
     sizes = await db.sizes.find({}, {"_id": 0}).to_list(1000)
     return sizes
 
@@ -1280,7 +1280,7 @@ async def create_size(data: Dict[str, Any]):
 
 # ============ Brand Master Routes ============
 @api_router.get("/masters/brands")
-async def get_brands(current_user: Dict = Depends(get_current_user)):
+async def get_brands():
     brands = await db.brands.find({}, {"_id": 0}).to_list(1000)
     return brands
 
@@ -1302,7 +1302,7 @@ async def create_indent(indent: PurchaseIndent):
     return indent
 
 @api_router.get("/purchase/indents", response_model=List[PurchaseIndent])
-async def get_indents(current_user: Dict = Depends(get_current_user)):
+async def get_indents():
     indents = await db.purchase_indents.find({}, {"_id": 0}).to_list(1000)
     for indent in indents:
         if isinstance(indent['created_at'], str):
@@ -1325,7 +1325,7 @@ async def create_po(po: PurchaseOrder):
     return po
 
 @api_router.get("/purchase/orders", response_model=List[PurchaseOrder])
-async def get_pos(current_user: Dict = Depends(get_current_user)):
+async def get_pos():
     pos = await db.purchase_orders.find({}, {"_id": 0}).to_list(1000)
     for po in pos:
         if isinstance(po['created_at'], str):
@@ -1373,7 +1373,7 @@ async def create_grn(grn: GRN):
     return grn
 
 @api_router.get("/inventory/grn", response_model=List[GRN])
-async def get_grns(current_user: Dict = Depends(get_current_user)):
+async def get_grns():
     grns = await db.grn.find({}, {"_id": 0}).to_list(1000)
     for grn in grns:
         if isinstance(grn['received_at'], str):
@@ -1400,7 +1400,7 @@ async def create_qc(qc: QualityCheck):
     return qc
 
 @api_router.get("/quality/checks", response_model=List[QualityCheck])
-async def get_qcs(current_user: Dict = Depends(get_current_user)):
+async def get_qcs():
     qcs = await db.quality_checks.find({}, {"_id": 0}).to_list(1000)
     for qc in qcs:
         if isinstance(qc['inspected_at'], str):
@@ -1441,7 +1441,7 @@ async def create_stock_inward(inward: StockInward):
     return inward
 
 @api_router.get("/inventory/stock-inward", response_model=List[StockInward])
-async def get_stock_inwards(current_user: Dict = Depends(get_current_user)):
+async def get_stock_inwards():
     inwards = await db.stock_inward.find({}, {"_id": 0}).to_list(1000)
     for inward in inwards:
         if isinstance(inward['created_at'], str):
@@ -1461,7 +1461,7 @@ async def create_stock_transfer(transfer: StockTransfer):
     return transfer
 
 @api_router.get("/inventory/stock-transfer", response_model=List[StockTransfer])
-async def get_stock_transfers(current_user: Dict = Depends(get_current_user)):
+async def get_stock_transfers():
     transfers = await db.stock_transfer.find({}, {"_id": 0}).to_list(1000)
     for transfer in transfers:
         if isinstance(transfer['created_at'], str):
@@ -1495,7 +1495,7 @@ async def create_issue(issue: IssueToDepartment):
     return issue
 
 @api_router.get("/inventory/issue", response_model=List[IssueToDepartment])
-async def get_issues(current_user: Dict = Depends(get_current_user)):
+async def get_issues():
     issues = await db.issues.find({}, {"_id": 0}).to_list(1000)
     for issue in issues:
         if isinstance(issue['issued_at'], str):
@@ -1524,7 +1524,7 @@ async def create_return(ret: ReturnFromDepartment):
     return ret
 
 @api_router.get("/inventory/return", response_model=List[ReturnFromDepartment])
-async def get_returns(current_user: Dict = Depends(get_current_user)):
+async def get_returns():
     returns = await db.returns.find({}, {"_id": 0}).to_list(1000)
     for ret in returns:
         if isinstance(ret['returned_at'], str):
@@ -1544,7 +1544,7 @@ async def create_adjustment(adjustment: StockAdjustment):
     return adjustment
 
 @api_router.get("/inventory/adjustment", response_model=List[StockAdjustment])
-async def get_adjustments(current_user: Dict = Depends(get_current_user)):
+async def get_adjustments():
     adjustments = await db.adjustments.find({}, {"_id": 0}).to_list(1000)
     for adj in adjustments:
         if isinstance(adj['created_at'], str):
@@ -1555,7 +1555,7 @@ async def get_adjustments(current_user: Dict = Depends(get_current_user)):
 
 # ============ Stock Balance Routes ============
 @api_router.get("/inventory/stock-balance", response_model=List[StockBalance])
-async def get_stock_balance(current_user: Dict = Depends(get_current_user)):
+async def get_stock_balance():
     stocks = await db.stock_balance.find({}, {"_id": 0}).to_list(1000)
     for stock in stocks:
         if isinstance(stock['last_updated'], str):
@@ -1564,7 +1564,7 @@ async def get_stock_balance(current_user: Dict = Depends(get_current_user)):
 
 # ============ Dashboard Stats ============
 @api_router.get("/dashboard/stats")
-async def get_dashboard_stats(current_user: Dict = Depends(get_current_user)):
+async def get_dashboard_stats():
     total_items = await db.items.count_documents({"status": "Active"})
     total_suppliers = await db.suppliers.count_documents({"status": "Active"})
     pending_pos = await db.purchase_orders.count_documents({"status": ApprovalStatus.PENDING})
@@ -1608,7 +1608,7 @@ async def issue_register_report(start_date: Optional[str] = None, end_date: Opti
     return issues
 
 @api_router.get("/reports/pending-po")
-async def pending_po_report(current_user: Dict = Depends(get_current_user)):
+async def pending_po_report():
     pos = await db.purchase_orders.find({"status": {"$in": [ApprovalStatus.PENDING, ApprovalStatus.DRAFT]}}, {"_id": 0}).to_list(1000)
     for po in pos:
         if isinstance(po['created_at'], str):
