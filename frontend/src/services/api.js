@@ -6,14 +6,7 @@ const api = axios.create({
   baseURL: API_BASE,
 });
 
-// Add token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+// Authentication removed - no token required
 
 // Masters API
 export const mastersAPI = {
