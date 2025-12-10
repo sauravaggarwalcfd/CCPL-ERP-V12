@@ -672,6 +672,19 @@ class BulkUpdateItemTypeRequest(BaseModel):
     category_ids: List[str]
     item_type: str
 
+# Pydantic model for moving category request
+class MoveCategoryRequest(BaseModel):
+    category_id: str
+    new_parent_id: Optional[str] = None  # None means move to root level
+
+class MoveCategoryResponse(BaseModel):
+    success: bool
+    message: str
+    affected_children_count: int
+    items_count: int
+    category_path: str
+
+
 # Bulk update item type for categories (PATCH endpoint) - MUST come before parametrized routes
 @api_router.patch("/masters/item-categories/bulk-update-item-type")
 async def bulk_update_item_type(
