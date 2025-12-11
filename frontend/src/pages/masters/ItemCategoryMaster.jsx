@@ -291,6 +291,7 @@ const ItemCategoryMaster = () => {
         category_short_code: formData.category_short_code.toUpperCase(),
         inventory_type: formData.item_type,
         default_uom: 'PCS',
+        allowed_uoms: formData.allowed_uoms || [],  // Include selected UOMs
         is_active: formData.is_active,
         status: formData.is_active ? 'Active' : 'Inactive',
         level
@@ -547,6 +548,11 @@ const ItemCategoryMaster = () => {
                 )}
                 {isDragOver && (
                   <Badge className="text-xs bg-blue-500 text-white">Drop Here</Badge>
+                )}
+                {category.allowed_uoms && category.allowed_uoms.length > 0 && (
+                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-300">
+                    UOMs: {category.allowed_uoms.join(', ')}
+                  </Badge>
                 )}
               </div>
               <div className="text-xs text-neutral-500">{category.category_id || category.code}</div>
