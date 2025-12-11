@@ -108,6 +108,7 @@ class ItemCategory(BaseModel):
     category_short_code: Optional[str] = None
     inventory_type: Optional[str] = "RM"
     default_uom: str = "PCS"
+    allowed_uoms: List[str] = Field(default_factory=list)  # Multiple UOMs allowed for subcategories
     default_hsn: Optional[str] = None
     stock_account: Optional[str] = None
     expense_account: Optional[str] = None
@@ -632,6 +633,12 @@ async def get_item_categories():
     for cat in categories:
         if isinstance(cat['created_at'], str):
             cat['created_at'] = datetime.fromisoformat(cat['created_at'])
+    # Debug: Log categories with UOMs
+    cats_with_uoms = [c for c in categories if c.get('allowed_uoms')]
+    if cats_with_uoms:
+        print(f"📤 Backend GET: Found {len(cats_with_uoms)} categories with UOMs")
+        for c in cats_with_uoms[:3]:  # Show first 3
+            print(f"  - {c.get('name')}: allowed_uoms = {c.get('allowed_uoms')}")
     return categories
 
 @api_router.get("/masters/item-categories/leaf-only")
@@ -669,7 +676,13 @@ async def get_item_category(category_id: str):
 async def update_item_category(category_id: str, category: ItemCategory):
     doc = category.model_dump()
     doc['created_at'] = doc['created_at'].isoformat()
+    print(f"🔧 Backend: Updating category {category_id}")
+    print(f"📦 Backend: allowed_uoms in request = {category.allowed_uoms}")
+    print(f"💾 Backend: Document to save = {doc.get('allowed_uoms')}")
     await db.item_categories.update_one({"id": category_id}, {"$set": doc})
+    # Verify what was saved
+    saved = await db.item_categories.find_one({"id": category_id}, {"_id": 0})
+    print(f"✅ Backend: Saved allowed_uoms = {saved.get('allowed_uoms') if saved else 'NOT FOUND'}")
     return category
 
 # Pydantic model for bulk update request

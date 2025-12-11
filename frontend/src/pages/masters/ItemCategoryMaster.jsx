@@ -21,7 +21,8 @@ const ItemCategoryMaster = () => {
   const [itemTypeFilter, setItemTypeFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [editMode, setEditMode] = useState(false);
-  
+  const [uomsList, setUomsList] = useState([]);  // For UOM dropdown
+
   // Drag and drop state
   const [draggedCategory, setDraggedCategory] = useState(null);
   const [dragOverCategory, setDragOverCategory] = useState(null);
@@ -38,6 +39,7 @@ const ItemCategoryMaster = () => {
     category_short_code: '',
     item_type: 'RM',
     parent_category: '',
+    allowed_uoms: [],  // Multiple UOMs for subcategories
     description: '',
     is_active: true
   });
@@ -50,18 +52,38 @@ const ItemCategoryMaster = () => {
 
   useEffect(() => {
     fetchCategories();
+    fetchUOMs();
   }, []);
+
+  // Debug: Log formData.allowed_uoms whenever it changes
+  useEffect(() => {
+    console.log('🔄 formData.allowed_uoms changed:', formData.allowed_uoms);
+  }, [formData.allowed_uoms]);
 
   const fetchCategories = async () => {
     try {
       const response = await mastersAPI.getItemCategories();
       const data = response.data || [];
+      console.log('📂 Fetched categories from API:', data);
+      console.log('📦 Sample category with UOMs:', data.find(c => c.allowed_uoms && c.allowed_uoms.length > 0));
       setCategories(data);
       // Expand root categories by default
       const rootIds = data.filter(c => !c.parent_category).map(c => c.id);
       setExpandedCategories(new Set(rootIds));
     } catch (error) {
       toast.error('Failed to load categories');
+    }
+  };
+
+  const fetchUOMs = async () => {
+    try {
+      const response = await mastersAPI.getUOMs();
+      console.log('📋 Fetched UOMs from API:', response.data);
+      console.log('📋 Number of UOMs:', response.data?.length || 0);
+      setUomsList(response.data || []);
+    } catch (error) {
+      console.error('❌ Failed to load UOMs:', error);
+      toast.error('Failed to load UOMs');
     }
   };
 
@@ -77,6 +99,7 @@ const ItemCategoryMaster = () => {
       category_short_code: '',
       item_type: 'RM',
       parent_category: '',
+      allowed_uoms: [],
       description: '',
       is_active: true
     });
@@ -89,15 +112,23 @@ const ItemCategoryMaster = () => {
     const parentCat = category.parent_category ? categories.find(c => c.id === category.parent_category) : null;
     const inheritedType = parentCat ? (parentCat.item_type || 'RM') : (category.item_type || 'RM');
 
-    setFormData({
+    console.log('📝 Editing category:', category);
+    console.log('📦 Category allowed_uoms:', category.allowed_uoms);
+
+    const formDataToSet = {
       category_id: category.category_id || category.id,
       category_name: category.category_name || category.name,
       category_short_code: category.category_short_code || category.code?.substring(0, 4) || '',
       item_type: inheritedType,
       parent_category: category.parent_category || '',
+      allowed_uoms: category.allowed_uoms || [],
       description: category.description || '',
       is_active: category.is_active !== false
-    });
+    };
+
+    console.log('✅ Setting formData with allowed_uoms:', formDataToSet.allowed_uoms);
+
+    setFormData(formDataToSet);
     setSelectedCategory(category);
     setEditMode(true);
   };
@@ -105,13 +136,14 @@ const ItemCategoryMaster = () => {
   const handleAddChild = (parentCategory) => {
     // Inherit item type from parent
     const inheritedType = parentCategory.item_type || 'RM';
-    
+
     setFormData({
       category_id: generateCategoryID(),
       category_name: '',
       category_short_code: '',
       item_type: inheritedType,
       parent_category: parentCategory.id,
+      allowed_uoms: [],
       description: '',
       is_active: true
     });
@@ -255,7 +287,7 @@ const ItemCategoryMaster = () => {
         toast.error('Category Short Code is required');
         return;
       }
-      
+
       // Check duplicate short code
       if (checkDuplicateShortCode(formData.category_short_code)) {
         toast.error('Category Short Code already exists. Please use a unique code.');
@@ -266,6 +298,9 @@ const ItemCategoryMaster = () => {
         ? (categories.find(c => c.id === formData.parent_category)?.level || 0) + 1
         : 0;
 
+      console.log('💾 BEFORE SAVE - formData.allowed_uoms:', formData.allowed_uoms);
+      console.log('💾 BEFORE SAVE - formData full:', formData);
+
       const payload = {
         id: formData.category_id || formData.id,  // Use existing ID or generate new one
         code: formData.category_short_code.toUpperCase(),
@@ -275,12 +310,14 @@ const ItemCategoryMaster = () => {
         category_short_code: formData.category_short_code.toUpperCase(),
         inventory_type: formData.item_type,
         default_uom: 'PCS',
+        allowed_uoms: formData.allowed_uoms || [],  // Include selected UOMs
         is_active: formData.is_active,
         status: formData.is_active ? 'Active' : 'Inactive',
         level
       };
 
-      console.log('Saving category with payload:', payload);
+      console.log('💾 PAYLOAD - allowed_uoms:', payload.allowed_uoms);
+      console.log('💾 PAYLOAD - full:', payload);
 
       if (editMode && selectedCategory) {
         await mastersAPI.updateItemCategory(selectedCategory.id, payload);
@@ -531,6 +568,11 @@ const ItemCategoryMaster = () => {
                 )}
                 {isDragOver && (
                   <Badge className="text-xs bg-blue-500 text-white">Drop Here</Badge>
+                )}
+                {category.allowed_uoms && category.allowed_uoms.length > 0 && (
+                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-300">
+                    UOMs: {category.allowed_uoms.join(', ')}
+                  </Badge>
                 )}
               </div>
               <div className="text-xs text-neutral-500">{category.category_id || category.code}</div>
@@ -830,13 +872,13 @@ const ItemCategoryMaster = () => {
                     const parentId = value === 'none' ? '' : value;
                     const parentCat = parentId ? categories.find(c => c.id === parentId) : null;
                     const inheritedType = parentCat ? (parentCat.item_type || 'RM') : formData.item_type;
-                    
-                    setFormData({ 
-                      ...formData, 
+
+                    setFormData({
+                      ...formData,
                       parent_category: parentId,
                       item_type: inheritedType
                     });
-                    
+
                     if (parentCat) {
                       toast.info(`Item Type inherited: ${inheritedType}`, { duration: 2000 });
                     }
@@ -881,6 +923,75 @@ const ItemCategoryMaster = () => {
                   )}
                 </p>
               </div>
+
+              {/* Allowed UOMs - Only for Subcategories */}
+              {formData.parent_category && formData.parent_category !== 'none' && (
+                <div className="space-y-2 border-2 border-blue-200 rounded-lg p-5 bg-blue-50">
+                  <Label className="text-base font-medium text-blue-900">
+                    Allowed UOMs (Unit of Measurement) * - For Subcategories Only
+                  </Label>
+                  <p className="text-xs text-blue-700 mb-3">
+                    Select multiple UOMs that can be used for items in this subcategory
+                  </p>
+                  {uomsList.length === 0 ? (
+                    <p className="text-sm text-neutral-500 p-4 border border-neutral-200 rounded bg-white">
+                      No UOMs available. Please add UOMs first from Masters &gt; UOM Master.
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto bg-white p-4 rounded-lg border border-blue-200">
+                      {uomsList.map((uom) => {
+                        const uomCode = uom.uom_code || uom.code;
+                        const uomName = uom.uom_name || uom.name;
+                        const isChecked = formData.allowed_uoms.includes(uomCode);
+
+                        return (
+                          <div
+                            key={uomCode}
+                            className={`flex items-center gap-2 p-3 rounded-md border-2 cursor-pointer transition-all ${
+                              isChecked
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-neutral-200 hover:border-blue-300 hover:bg-blue-50'
+                            }`}
+                            onClick={() => {
+                              const newUoms = isChecked
+                                ? formData.allowed_uoms.filter(u => u !== uomCode)
+                                : [...formData.allowed_uoms, uomCode];
+                              console.log(`✓ UOM ${isChecked ? 'UNCHECKED' : 'CHECKED'}: ${uomCode}`);
+                              console.log('✓ New allowed_uoms array:', newUoms);
+                              setFormData({ ...formData, allowed_uoms: newUoms });
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => {}} // Handled by div onClick
+                              className="h-4 w-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                            />
+                            <div>
+                              <div className="font-semibold text-sm text-neutral-900">{uomCode}</div>
+                              <div className="text-xs text-neutral-600">{uomName}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {formData.allowed_uoms.length > 0 && (
+                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-800 font-medium mb-2">
+                        ✓ Selected UOMs ({formData.allowed_uoms.length}):
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.allowed_uoms.map(uomCode => (
+                          <Badge key={uomCode} variant="outline" className="bg-white border-green-300 text-green-700">
+                            {uomCode}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Description */}
               <div className="space-y-2">
