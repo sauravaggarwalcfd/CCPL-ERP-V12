@@ -55,10 +55,17 @@ const ItemCategoryMaster = () => {
     fetchUOMs();
   }, []);
 
+  // Debug: Log formData.allowed_uoms whenever it changes
+  useEffect(() => {
+    console.log('🔄 formData.allowed_uoms changed:', formData.allowed_uoms);
+  }, [formData.allowed_uoms]);
+
   const fetchCategories = async () => {
     try {
       const response = await mastersAPI.getItemCategories();
       const data = response.data || [];
+      console.log('📂 Fetched categories from API:', data);
+      console.log('📦 Sample category with UOMs:', data.find(c => c.allowed_uoms && c.allowed_uoms.length > 0));
       setCategories(data);
       // Expand root categories by default
       const rootIds = data.filter(c => !c.parent_category).map(c => c.id);
@@ -103,7 +110,10 @@ const ItemCategoryMaster = () => {
     const parentCat = category.parent_category ? categories.find(c => c.id === category.parent_category) : null;
     const inheritedType = parentCat ? (parentCat.item_type || 'RM') : (category.item_type || 'RM');
 
-    setFormData({
+    console.log('📝 Editing category:', category);
+    console.log('📦 Category allowed_uoms:', category.allowed_uoms);
+
+    const formDataToSet = {
       category_id: category.category_id || category.id,
       category_name: category.category_name || category.name,
       category_short_code: category.category_short_code || category.code?.substring(0, 4) || '',
@@ -112,7 +122,11 @@ const ItemCategoryMaster = () => {
       allowed_uoms: category.allowed_uoms || [],
       description: category.description || '',
       is_active: category.is_active !== false
-    });
+    };
+
+    console.log('✅ Setting formData with allowed_uoms:', formDataToSet.allowed_uoms);
+
+    setFormData(formDataToSet);
     setSelectedCategory(category);
     setEditMode(true);
   };
