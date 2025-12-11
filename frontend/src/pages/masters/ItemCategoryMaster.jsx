@@ -78,9 +78,11 @@ const ItemCategoryMaster = () => {
   const fetchUOMs = async () => {
     try {
       const response = await mastersAPI.getUOMs();
+      console.log('📋 Fetched UOMs from API:', response.data);
+      console.log('📋 Number of UOMs:', response.data?.length || 0);
       setUomsList(response.data || []);
     } catch (error) {
-      console.error('Failed to load UOMs:', error);
+      console.error('❌ Failed to load UOMs:', error);
       toast.error('Failed to load UOMs');
     }
   };
@@ -285,7 +287,7 @@ const ItemCategoryMaster = () => {
         toast.error('Category Short Code is required');
         return;
       }
-      
+
       // Check duplicate short code
       if (checkDuplicateShortCode(formData.category_short_code)) {
         toast.error('Category Short Code already exists. Please use a unique code.');
@@ -295,6 +297,9 @@ const ItemCategoryMaster = () => {
       const level = formData.parent_category && formData.parent_category !== 'none'
         ? (categories.find(c => c.id === formData.parent_category)?.level || 0) + 1
         : 0;
+
+      console.log('💾 BEFORE SAVE - formData.allowed_uoms:', formData.allowed_uoms);
+      console.log('💾 BEFORE SAVE - formData full:', formData);
 
       const payload = {
         id: formData.category_id || formData.id,  // Use existing ID or generate new one
@@ -311,7 +316,8 @@ const ItemCategoryMaster = () => {
         level
       };
 
-      console.log('Saving category with payload:', payload);
+      console.log('💾 PAYLOAD - allowed_uoms:', payload.allowed_uoms);
+      console.log('💾 PAYLOAD - full:', payload);
 
       if (editMode && selectedCategory) {
         await mastersAPI.updateItemCategory(selectedCategory.id, payload);
@@ -950,6 +956,8 @@ const ItemCategoryMaster = () => {
                               const newUoms = isChecked
                                 ? formData.allowed_uoms.filter(u => u !== uomCode)
                                 : [...formData.allowed_uoms, uomCode];
+                              console.log(`✓ UOM ${isChecked ? 'UNCHECKED' : 'CHECKED'}: ${uomCode}`);
+                              console.log('✓ New allowed_uoms array:', newUoms);
                               setFormData({ ...formData, allowed_uoms: newUoms });
                             }}
                           >
