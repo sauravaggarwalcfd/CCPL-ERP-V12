@@ -19,6 +19,7 @@ const ItemMasterForm = () => {
   const [categories, setCategories] = useState([]);
   const [colors, setColors] = useState([]);
   const [uoms, setUOMs] = useState([]);
+  const [allowedUoms, setAllowedUoms] = useState([]); // Filtered UOMs based on selected category
   const [activeSection, setActiveSection] = useState('basic');
 
   const [formData, setFormData] = useState({
@@ -147,15 +148,42 @@ const ItemMasterForm = () => {
 
     const path = getCategoryPath(categoryId);
     const nextCode = await getNextItemCode(categoryId);
-    
+
+    // Get selected category and filter UOMs based on allowed_uoms
+    const selectedCategory = categories.find(c => c.id === categoryId);
+    const categoryAllowedUoms = selectedCategory?.allowed_uoms || [];
+
+    console.log('📦 Selected category:', selectedCategory);
+    console.log('📦 Category allowed_uoms:', categoryAllowedUoms);
+
+    // Filter UOMs - if category has allowed_uoms, show only those; otherwise show all
+    let filteredUoms = uoms;
+    if (categoryAllowedUoms.length > 0) {
+      filteredUoms = uoms.filter(uom =>
+        categoryAllowedUoms.includes(uom.uom_code) ||
+        categoryAllowedUoms.includes(uom.code) ||
+        categoryAllowedUoms.includes(uom.uom_name)
+      );
+      console.log('✅ Filtered UOMs based on category:', filteredUoms);
+    } else {
+      console.log('ℹ️ No allowed_uoms configured for this category, showing all UOMs');
+    }
+
+    setAllowedUoms(filteredUoms);
+
     setFormData({
       ...formData,
       item_category: categoryId,
       category_path: path,
       item_code: nextCode,
-      next_code_preview: nextCode
+      next_code_preview: nextCode,
+      uom: '' // Reset UOM when category changes
     });
-    toast.success(`Category selected: ${path}`, { duration: 2000 });
+
+    const uomInfo = filteredUoms.length > 0
+      ? ` (${filteredUoms.length} UOM${filteredUoms.length > 1 ? 's' : ''} available)`
+      : ' (No UOMs configured for this category)';
+    toast.success(`Category selected: ${path}${uomInfo}`, { duration: 3000 });
   };
 
   const fetchItem = async (itemId) => {
@@ -163,6 +191,8 @@ const ItemMasterForm = () => {
       setLoading(true);
       const response = await mastersAPI.getItem(itemId);
       const item = response.data;
+
+      // Set form data
       setFormData({
         uid_code: item.uid_code || '',
         item_code: item.item_code,
@@ -188,6 +218,22 @@ const ItemMasterForm = () => {
         costing_method: item.costing_method || 'FIFO',
         status: item.status
       });
+
+      // Set allowed UOMs based on item's category
+      if (item.category_id) {
+        const selectedCategory = categories.find(c => c.id === item.category_id);
+        const categoryAllowedUoms = selectedCategory?.allowed_uoms || [];
+        if (categoryAllowedUoms.length > 0) {
+          const filteredUoms = uoms.filter(uom =>
+            categoryAllowedUoms.includes(uom.uom_code) ||
+            categoryAllowedUoms.includes(uom.code) ||
+            categoryAllowedUoms.includes(uom.uom_name)
+          );
+          setAllowedUoms(filteredUoms);
+        } else {
+          setAllowedUoms(uoms);
+        }
+      }
     } catch (error) {
       toast.error('Failed to load item');
     } finally {
@@ -517,14 +563,32 @@ const ItemMasterForm = () => {
                 <div className="grid grid-cols-3 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="uom" className="text-base font-medium">UOM *</Label>
-                    <Select value={formData.uom} onValueChange={(value) => setFormData({ ...formData, uom: value })}>
+                    <Select
+                      value={formData.uom}
+                      onValueChange={(value) => setFormData({ ...formData, uom: value })}
+                      disabled={!formData.item_category}
+                    >
                       <SelectTrigger className="h-11 text-base" data-testid="uom-select">
-                        <SelectValue placeholder="Select UOM" />
+                        <SelectValue placeholder={formData.item_category ? "Select UOM" : "Select category first"} />
                       </SelectTrigger>
                       <SelectContent>
-                        {uoms.map(uom => <SelectItem key={uom.id} value={uom.uom_name}>{uom.uom_name} ({uom.symbol})</SelectItem>)}
+                        {(allowedUoms.length > 0 ? allowedUoms : uoms).map(uom => (
+                          <SelectItem key={uom.id} value={uom.uom_code || uom.code}>
+                            {uom.uom_name || uom.name} ({uom.symbol || uom.uom_code || uom.code})
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
+                    {formData.item_category && allowedUoms.length > 0 && (
+                      <p className="text-xs text-green-600 font-medium mt-1">
+                        ✓ Showing {allowedUoms.length} UOM{allowedUoms.length > 1 ? 's' : ''} configured for this category
+                      </p>
+                    )}
+                    {formData.item_category && allowedUoms.length === 0 && (
+                      <p className="text-xs text-amber-600 font-medium mt-1">
+                        ⚠ No UOMs configured for this category - showing all available UOMs
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="spec_dimensions" className="text-base font-medium">Spec / Dimensions</Label>
