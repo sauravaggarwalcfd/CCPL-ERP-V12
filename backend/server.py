@@ -108,6 +108,7 @@ class ItemCategory(BaseModel):
     category_short_code: Optional[str] = None
     inventory_type: Optional[str] = "RM"
     default_uom: str = "PCS"
+    allowed_uoms: Optional[List[str]] = []  # Multiple UOMs allowed for subcategories
     default_hsn: Optional[str] = None
     stock_account: Optional[str] = None
     expense_account: Optional[str] = None

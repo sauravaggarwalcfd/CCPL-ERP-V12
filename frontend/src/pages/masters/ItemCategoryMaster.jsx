@@ -21,7 +21,8 @@ const ItemCategoryMaster = () => {
   const [itemTypeFilter, setItemTypeFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [editMode, setEditMode] = useState(false);
-  
+  const [uomsList, setUomsList] = useState([]);  // For UOM dropdown
+
   // Drag and drop state
   const [draggedCategory, setDraggedCategory] = useState(null);
   const [dragOverCategory, setDragOverCategory] = useState(null);
@@ -38,6 +39,7 @@ const ItemCategoryMaster = () => {
     category_short_code: '',
     item_type: 'RM',
     parent_category: '',
+    allowed_uoms: [],  // Multiple UOMs for subcategories
     description: '',
     is_active: true
   });
@@ -50,6 +52,7 @@ const ItemCategoryMaster = () => {
 
   useEffect(() => {
     fetchCategories();
+    fetchUOMs();
   }, []);
 
   const fetchCategories = async () => {
@@ -65,6 +68,16 @@ const ItemCategoryMaster = () => {
     }
   };
 
+  const fetchUOMs = async () => {
+    try {
+      const response = await mastersAPI.getUOMs();
+      setUomsList(response.data || []);
+    } catch (error) {
+      console.error('Failed to load UOMs:', error);
+      toast.error('Failed to load UOMs');
+    }
+  };
+
   const generateCategoryID = () => {
     const count = categories.length + 1;
     return `CAT-${String(count).padStart(4, '0')}`;
@@ -77,6 +90,7 @@ const ItemCategoryMaster = () => {
       category_short_code: '',
       item_type: 'RM',
       parent_category: '',
+      allowed_uoms: [],
       description: '',
       is_active: true
     });
@@ -95,6 +109,7 @@ const ItemCategoryMaster = () => {
       category_short_code: category.category_short_code || category.code?.substring(0, 4) || '',
       item_type: inheritedType,
       parent_category: category.parent_category || '',
+      allowed_uoms: category.allowed_uoms || [],
       description: category.description || '',
       is_active: category.is_active !== false
     });
@@ -105,13 +120,14 @@ const ItemCategoryMaster = () => {
   const handleAddChild = (parentCategory) => {
     // Inherit item type from parent
     const inheritedType = parentCategory.item_type || 'RM';
-    
+
     setFormData({
       category_id: generateCategoryID(),
       category_name: '',
       category_short_code: '',
       item_type: inheritedType,
       parent_category: parentCategory.id,
+      allowed_uoms: [],
       description: '',
       is_active: true
     });
@@ -830,13 +846,13 @@ const ItemCategoryMaster = () => {
                     const parentId = value === 'none' ? '' : value;
                     const parentCat = parentId ? categories.find(c => c.id === parentId) : null;
                     const inheritedType = parentCat ? (parentCat.item_type || 'RM') : formData.item_type;
-                    
-                    setFormData({ 
-                      ...formData, 
+
+                    setFormData({
+                      ...formData,
                       parent_category: parentId,
                       item_type: inheritedType
                     });
-                    
+
                     if (parentCat) {
                       toast.info(`Item Type inherited: ${inheritedType}`, { duration: 2000 });
                     }
@@ -881,6 +897,73 @@ const ItemCategoryMaster = () => {
                   )}
                 </p>
               </div>
+
+              {/* Allowed UOMs - Only for Subcategories */}
+              {formData.parent_category && formData.parent_category !== 'none' && (
+                <div className="space-y-2 border-2 border-blue-200 rounded-lg p-5 bg-blue-50">
+                  <Label className="text-base font-medium text-blue-900">
+                    Allowed UOMs (Unit of Measurement) * - For Subcategories Only
+                  </Label>
+                  <p className="text-xs text-blue-700 mb-3">
+                    Select multiple UOMs that can be used for items in this subcategory
+                  </p>
+                  {uomsList.length === 0 ? (
+                    <p className="text-sm text-neutral-500 p-4 border border-neutral-200 rounded bg-white">
+                      No UOMs available. Please add UOMs first from Masters &gt; UOM Master.
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto bg-white p-4 rounded-lg border border-blue-200">
+                      {uomsList.map((uom) => {
+                        const uomCode = uom.uom_code || uom.code;
+                        const uomName = uom.uom_name || uom.name;
+                        const isChecked = formData.allowed_uoms.includes(uomCode);
+
+                        return (
+                          <div
+                            key={uomCode}
+                            className={`flex items-center gap-2 p-3 rounded-md border-2 cursor-pointer transition-all ${
+                              isChecked
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-neutral-200 hover:border-blue-300 hover:bg-blue-50'
+                            }`}
+                            onClick={() => {
+                              const newUoms = isChecked
+                                ? formData.allowed_uoms.filter(u => u !== uomCode)
+                                : [...formData.allowed_uoms, uomCode];
+                              setFormData({ ...formData, allowed_uoms: newUoms });
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => {}} // Handled by div onClick
+                              className="h-4 w-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                            />
+                            <div>
+                              <div className="font-semibold text-sm text-neutral-900">{uomCode}</div>
+                              <div className="text-xs text-neutral-600">{uomName}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {formData.allowed_uoms.length > 0 && (
+                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-800 font-medium mb-2">
+                        ✓ Selected UOMs ({formData.allowed_uoms.length}):
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {formData.allowed_uoms.map(uomCode => (
+                          <Badge key={uomCode} variant="outline" className="bg-white border-green-300 text-green-700">
+                            {uomCode}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Description */}
               <div className="space-y-2">
