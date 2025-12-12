@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/authStore';
+import { authAPI } from '@/services/authAPI';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,10 +10,10 @@ import { Package } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');  // Can be email or username
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,10 +21,21 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
-      toast.success('Login successful');
+      // Call login API
+      const response = await authAPI.login(username, password);
+      const { access_token, refresh_token } = response.data;
+
+      // Get user info
+      const userResponse = await authAPI.getCurrentUser();
+      const user = userResponse.data;
+
+      // Update auth store
+      login(user, access_token, refresh_token);
+
+      toast.success(`Welcome back, ${user.full_name || user.username}!`);
       navigate('/dashboard');
     } catch (error) {
+      console.error('Login error:', error);
       toast.error(error.response?.data?.detail || 'Invalid credentials');
     } finally {
       setLoading(false);
@@ -47,15 +59,15 @@ const Login = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Email or Username</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="your.email@company.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                placeholder="your.email@company.com or username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
-                data-testid="login-email-input"
+                data-testid="login-username-input"
               />
             </div>
 
