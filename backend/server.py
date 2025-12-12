@@ -14,6 +14,9 @@ import bcrypt
 import jwt
 from enum import Enum
 
+# Import auth router
+from auth.router import router as auth_router
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -1633,8 +1636,9 @@ async def pending_po_report():
             po['created_at'] = datetime.fromisoformat(po['created_at'])
     return pos
 
-# Include router
-app.include_router(api_router)
+# Include routers
+app.include_router(auth_router)  # Auth router (no /api prefix, has its own prefix)
+app.include_router(api_router)   # Existing API routes
 
 app.add_middleware(
     CORSMiddleware,
